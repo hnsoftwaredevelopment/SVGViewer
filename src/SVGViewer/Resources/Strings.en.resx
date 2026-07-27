@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppTitle" xml:space="preserve">
+    <value>SVG Viewer</value>
+  </data>
+  <data name="LabelDrive" xml:space="preserve">
+    <value>Drive:</value>
+  </data>
+  <data name="LabelView" xml:space="preserve">
+    <value>View:</value>
+  </data>
+  <data name="FilterAll" xml:space="preserve">
+    <value>Full folder structure</value>
+  </data>
+  <data name="FilterSvgOnly" xml:space="preserve">
+    <value>Folders with SVG only</value>
+  </data>
+  <data name="LabelPreviewSize" xml:space="preserve">
+    <value>Preview:</value>
+  </data>
+  <data name="SizeLarge" xml:space="preserve">
+    <value>Large</value>
+  </data>
+  <data name="SizeMedium" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="SizeSmall" xml:space="preserve">
+    <value>Small</value>
+  </data>
+  <data name="SizeDetailsOnly" xml:space="preserve">
+    <value>Only details</value>
+  </data>
+  <data name="LabelLanguage" xml:space="preserve">
+    <value>Language:</value>
+  </data>
+  <data name="ButtonHelp" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="ButtonRefresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="StatusReady" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="StatusSelectDrive" xml:space="preserve">
+    <value>Select a drive to begin</value>
+  </data>
+  <data name="StatusScanning" xml:space="preserve">
+    <value>Scanning for SVG folders...</value>
+  </data>
+  <data name="StatusScanCancelled" xml:space="preserve">
+    <value>Scan cancelled</value>
+  </data>
+  <data name="StatusFoldersScanned" xml:space="preserve">
+    <value>{0} folders scanned, {1} containing SVG files</value>
+  </data>
+  <data name="StatusFoldersWithSvg" xml:space="preserve">
+    <value>Found {0} folders containing SVG files</value>
+  </data>
+  <data name="StatusNoSvgFound" xml:space="preserve">
+    <value>No SVG files found on this drive</value>
+  </data>
+  <data name="TreeLoading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="TreeAccessDenied" xml:space="preserve">
+    <value>Access denied</value>
+  </data>
+  <data name="TooltipContainsSvg" xml:space="preserve">
+    <value>This folder contains {0} SVG file(s)</value>
+  </data>
+  <data name="LabelSvgFilesInFolder" xml:space="preserve">
+    <value>{0} SVG file(s) in this folder</value>
+  </data>
+  <data name="PreviewComingSoon" xml:space="preserve">
+    <value>The preview pane will be added in the next milestone.</value>
+  </data>
+</root>

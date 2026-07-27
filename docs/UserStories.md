@@ -17,21 +17,21 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
   en planning vastliggen.
 - ☑ **US-1.4** — Als ontwikkelaar wil ik een Obsidian-sync-script, zodat MD-docs
   automatisch in de vault verschijnen.
-- ☐ **US-1.5** — Als ontwikkelaar wil ik een `LicenseManager` die de Syncfusion-key
+- ☑ **US-1.5** — Als ontwikkelaar wil ik een `LicenseManager` die de Syncfusion-key
   uit `syncfusionlicense.txt` leest en registreert (no-op als afwezig).
-- ☐ **US-1.6** — Als ontwikkelaar wil ik een `SettingsService` (JSON in AppData)
+- ☑ **US-1.6** — Als ontwikkelaar wil ik een `SettingsService` (JSON in AppData)
   voor taal en previewgrootte.
 
 ## SE-2 · Directory-navigatie
 
-- ☐ **US-2.1** — Als gebruiker wil ik een drive kunnen kiezen uit een dropdown.
-- ☐ **US-2.2** — Als gebruiker wil ik een TreeView van de gekozen drive en door
+- ☑ **US-2.1** — Als gebruiker wil ik een drive kunnen kiezen uit een dropdown.
+- ☑ **US-2.2** — Als gebruiker wil ik een TreeView van de gekozen drive en door
   mappen kunnen klikken (lazy-loading van submappen).
-- ☐ **US-2.3** — Als gebruiker wil ik dat mappen met SVG's gemarkeerd worden
+- ☑ **US-2.3** — Als gebruiker wil ik dat mappen met SVG's gemarkeerd worden
   (icoon/kleur/badge), zodat ik ze snel vind.
-- ☐ **US-2.4** — Als gebruiker wil ik bovenaan kunnen kiezen: volledige structuur
+- ☑ **US-2.4** — Als gebruiker wil ik bovenaan kunnen kiezen: volledige structuur
   óf alleen mappen die SVG's bevatten.
-- ☐ **US-2.5** — Als gebruiker wil ik dat het scannen asynchroon gebeurt, zodat de
+- ☑ **US-2.5** — Als gebruiker wil ik dat het scannen asynchroon gebeurt, zodat de
   UI responsief blijft.
 
 ## SE-3 · SVG-preview
@@ -56,11 +56,12 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 
 ## SE-5 · Meertaligheid
 
-- ☐ **US-5.1** — Als ontwikkelaar wil ik `.resx`-resources: NL (default), EN, DE.
-- ☐ **US-5.2** — Als gebruiker wil ik de taal in de toolbar wisselen; de UI werkt
+- ☑ **US-5.1** — Als ontwikkelaar wil ik `.resx`-resources: NL (default), EN, DE.
+  *(Vooruitgetrokken naar M2 om herwerk van hardcoded teksten te voorkomen.)*
+- ☑ **US-5.2** — Als gebruiker wil ik de taal in de toolbar wisselen; de UI werkt
   direct bij zonder herstart.
-- ☐ **US-5.3** — Als gebruiker wil ik dat mijn taalkeuze bewaard blijft.
-- ☐ **US-5.4** — Als ontwikkelaar wil ik dat er geen hardcoded UI-teksten zijn.
+- ☑ **US-5.3** — Als gebruiker wil ik dat mijn taalkeuze bewaard blijft.
+- ☑ **US-5.4** — Als ontwikkelaar wil ik dat er geen hardcoded UI-teksten zijn.
 
 ## SE-6 · Documentatie
 

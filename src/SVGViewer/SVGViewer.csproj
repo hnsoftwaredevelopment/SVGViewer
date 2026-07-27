@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -6,6 +6,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <RootNamespace>SVGViewer</RootNamespace>
+    <AssemblyName>SVGViewer</AssemblyName>
+
+    <!-- Dutch is the default (neutral) language; en/de ship as satellite assemblies. -->
+    <NeutralResourcesLanguage>nl</NeutralResourcesLanguage>
+    <SatelliteResourceLanguages>nl;en;de</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>

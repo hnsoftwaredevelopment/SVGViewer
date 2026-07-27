@@ -43,7 +43,7 @@ meertalig (Nederlands, Engels, Duits).
 | F10 | Voorkeuren (taal, previewgrootte) worden bewaard | SE-5 |
 | F11 | In-app help in de gekozen taal | SE-6 |
 | F12 | README (EN) + user guides (NL/EN/DE) met screenshots | SE-6 |
-| F13 | Optioneel Syncfusion; licentie uit `syncfusionlicense.txt` | SE-1 |
+| F13 | Licentiesleutel nooit in de repo (zie AD-1) | SE-1 |
 
 ## 5. Architectuur & technologie
 
@@ -52,8 +52,7 @@ meertalig (Nederlands, Engels, Duits).
   `ObservableProperty` / `RelayCommand`).
 - **SVG-rendering:** `SharpVectors.Reloaded` — rendert SVG naar WPF
   `DrawingImage`/`DrawingGroup`, ideaal voor thumbnails.
-- **UI-componenten:** Syncfusion WPF (o.a. `SfTreeView`) indien licentie
-  aanwezig; anders val terug op de standaard WPF `TreeView`.
+- **UI-componenten:** standaard WPF-controls (zie besluit AD-1).
 - **Lokalisatie:** satelliet-assemblies uit `.resx` (`Strings.resx` = NL default,
   `Strings.en.resx`, `Strings.de.resx`) + runtime `CultureInfo`-switch.
 - **Instellingen:** JSON in `%AppData%\SVGViewer\settings.json`.
@@ -112,6 +111,30 @@ meertalig (Nederlands, Engels, Duits).
 | Syncfusion-licentie ontbreekt | Nette fallback naar standaard WPF-controls |
 | Preview-SDK (.NET 10) op machine | `global.json` pint op .NET 8 |
 
-## 11. Werkverdeling
+## 11. Besluiten (ADR)
+
+### AD-1 · Standaard WPF-controls i.p.v. Syncfusion
+**Datum:** milestone 2 · **Status:** aangenomen
+
+Er is een Syncfusion-licentie beschikbaar (versie **34.x**), maar voor de
+functionaliteit van deze applicatie biedt Syncfusion geen meerwaarde:
+
+- Lazy-loading, `HierarchicalDataTemplate` en markeren via `DataTrigger`s zijn
+  volledig te realiseren met de standaard WPF `TreeView`.
+- Minder externe afhankelijkheden en geen licentie nodig om te kunnen bouwen.
+- De applicatie draait bij elke gebruiker, ook zonder licentiebestand.
+
+**Gevolg:** de app gebruikt standaard WPF-controls. `syncfusionlicense.txt`
+blijft in `.gitignore` staan zodat een aanwezige sleutel nooit in de repo
+terechtkomt.
+
+**Herziening:** mocht een specifiek onderdeel (bijv. een virtualiserende
+thumbnail-grid in SE-3) meetbaar beter zijn met Syncfusion, dan wordt een
+`LicenseManager` toegevoegd die de sleutel uit `syncfusionlicense.txt` leest.
+Gebruik in dat geval Syncfusion WPF **34.x**-pakketten, passend bij de licentie.
+
+## 12. Werkverdeling
 
 Zie [`UserStories.md`](./UserStories.md) voor de sub-epics en user stories.
+Zie [`Architecture.md`](./Architecture.md) voor de technische uitwerking en de
+onderbouwing van de gemaakte keuzes.

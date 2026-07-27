@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppTitle" xml:space="preserve">
+    <value>SVG Viewer</value>
+  </data>
+  <data name="LabelDrive" xml:space="preserve">
+    <value>Laufwerk:</value>
+  </data>
+  <data name="LabelView" xml:space="preserve">
+    <value>Ansicht:</value>
+  </data>
+  <data name="FilterAll" xml:space="preserve">
+    <value>Vollständige Ordnerstruktur</value>
+  </data>
+  <data name="FilterSvgOnly" xml:space="preserve">
+    <value>Nur Ordner mit SVG</value>
+  </data>
+  <data name="LabelPreviewSize" xml:space="preserve">
+    <value>Vorschau:</value>
+  </data>
+  <data name="SizeLarge" xml:space="preserve">
+    <value>Groß</value>
+  </data>
+  <data name="SizeMedium" xml:space="preserve">
+    <value>Mittel</value>
+  </data>
+  <data name="SizeSmall" xml:space="preserve">
+    <value>Klein</value>
+  </data>
+  <data name="SizeDetailsOnly" xml:space="preserve">
+    <value>Nur Details</value>
+  </data>
+  <data name="LabelLanguage" xml:space="preserve">
+    <value>Sprache:</value>
+  </data>
+  <data name="ButtonHelp" xml:space="preserve">
+    <value>Hilfe</value>
+  </data>
+  <data name="ButtonRefresh" xml:space="preserve">
+    <value>Aktualisieren</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="StatusReady" xml:space="preserve">
+    <value>Bereit</value>
+  </data>
+  <data name="StatusSelectDrive" xml:space="preserve">
+    <value>Wählen Sie ein Laufwerk aus, um zu beginnen</value>
+  </data>
+  <data name="StatusScanning" xml:space="preserve">
+    <value>Suche nach SVG-Ordnern...</value>
+  </data>
+  <data name="StatusScanCancelled" xml:space="preserve">
+    <value>Suche abgebrochen</value>
+  </data>
+  <data name="StatusFoldersScanned" xml:space="preserve">
+    <value>{0} Ordner durchsucht, {1} mit SVG-Dateien</value>
+  </data>
+  <data name="StatusFoldersWithSvg" xml:space="preserve">
+    <value>{0} Ordner mit SVG-Dateien gefunden</value>
+  </data>
+  <data name="StatusNoSvgFound" xml:space="preserve">
+    <value>Keine SVG-Dateien auf diesem Laufwerk gefunden</value>
+  </data>
+  <data name="TreeLoading" xml:space="preserve">
+    <value>Wird geladen...</value>
+  </data>
+  <data name="TreeAccessDenied" xml:space="preserve">
+    <value>Kein Zugriff</value>
+  </data>
+  <data name="TooltipContainsSvg" xml:space="preserve">
+    <value>Dieser Ordner enthält {0} SVG-Datei(en)</value>
+  </data>
+  <data name="LabelSvgFilesInFolder" xml:space="preserve">
+    <value>{0} SVG-Datei(en) in diesem Ordner</value>
+  </data>
+  <data name="PreviewComingSoon" xml:space="preserve">
+    <value>Die Vorschau wird im nächsten Meilenstein hinzugefügt.</value>
+  </data>
+</root>
