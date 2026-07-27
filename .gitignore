@@ -1,0 +1,56 @@
+# ---------------------------------------------------------------------------
+# SVGViewer .gitignore
+# ---------------------------------------------------------------------------
+
+# Syncfusion license key - MUST NEVER be committed
+syncfusionlicense.txt
+**/syncfusionlicense.txt
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+build/artifacts/
+
+# .NET
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.dll.config
+*.exe.config
+
+# Visual Studio
+.vs/
+*.rsuser
+*.suo
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+
+# Rider / ReSharper
+.idea/
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+!packages/build/
+
+# Logs & temp
+*.log
+*.tmp
+*.cache
