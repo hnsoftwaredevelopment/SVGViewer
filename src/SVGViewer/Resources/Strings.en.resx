@@ -87,7 +87,31 @@
   <data name="LabelSvgFilesInFolder" xml:space="preserve">
     <value>{0} SVG file(s) in this folder</value>
   </data>
-  <data name="PreviewComingSoon" xml:space="preserve">
-    <value>The preview pane will be added in the next milestone.</value>
+  <data name="PreviewSelectFolder" xml:space="preserve">
+    <value>Select a folder to view its SVG files</value>
+  </data>
+  <data name="PreviewNoSvgFiles" xml:space="preserve">
+    <value>This folder contains no SVG files</value>
+  </data>
+  <data name="PreviewRenderFailed" xml:space="preserve">
+    <value>Cannot be displayed</value>
+  </data>
+  <data name="ColumnName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ColumnSize" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="ColumnModified" xml:space="preserve">
+    <value>Modified</value>
+  </data>
+  <data name="SizeBytes" xml:space="preserve">
+    <value>{0} B</value>
+  </data>
+  <data name="SizeKilobytes" xml:space="preserve">
+    <value>{0} kB</value>
+  </data>
+  <data name="SizeMegabytes" xml:space="preserve">
+    <value>{0} MB</value>
   </data>
 </root>

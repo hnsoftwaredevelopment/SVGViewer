@@ -87,7 +87,31 @@
   <data name="LabelSvgFilesInFolder" xml:space="preserve">
     <value>{0} SVG-bestand(en) in deze map</value>
   </data>
-  <data name="PreviewComingSoon" xml:space="preserve">
-    <value>De voorbeeldweergave wordt in de volgende milestone toegevoegd.</value>
+  <data name="PreviewSelectFolder" xml:space="preserve">
+    <value>Selecteer een map om de SVG-bestanden te bekijken</value>
+  </data>
+  <data name="PreviewNoSvgFiles" xml:space="preserve">
+    <value>Deze map bevat geen SVG-bestanden</value>
+  </data>
+  <data name="PreviewRenderFailed" xml:space="preserve">
+    <value>Kan niet worden weergegeven</value>
+  </data>
+  <data name="ColumnName" xml:space="preserve">
+    <value>Naam</value>
+  </data>
+  <data name="ColumnSize" xml:space="preserve">
+    <value>Grootte</value>
+  </data>
+  <data name="ColumnModified" xml:space="preserve">
+    <value>Gewijzigd</value>
+  </data>
+  <data name="SizeBytes" xml:space="preserve">
+    <value>{0} B</value>
+  </data>
+  <data name="SizeKilobytes" xml:space="preserve">
+    <value>{0} kB</value>
+  </data>
+  <data name="SizeMegabytes" xml:space="preserve">
+    <value>{0} MB</value>
   </data>
 </root>

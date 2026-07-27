@@ -136,16 +136,118 @@
             <GridSplitter Grid.Column="1" Width="4" HorizontalAlignment="Stretch"
                           Background="#E4E8ED" />
 
-            <!-- Preview pane: filled in milestone 3 -->
-            <Border Grid.Column="2" Background="White">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock Text="{Binding SelectedFolderInfo}"
+            <!-- Preview pane: thumbnails, or a detail list in "only details" mode -->
+            <Grid Grid.Column="2" Background="White">
+
+                <!-- Thumbnail grid -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="10">
+                    <ScrollViewer.Style>
+                        <Style TargetType="ScrollViewer">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsDetailsMode}" Value="False" />
+                                        <Condition Binding="{Binding HasSvgFiles}" Value="True" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ScrollViewer.Style>
+
+                    <ItemsControl ItemsSource="{Binding SvgFiles}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:SvgFileViewModel}">
+                                <Border Margin="6" Padding="8" CornerRadius="6"
+                                        BorderBrush="#E4E8ED" BorderThickness="1"
+                                        Background="#FCFDFE"
+                                        ToolTip="{Binding ToolTipText}">
+                                    <StackPanel Width="{Binding DataContext.ThumbnailSize,
+                                                                RelativeSource={RelativeSource AncestorType=Window}}">
+
+                                        <!-- Fixed-size cell so the grid stays aligned -->
+                                        <Grid Height="{Binding DataContext.ThumbnailSize,
+                                                               RelativeSource={RelativeSource AncestorType=Window}}">
+
+                                            <Image Source="{Binding Thumbnail}"
+                                                   Stretch="Uniform"
+                                                   RenderOptions.BitmapScalingMode="HighQuality" />
+
+                                            <TextBlock Text="{Binding Source={x:Static loc:Loc.Instance}, Path=[PreviewRenderFailed]}"
+                                                       TextWrapping="Wrap" TextAlignment="Center"
+                                                       FontSize="11" Foreground="#B42318"
+                                                       VerticalAlignment="Center"
+                                                       Visibility="{Binding RenderFailed, Converter={StaticResource BoolToVisibility}}" />
+
+                                            <ProgressBar Height="3" Width="40" IsIndeterminate="True"
+                                                         VerticalAlignment="Center"
+                                                         Visibility="{Binding IsLoadingThumbnail, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
+
+                                        <TextBlock Text="{Binding FileName}"
+                                                   TextTrimming="CharacterEllipsis" TextAlignment="Center"
+                                                   Margin="0,6,0,0" FontSize="11" Foreground="#24292F" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <!-- Detail list -->
+                <ListView ItemsSource="{Binding SvgFiles}" BorderThickness="0">
+                    <ListView.Style>
+                        <Style TargetType="ListView">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsDetailsMode}" Value="True" />
+                                        <Condition Binding="{Binding HasSvgFiles}" Value="True" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.Style>
+
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="320"
+                                            Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[ColumnName]}"
+                                            DisplayMemberBinding="{Binding FileName}" />
+                            <GridViewColumn Width="110"
+                                            Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[ColumnSize]}"
+                                            DisplayMemberBinding="{Binding SizeDisplay}" />
+                            <GridViewColumn Width="170"
+                                            Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[ColumnModified]}"
+                                            DisplayMemberBinding="{Binding LastModifiedDisplay}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+                <!-- Placeholder messages -->
+                <TextBlock Text="{Binding Source={x:Static loc:Loc.Instance}, Path=[PreviewSelectFolder]}"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Foreground="#8B949E"
+                           Visibility="{Binding ShowsNoSelectionMessage, Converter={StaticResource BoolToVisibility}}" />
+
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Visibility="{Binding ShowsEmptyFolderMessage, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="{Binding SelectedNode.DisplayName}"
                                FontSize="14" Foreground="#24292F"
-                               HorizontalAlignment="Center" Margin="0,0,0,8" />
-                    <TextBlock Text="{Binding Source={x:Static loc:Loc.Instance}, Path=[PreviewComingSoon]}"
+                               HorizontalAlignment="Center" Margin="0,0,0,6" />
+                    <TextBlock Text="{Binding Source={x:Static loc:Loc.Instance}, Path=[PreviewNoSvgFiles]}"
                                Foreground="#8B949E" HorizontalAlignment="Center" />
                 </StackPanel>
-            </Border>
+            </Grid>
         </Grid>
     </DockPanel>
 </Window>

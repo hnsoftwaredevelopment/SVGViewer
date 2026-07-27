@@ -20,14 +20,26 @@ public sealed class SettingsService
 
     private readonly string _settingsPath;
 
+    /// <summary>Uses the default location: %AppData%\SVGViewer\settings.json.</summary>
     public SettingsService()
-    {
-        var folder = Path.Combine(
+        : this(Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "SVGViewer");
-
-        _settingsPath = Path.Combine(folder, "settings.json");
+            "SVGViewer",
+            "settings.json"))
+    {
     }
+
+    /// <summary>
+    /// Uses an explicit settings file. Intended for tests, so they never touch
+    /// the real user preferences.
+    /// </summary>
+    public SettingsService(string settingsPath)
+    {
+        _settingsPath = settingsPath;
+    }
+
+    /// <summary>Full path of the file this instance reads and writes.</summary>
+    public string SettingsPath => _settingsPath;
 
     /// <summary>Reads the settings file, or returns defaults when unavailable.</summary>
     public AppSettings Load()

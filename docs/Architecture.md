@@ -98,23 +98,50 @@ kunnen worden in de nieuwe taal.
 daarom in `MainWindow.xaml.cs` doorgegeven aan de ViewModel. Dat is de enige
 code-behind in het venster; al het andere gedrag zit in de ViewModels.
 
-## Verificatie bij milestone 2
+## Verificatie
 
-De logica is getest met een tijdelijk testharnas tegen een gegenereerde
-mappenstructuur (`build/make-testdata.ps1`). Alle 30 controles slaagden:
+De logica wordt gedekt door een xUnit-testproject (`tests/SVGViewer.Tests`), te
+draaien met `dotnet test`. De tests maken hun eigen mappenstructuur aan in een
+tijdelijke map en ruimen die weer op, dus ze hebben geen externe testdata nodig.
 
-- alleen `.svg` wordt geteld (`.txt`/`.png` worden genegeerd);
-- markering van mappen met SVG's, inclusief het relevant maken van ouders;
-- beide filtermodi tonen precies de juiste mappen;
-- alle drie de talen resolven en wisselen correct;
-- instellingen overleven een schrijf/lees-ronde.
+Gedekt: alleen `.svg` wordt geteld, markering van SVG-mappen inclusief het
+relevant houden van oudermappen, beide filtermodi, onleesbare paden, annulering,
+instellingen (inclusief corrupt bestand), alle drie de talen, en SVG-rendering.
+
+Twee dingen die de tests bewust vastleggen omdat ze anders stil kapot gaan:
+
+- **Rendering buiten de UI-thread.** De tests draaien zonder Dispatcher; als
+  SharpVectors een UI-thread zou vereisen, falen ze meteen. Ze controleren ook
+  dat elke image `IsFrozen` is — zonder freeze crasht de UI-thread erop.
+- **Resourcedekking.** `build/check-resources.ps1` controleert dat nl/en/de
+  dezelfde keys hebben en dat elke key die in XAML of C# wordt gebruikt bestaat.
+  Ontbrekende keys vallen anders pas op als `!Key!` in de UI.
 
 Bekend aandachtspunt: WPF-applicaties starten niet in een omgeving waar de
 omgevingsvariabele `windir` ontbreekt (dan faalt WPF's interne font-cache op een
 ongeldige URI). Dit raakt alleen niet-interactieve buildomgevingen, niet normaal
 gebruik.
 
+## SVG-previews (SE-3)
+
+`SvgThumbnailService` rendert met SharpVectors naar een `DrawingImage`. Omdat dat
+een **vector** is, volstaat één render voor alle previewgroottes: WPF schaalt hem
+zonder kwaliteitsverlies. De previewgrootte bepaalt dus alleen de afmeting van de
+`Image` in XAML, niet wat er gerenderd wordt.
+
+- De cachesleutel is pad + wijzigingsdatum, dus een bewerkt bestand wordt
+  automatisch opnieuw gerenderd.
+- Parallellisme is begrensd op de helft van de processorkernen, zodat een map met
+  honderden bestanden de machine niet plat legt.
+- Bestandsdetails (naam, grootte, datum) worden direct gelezen en de lijst wordt
+  meteen getoond; thumbnails druppelen daarna binnen. Een map voelt dus
+  onmiddellijk responsief.
+- Een onleesbare of kapotte SVG levert `null` op en wordt in de UI als
+  "kan niet worden weergegeven" getoond in plaats van de app te laten crashen.
+- In modus *Only details* wordt er niets gerenderd; er is dan alleen een lijst
+  met naam, grootte en wijzigingsdatum.
+
 ## Nog te doen
 
-Zie [`UserStories.md`](./UserStories.md). Eerstvolgend: SE-3 (SVG-previews met
-instelbare grootte) en SE-4 (dubbelklik naar de gekoppelde editor).
+Zie [`UserStories.md`](./UserStories.md). Eerstvolgend: SE-4 (dubbelklik naar de
+gekoppelde editor) en SE-6 (documentatie met screenshots, in-app help).

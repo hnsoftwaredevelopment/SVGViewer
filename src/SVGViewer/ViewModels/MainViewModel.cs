@@ -16,9 +16,11 @@ public partial class MainViewModel : ObservableObject
 {
     private readonly SettingsService _settingsService;
     private readonly SvgIndexService _indexService = new();
+    private readonly SvgThumbnailService _thumbnailService = new();
     private readonly AppSettings _settings;
 
     private CancellationTokenSource? _scanCancellation;
+    private CancellationTokenSource? _previewCancellation;
     private bool _isInitializing = true;
 
     // Remembered so the status line can be re-rendered after a language switch.
@@ -32,6 +34,7 @@ public partial class MainViewModel : ObservableObject
 
         Drives = new ObservableCollection<DriveChoice>(LoadDrives());
         RootNodes = new ObservableCollection<DirectoryNodeViewModel>();
+        SvgFiles = new ObservableCollection<SvgFileViewModel>();
 
         FilterChoices = new ObservableCollection<LocalizedChoice<FolderFilterMode>>
         {
@@ -73,6 +76,30 @@ public partial class MainViewModel : ObservableObject
     public ObservableCollection<DriveChoice> Drives { get; }
 
     public ObservableCollection<DirectoryNodeViewModel> RootNodes { get; }
+
+    /// <summary>SVG files in the selected folder. Never contains other file types.</summary>
+    public ObservableCollection<SvgFileViewModel> SvgFiles { get; }
+
+    /// <summary>Edge length in pixels for a thumbnail, derived from the size choice.</summary>
+    public double ThumbnailSize => SelectedPreviewSize.Value switch
+    {
+        PreviewSize.Large => 192,
+        PreviewSize.Medium => 128,
+        PreviewSize.Small => 72,
+        _ => 0
+    };
+
+    /// <summary>True when the user chose "only details": a list instead of thumbnails.</summary>
+    public bool IsDetailsMode => SelectedPreviewSize.Value == PreviewSize.DetailsOnly;
+
+    /// <summary>True when the selected folder contains at least one SVG file.</summary>
+    public bool HasSvgFiles => SvgFiles.Count > 0;
+
+    /// <summary>True when a folder is selected but holds no SVG files.</summary>
+    public bool ShowsEmptyFolderMessage => SelectedNode is not null && SvgFiles.Count == 0;
+
+    /// <summary>True while no folder has been selected yet.</summary>
+    public bool ShowsNoSelectionMessage => SelectedNode is null;
 
     public ObservableCollection<LocalizedChoice<FolderFilterMode>> FilterChoices { get; }
 
@@ -130,6 +157,9 @@ public partial class MainViewModel : ObservableObject
 
     partial void OnSelectedPreviewSizeChanged(LocalizedChoice<PreviewSize> value)
     {
+        OnPropertyChanged(nameof(ThumbnailSize));
+        OnPropertyChanged(nameof(IsDetailsMode));
+
         if (_isInitializing)
         {
             return;
@@ -137,6 +167,13 @@ public partial class MainViewModel : ObservableObject
 
         _settings.PreviewSize = value.Value;
         _settingsService.Save(_settings);
+
+        // Details mode renders nothing, so thumbnails may still be missing when
+        // the user switches back to a thumbnail size.
+        if (!IsDetailsMode)
+        {
+            _ = LoadThumbnailsAsync(CancellationToken.None);
+        }
     }
 
     partial void OnSelectedLanguageChanged(LanguageChoice value)
@@ -157,11 +194,17 @@ public partial class MainViewModel : ObservableObject
     partial void OnSelectedNodeChanged(DirectoryNodeViewModel? value)
     {
         UpdateSelectedFolderInfo();
+        _ = LoadPreviewAsync(value);
     }
 
     /// <summary>Re-runs the current selection, e.g. after pressing Refresh.</summary>
     [RelayCommand]
-    private Task Refresh() => RebuildTreeAsync();
+    private Task Refresh()
+    {
+        // Drop cached renders so edited files show their new content.
+        _thumbnailService.ClearCache();
+        return RebuildTreeAsync();
+    }
 
     /// <summary>Stops a running drive scan.</summary>
     [RelayCommand]
@@ -275,6 +318,67 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Fills the preview pane for the selected folder. Only SVG files are listed;
+    /// every other file type is ignored entirely.
+    /// </summary>
+    private async Task LoadPreviewAsync(DirectoryNodeViewModel? node)
+    {
+        _previewCancellation?.Cancel();
+        SvgFiles.Clear();
+        NotifyPreviewStateChanged();
+
+        if (node is null || node.IsPlaceholder || string.IsNullOrEmpty(node.FullPath))
+        {
+            return;
+        }
+
+        _previewCancellation = new CancellationTokenSource();
+        var token = _previewCancellation.Token;
+
+        // File details are cheap, so the list is shown before any rendering starts.
+        foreach (var path in DirectoryScanner.GetSvgFiles(node.FullPath))
+        {
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+
+            SvgFiles.Add(new SvgFileViewModel(new FileInfo(path), _thumbnailService));
+        }
+
+        NotifyPreviewStateChanged();
+
+        if (!IsDetailsMode)
+        {
+            await LoadThumbnailsAsync(token);
+        }
+    }
+
+    /// <summary>Renders thumbnails for the files currently listed.</summary>
+    private async Task LoadThumbnailsAsync(CancellationToken cancellationToken)
+    {
+        // Snapshot: the collection can change while rendering.
+        var files = SvgFiles.ToList();
+
+        foreach (var file in files)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            await file.LoadThumbnailAsync(cancellationToken);
+        }
+    }
+
+    private void NotifyPreviewStateChanged()
+    {
+        OnPropertyChanged(nameof(HasSvgFiles));
+        OnPropertyChanged(nameof(ShowsEmptyFolderMessage));
+        OnPropertyChanged(nameof(ShowsNoSelectionMessage));
+    }
+
     private void UpdateSelectedFolderInfo()
     {
         SelectedFolderInfo = SelectedNode is null
@@ -293,5 +397,11 @@ public partial class MainViewModel : ObservableObject
     {
         SetStatus(_statusKey, _statusArgs);
         UpdateSelectedFolderInfo();
+
+        // File sizes and dates are culture-dependent too.
+        foreach (var file in SvgFiles)
+        {
+            file.RefreshLocalizedText();
+        }
     }
 }

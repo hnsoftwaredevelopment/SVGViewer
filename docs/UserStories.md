@@ -21,6 +21,11 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
   uit `syncfusionlicense.txt` leest en registreert (no-op als afwezig).
 - ☑ **US-1.6** — Als ontwikkelaar wil ik een `SettingsService` (JSON in AppData)
   voor taal en previewgrootte.
+- ☑ **US-1.7** — Als ontwikkelaar wil ik geautomatiseerde tests, zodat regressies
+  zichtbaar worden bij elke wijziging. *(AC: `dotnet test` slaagt; dekking op
+  bestandssysteem-scan, index, instellingen, lokalisatie en SVG-rendering.)*
+- ☑ **US-1.8** — Als ontwikkelaar wil ik een controle op de resourcebestanden,
+  zodat ontbrekende vertalingen niet pas in de UI als `!Key!` opvallen.
 
 ## SE-2 · Directory-navigatie
 
@@ -36,15 +41,17 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 
 ## SE-3 · SVG-preview
 
-- ☐ **US-3.1** — Als gebruiker wil ik previews (thumbnails) zien van alle SVG's in
+- ☑ **US-3.1** — Als gebruiker wil ik previews (thumbnails) zien van alle SVG's in
   de geselecteerde map.
-- ☐ **US-3.2** — Als gebruiker wil ik de previewgrootte kiezen: Large / Medium /
+- ☑ **US-3.2** — Als gebruiker wil ik de previewgrootte kiezen: Large / Medium /
   Small / Only details.
-- ☐ **US-3.3** — Als gebruiker wil ik in "Only details" een lijst met naam, grootte
+- ☑ **US-3.3** — Als gebruiker wil ik in "Only details" een lijst met naam, grootte
   en wijzigingsdatum in plaats van thumbnails.
-- ☐ **US-3.4** — Als gebruiker wil ik dat uitsluitend `.svg`-bestanden getoond
+- ☑ **US-3.4** — Als gebruiker wil ik dat uitsluitend `.svg`-bestanden getoond
   worden; alle andere bestanden blijven verborgen.
-- ☐ **US-3.5** — Als ontwikkelaar wil ik thumbnails cachen voor snelheid.
+- ☑ **US-3.5** — Als ontwikkelaar wil ik thumbnails cachen voor snelheid.
+  *(Vector-render, dus één render dient alle groottes; cache verloopt op
+  wijzigingsdatum.)*
 
 ## SE-4 · SVG bewerken
 
