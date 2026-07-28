@@ -85,12 +85,29 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 - ☐ **US-6.3** — Als gebruiker wil ik de help vanuit de app openen in mijn taal.
 - ☐ **US-6.4** — Als team wil ik dat alle MD-docs in de Obsidian-vault staan.
 
-## SE-7 · Afwerking
+## SE-7 · Afwerking & UI-makeover
 
+### Afwerking
 - ☐ **US-7.1** — App-icoon en over-dialoog.
 - ☐ **US-7.2** — Foutafhandeling & logging.
 - ☐ **US-7.3** — Handmatige testronde over alle features/talen.
 - ☐ **US-7.4** — Echte screenshots vastleggen en in docs verwerken.
+
+### UI-makeover (iconen)
+- ☐ **US-7.5** — Weergavekeuze (previewgrootte) als Explorer-achtig icoonmenu
+  in plaats van een dropdown (Extra grote / Grote / Middelgrote iconen · Details),
+  het liefst direct bruikbaar in de view.
+- ☐ **US-7.6** — Tandwiel-icoon (⚙) voor Instellingen; iconen voor Vernieuwen en
+  Annuleren.
+- ☐ **US-7.7** — Talen in het Instellingen-scherm met vlaggen.
+
+### Navigatie-verbeteringen
+- ☐ **US-7.8** — Als gebruiker wil ik dat **bovenliggende** mappen van een
+  SVG-map ook blauw gemarkeerd worden (zónder aantal), zodat ik in ingeklapte
+  staat direct zie langs welke tak ik SVG's vind.
+- ☐ **US-7.9** — Als gebruiker wil ik dat de mappenmarkeringen **progressief**
+  verschijnen tijdens de achtergrondscan: de tree is meteen bruikbaar (lazy) en
+  "licht op" naarmate de scan vordert. De statusbar met voortgang blijft.
 
 ## SE-8 · Bestandsbeheer (backlog, nog niet ingepland)
 
