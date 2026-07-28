@@ -150,6 +150,24 @@ enkele-klik met de dubbelkliktijd, wat de preview traag liet aanvoelen en in de
 praktijk niet betrouwbaar opende. Dubbelklik = preview is direct en voorspelbaar;
 editor-acties zijn expliciet in het contextmenu.
 
+### AD-3 · Conflictafhandeling bij bestandsbewerkingen
+**Datum:** milestone 4 (vooruit vastgelegd) · **Status:** aangenomen · **Scope:** SE-8/SE-9
+
+Voor het toekomstige bestandsbeheer geldt:
+
+- **Eén bestand bestaat al** → **altijd opnieuw vragen**. Er komt bewust géén
+  persistente "altijd overschrijven"-instelling; overschrijven is per keer een
+  expliciete keuze.
+- **Meerdere bestanden verplaatsen/kopiëren** → per conflict vier keuzes:
+  *Bestand overschrijven*, *Alle bestanden overschrijven*, *Dit bestand overslaan*,
+  *Alle bestanden overslaan*. De "Alle …"-keuzes gelden **alleen binnen die ene
+  operatie**, niet persistent. Volledige teksten voor duidelijkheid; knoplabels
+  mogen korter met de volledige tekst als tooltip.
+- **Verwijderen** → met bevestiging, bij voorkeur naar de prullenbak. Deze
+  bevestiging mág wél uitgezet worden ("Niet meer tonen") en is daarna weer aan te
+  zetten via het Instellingen-menu (SE-9). Dit verschilt bewust van overschrijven:
+  verwijderen naar de prullenbak is terug te draaien, overschrijven niet.
+
 ## 12. Werkverdeling
 
 Zie [`UserStories.md`](./UserStories.md) voor de sub-epics en user stories.

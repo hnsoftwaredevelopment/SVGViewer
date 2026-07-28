@@ -94,19 +94,43 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 
 ## SE-8 · Bestandsbeheer (backlog, nog niet ingepland)
 
-Uit gebruik blijkt behoefte aan minimaal bestandsbeheer binnen de viewer. Nog te
-verfijnen; hier alvast vastgelegd zodat het niet verloren gaat.
+Uit gebruik blijkt behoefte aan minimaal bestandsbeheer binnen de viewer.
+Zie [AD-3](./Epic.md#ad-3--conflictafhandeling-bij-bestandsbewerkingen) voor de
+gekozen aanpak bij naamconflicten en bevestigingen.
 
 - ☐ **US-8.1** — Als gebruiker wil ik een SVG met slepen naar een andere map
   verplaatsen. *(Hiervoor is de enkele klik/drag gereserveerd.)*
-- ☐ **US-8.2** — Als gebruiker wil ik via het contextmenu een SVG verwijderen
-  (met bevestiging; bij voorkeur naar de prullenbak).
+- ☐ **US-8.2** — Als gebruiker wil ik via het contextmenu een SVG verwijderen,
+  met bevestiging en bij voorkeur naar de prullenbak. De bevestiging heeft een
+  "Niet meer tonen"-optie; weer inschakelbaar via Instellingen (SE-9).
 - ☐ **US-8.3** — Als gebruiker wil ik via het contextmenu een SVG kopiëren
   (en plakken in een andere map).
 - ☐ **US-8.4** — Als gebruiker wil ik via het contextmenu een SVG hernoemen.
 - ☐ **US-8.5** — Als gebruiker wil ik een nieuwe map kunnen aanmaken.
 - ☐ **US-8.6** — Als gebruiker wil ik dat de tree en preview zich verversen na een
   bestandsbewerking.
+- ☐ **US-8.7** — Als gebruiker wil ik bij één bestand dat al bestaat, **elke keer
+  opnieuw** gevraagd worden. *(Geen persistente "altijd overschrijven"; standaard
+  is steeds vragen.)*
+- ☐ **US-8.8** — Als gebruiker wil ik bij het verplaatsen/kopiëren van **meerdere**
+  bestanden, per conflict de keuze: **Bestand overschrijven** · **Alle bestanden
+  overschrijven** · **Dit bestand overslaan** · **Alle bestanden overslaan**.
+  *(Volledige tekst voor duidelijkheid; knoplabels mogen korter met de volledige
+  tekst als tooltip. "Alle …" geldt alleen binnen de lopende operatie, niet
+  persistent.)*
+- ☐ **US-8.9** — Als gebruiker wil ik meerdere bestanden kunnen selecteren voor
+  verplaatsen/kopiëren/verwijderen. *(Voorwaarde voor US-8.8.)*
+
+## SE-9 · Instellingen (backlog, nog niet ingepland)
+
+- ☐ **US-9.1** — Als gebruiker wil ik een "Instellingen"-menu/scherm waarin mijn
+  voorkeuren bij elkaar staan.
+- ☐ **US-9.2** — Als gebruiker wil ik mijn taal in Instellingen kunnen kiezen.
+  *(Beslissen: taalkeuze verhuizen uit de toolbar naar Instellingen, of beide.)*
+- ☐ **US-9.3** — Als gebruiker wil ik de verwijder-bevestiging aan/uit kunnen
+  zetten, óók nadat ik eerder "Niet meer tonen" heb gekozen.
+- ☐ **US-9.4** — Als gebruiker wil ik dat instellingen bewaard blijven.
+  *(`SettingsService` bestaat al; uitbreiden met de nieuwe voorkeuren.)*
 
 ---
 
@@ -120,4 +144,5 @@ verfijnen; hier alvast vastgelegd zodat het niet verloren gaat.
 | M4 | SE-4 | SVG openen in editor |
 | M5 | SE-5 | Meertaligheid (grotendeels in M2 gedaan) |
 | M6 | SE-6, SE-7 | Documentatie compleet + afwerking |
-| M7 | SE-8 | Bestandsbeheer (toekomst) |
+| M7 | SE-9 | Instellingen-menu (taal + bevestigingen) |
+| M8 | SE-8 | Bestandsbeheer |
