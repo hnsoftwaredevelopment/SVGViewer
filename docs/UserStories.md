@@ -52,18 +52,18 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 - ☑ **US-3.5** — Als ontwikkelaar wil ik thumbnails cachen voor snelheid.
   *(Vector-render, dus één render dient alle groottes; cache verloopt op
   wijzigingsdatum.)*
-- ☑ **US-3.6** — Als gebruiker wil ik op een preview kunnen klikken om de SVG groot
-  te zien in een popup die ik kan in- en uitzoomen. *(Zoombare overlay: muiswiel,
-  knoppen, slepen om te verschuiven, Esc om te sluiten; blijft messcherp omdat het
-  een vector is.)*
+- ☑ **US-3.6** — Als gebruiker wil ik een preview groot kunnen zien in een popup
+  die ik kan in- en uitzoomen. *(Geopend met **dubbelklik**; zoombare overlay met
+  muiswiel, knoppen en slepen; blijft messcherp omdat het een vector is.)*
 - ☑ **US-3.7** — Als gebruiker wil ik dat een drive-root (bijv. `C:\`) daadwerkelijk
   de root toont en niet de werkmap van de app. *(Regressie: `C:\` mag niet tot
   `C:` worden verkort; `NormalizeFolderPath` + 9 tests.)*
 
-## SE-4 · SVG bewerken
+## SE-4 · SVG openen in editor
 
-- ☑ **US-4.1** — Als gebruiker wil ik met dubbelklik een SVG openen in de gekoppelde
-  applicatie (bijv. Inkscape) via de Windows-shell.
+- ☑ **US-4.1** — Als gebruiker wil ik een SVG openen in de gekoppelde applicatie
+  (bijv. Inkscape) via de Windows-shell. *(Via het contextmenu "Openen"; zie AD-2
+  voor waarom dit niet meer op dubbelklik zit.)*
 - ☑ **US-4.2** — Als gebruiker wil ik een nette melding als er geen app gekoppeld is.
 - ☑ **US-4.3** — Als gebruiker wil ik via rechtermuisknop "Openen met…" / "Tonen in
   Verkenner" als extra opties.
@@ -92,6 +92,22 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 - ☐ **US-7.3** — Handmatige testronde over alle features/talen.
 - ☐ **US-7.4** — Echte screenshots vastleggen en in docs verwerken.
 
+## SE-8 · Bestandsbeheer (backlog, nog niet ingepland)
+
+Uit gebruik blijkt behoefte aan minimaal bestandsbeheer binnen de viewer. Nog te
+verfijnen; hier alvast vastgelegd zodat het niet verloren gaat.
+
+- ☐ **US-8.1** — Als gebruiker wil ik een SVG met slepen naar een andere map
+  verplaatsen. *(Hiervoor is de enkele klik/drag gereserveerd.)*
+- ☐ **US-8.2** — Als gebruiker wil ik via het contextmenu een SVG verwijderen
+  (met bevestiging; bij voorkeur naar de prullenbak).
+- ☐ **US-8.3** — Als gebruiker wil ik via het contextmenu een SVG kopiëren
+  (en plakken in een andere map).
+- ☐ **US-8.4** — Als gebruiker wil ik via het contextmenu een SVG hernoemen.
+- ☐ **US-8.5** — Als gebruiker wil ik een nieuwe map kunnen aanmaken.
+- ☐ **US-8.6** — Als gebruiker wil ik dat de tree en preview zich verversen na een
+  bestandsbewerking.
+
 ---
 
 ## Milestone-overzicht
@@ -100,7 +116,8 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 |-----------|-----------|-------------|
 | M1 | SE-1 (deels), SE-6 (deels) | Skeleton + docs + repo-init |
 | M2 | SE-2 | Directory-navigatie |
-| M3 | SE-3 | SVG-preview |
-| M4 | SE-4 | SVG bewerken |
-| M5 | SE-5 | Meertaligheid + in-app help |
+| M3 | SE-3 | SVG-preview + zoom-popup |
+| M4 | SE-4 | SVG openen in editor |
+| M5 | SE-5 | Meertaligheid (grotendeels in M2 gedaan) |
 | M6 | SE-6, SE-7 | Documentatie compleet + afwerking |
+| M7 | SE-8 | Bestandsbeheer (toekomst) |

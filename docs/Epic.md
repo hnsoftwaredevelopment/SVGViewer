@@ -133,6 +133,23 @@ thumbnail-grid in SE-3) meetbaar beter zijn met Syncfusion, dan wordt een
 `LicenseManager` toegevoegd die de sleutel uit `syncfusionlicense.txt` leest.
 Gebruik in dat geval Syncfusion WPF **34.x**-pakketten, passend bij de licentie.
 
+### AD-2 · Dubbelklik opent de preview, niet de editor
+**Datum:** milestone 4 (herzien) · **Status:** aangenomen
+
+De oorspronkelijke eis F8 zei: dubbelklik opent de gekoppelde editor. Bij gebruik
+bleek een andere indeling prettiger, en de gebruiker heeft die gevraagd:
+
+- **Dubbelklik** op een thumbnail of lijstregel → opent de **zoom-preview**.
+- **Openen in de editor** (en "Openen met…", "Tonen in Verkenner") → via het
+  **contextmenu** (rechtermuisknop).
+- **Enkele klik** → bewust vrijgelaten, gereserveerd voor toekomstig
+  bestandsbeheer (slepen om te verplaatsen, selecteren) — zie SE-8.
+
+**Reden:** één klik plus dubbelklik op hetzelfde element vereiste een uitgestelde
+enkele-klik met de dubbelkliktijd, wat de preview traag liet aanvoelen en in de
+praktijk niet betrouwbaar opende. Dubbelklik = preview is direct en voorspelbaar;
+editor-acties zijn expliciet in het contextmenu.
+
 ## 12. Werkverdeling
 
 Zie [`UserStories.md`](./UserStories.md) voor de sub-epics en user stories.

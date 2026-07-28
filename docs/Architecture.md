@@ -178,13 +178,14 @@ nep-launcher, zonder dat er echte programma's opstarten.
 
 ### Interactie: enkele vs. dubbele klik
 
-Op een thumbnail betekent één klik "toon de zoom-preview" en dubbelklik "open in
-de editor". Om te voorkomen dat een dubbelklik eerst de preview laat opflitsen,
-wordt de enkele-klik-actie uitgesteld met de **werkelijke** dubbelkliktijd van de
-gebruiker (`GetDoubleClickTime` uit user32). Komt er binnen die tijd een tweede
-klik, dan vervalt de preview en opent de editor. In de detaillijst opent een
-dubbelklik op een regel direct de editor. Dit is puur UI-gedrag en zit daarom in
-de code-behind, niet in een ViewModel.
+**Dubbelklik** op een thumbnail of detailregel opent de zoom-preview. In de
+detailweergave is nog geen thumbnail gerenderd, dus die wordt bij dubbelklik
+alsnog op dat moment gerenderd. **Openen in de editor** en de overige
+bestandsacties zitten in het **contextmenu** (rechtermuisknop). De **enkele klik**
+is bewust vrijgelaten voor toekomstig bestandsbeheer (slepen/selecteren, SE-8).
+Zie [AD-2](./Epic.md#ad-2--dubbelklik-opent-de-preview-niet-de-editor) voor de
+onderbouwing. Dit is puur UI-gedrag en zit daarom in de code-behind, niet in een
+ViewModel.
 
 ## Nog te doen
 
