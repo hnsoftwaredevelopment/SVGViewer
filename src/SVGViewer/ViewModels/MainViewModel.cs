@@ -17,6 +17,8 @@ public partial class MainViewModel : ObservableObject
     private readonly SettingsService _settingsService;
     private readonly SvgIndexService _indexService = new();
     private readonly SvgThumbnailService _thumbnailService = new();
+    private readonly FileOpenService _fileOpenService;
+    private readonly IUserNotifier _notifier;
     private readonly AppSettings _settings;
 
     private CancellationTokenSource? _scanCancellation;
@@ -27,10 +29,16 @@ public partial class MainViewModel : ObservableObject
     private string _statusKey = "StatusSelectDrive";
     private object[] _statusArgs = Array.Empty<object>();
 
-    public MainViewModel(SettingsService settingsService, AppSettings settings)
+    public MainViewModel(
+        SettingsService settingsService,
+        AppSettings settings,
+        FileOpenService? fileOpenService = null,
+        IUserNotifier? notifier = null)
     {
         _settingsService = settingsService;
         _settings = settings;
+        _fileOpenService = fileOpenService ?? new FileOpenService();
+        _notifier = notifier ?? new MessageBoxNotifier();
 
         Drives = new ObservableCollection<DriveChoice>(LoadDrives());
         RootNodes = new ObservableCollection<DirectoryNodeViewModel>();
@@ -209,6 +217,56 @@ public partial class MainViewModel : ObservableObject
     /// <summary>Stops a running drive scan.</summary>
     [RelayCommand]
     private void CancelScan() => _scanCancellation?.Cancel();
+
+    /// <summary>Opens the file in its associated application (e.g. Inkscape).</summary>
+    [RelayCommand]
+    private void OpenFile(SvgFileViewModel? file)
+    {
+        if (file is not null)
+        {
+            Report(_fileOpenService.OpenInAssociatedApp(file.FullPath));
+        }
+    }
+
+    /// <summary>Shows the Windows "Open with..." dialog for the file.</summary>
+    [RelayCommand]
+    private void OpenFileWith(SvgFileViewModel? file)
+    {
+        if (file is not null)
+        {
+            Report(_fileOpenService.OpenWithDialog(file.FullPath));
+        }
+    }
+
+    /// <summary>Reveals the file in Windows Explorer.</summary>
+    [RelayCommand]
+    private void ShowInExplorer(SvgFileViewModel? file)
+    {
+        if (file is not null)
+        {
+            Report(_fileOpenService.ShowInExplorer(file.FullPath));
+        }
+    }
+
+    /// <summary>Turns a failed file action into a localized, user-visible message.</summary>
+    private void Report(FileActionOutcome outcome)
+    {
+        switch (outcome)
+        {
+            case FileActionOutcome.NoAssociation:
+                _notifier.Notify(Loc.Get("MsgNoAssociation"), Loc.Get("MsgNoAssociationTitle"));
+                break;
+            case FileActionOutcome.FileNotFound:
+                _notifier.Notify(Loc.Get("MsgFileNotFound"), Loc.Get("AppTitle"));
+                break;
+            case FileActionOutcome.Failed:
+                _notifier.Notify(Loc.Get("MsgOpenFailed"), Loc.Get("AppTitle"));
+                break;
+            case FileActionOutcome.Opened:
+            default:
+                break;
+        }
+    }
 
     private static IEnumerable<DriveChoice> LoadDrives()
     {

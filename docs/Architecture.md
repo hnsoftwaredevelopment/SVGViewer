@@ -160,7 +160,33 @@ lost dit centraal op: het verwijdert trailing separators, behalve bij een
 drive-root, die juist `C:\` moet blijven. Alle padvergelijkingen en enumeraties
 lopen via deze helper. Regressietests leggen het gedrag vast.
 
+## Bestanden openen (SE-4)
+
+`FileOpenService` biedt drie acties, elk via de Windows-shell en elk faalt veilig
+met een `FileActionOutcome` in plaats van een exception:
+
+- **Openen in gekoppelde app** — `Process.Start` met `UseShellExecute`. Ontbreekt
+  er een koppeling, dan gooit Windows `Win32Exception` met code 1155
+  (`ERROR_NO_ASSOCIATION`); die wordt vertaald naar `NoAssociation` en de
+  gebruiker krijgt een nette melding met de suggestie "Openen met…".
+- **Openen met…** — dezelfde start met verb `openas`, wat de Windows-kiezer toont.
+- **Tonen in Verkenner** — `explorer.exe /select,"<pad>"`.
+
+Het starten van processen zit achter `IShellLauncher`, zodat de beslissingslogica
+(welke actie, welke argumenten, hoe fouten worden gemapt) getest wordt met een
+nep-launcher, zonder dat er echte programma's opstarten.
+
+### Interactie: enkele vs. dubbele klik
+
+Op een thumbnail betekent één klik "toon de zoom-preview" en dubbelklik "open in
+de editor". Om te voorkomen dat een dubbelklik eerst de preview laat opflitsen,
+wordt de enkele-klik-actie uitgesteld met de **werkelijke** dubbelkliktijd van de
+gebruiker (`GetDoubleClickTime` uit user32). Komt er binnen die tijd een tweede
+klik, dan vervalt de preview en opent de editor. In de detaillijst opent een
+dubbelklik op een regel direct de editor. Dit is puur UI-gedrag en zit daarom in
+de code-behind, niet in een ViewModel.
+
 ## Nog te doen
 
-Zie [`UserStories.md`](./UserStories.md). Eerstvolgend: SE-4 (dubbelklik naar de
-gekoppelde editor) en SE-6 (documentatie met screenshots, in-app help).
+Zie [`UserStories.md`](./UserStories.md). Eerstvolgend: SE-6 — documentatie met
+echte screenshots, in-app help in de gekozen taal, en de afwerking (SE-7).

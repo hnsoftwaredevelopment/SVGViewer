@@ -132,4 +132,25 @@
   <data name="ViewerHint" xml:space="preserve">
     <value>Scrollen om te zoomen · slepen om te verschuiven · Esc om te sluiten</value>
   </data>
+  <data name="ContextOpen" xml:space="preserve">
+    <value>Openen</value>
+  </data>
+  <data name="ContextOpenWith" xml:space="preserve">
+    <value>Openen met…</value>
+  </data>
+  <data name="ContextShowInExplorer" xml:space="preserve">
+    <value>Tonen in Verkenner</value>
+  </data>
+  <data name="MsgNoAssociationTitle" xml:space="preserve">
+    <value>Geen toepassing gekoppeld</value>
+  </data>
+  <data name="MsgNoAssociation" xml:space="preserve">
+    <value>Er is geen toepassing gekoppeld aan SVG-bestanden. Kies "Openen met…" om een programma te kiezen.</value>
+  </data>
+  <data name="MsgOpenFailed" xml:space="preserve">
+    <value>Het bestand kon niet worden geopend.</value>
+  </data>
+  <data name="MsgFileNotFound" xml:space="preserve">
+    <value>Het bestand bestaat niet meer.</value>
+  </data>
 </root>

@@ -62,10 +62,10 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 
 ## SE-4 · SVG bewerken
 
-- ☐ **US-4.1** — Als gebruiker wil ik met dubbelklik een SVG openen in de gekoppelde
+- ☑ **US-4.1** — Als gebruiker wil ik met dubbelklik een SVG openen in de gekoppelde
   applicatie (bijv. Inkscape) via de Windows-shell.
-- ☐ **US-4.2** — Als gebruiker wil ik een nette melding als er geen app gekoppeld is.
-- ☐ **US-4.3** — Als gebruiker wil ik via rechtermuisknop "Openen met…" / "Toon in
+- ☑ **US-4.2** — Als gebruiker wil ik een nette melding als er geen app gekoppeld is.
+- ☑ **US-4.3** — Als gebruiker wil ik via rechtermuisknop "Openen met…" / "Tonen in
   Verkenner" als extra opties.
 
 ## SE-5 · Meertaligheid

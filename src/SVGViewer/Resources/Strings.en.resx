@@ -132,4 +132,25 @@
   <data name="ViewerHint" xml:space="preserve">
     <value>Scroll to zoom · drag to pan · Esc to close</value>
   </data>
+  <data name="ContextOpen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="ContextOpenWith" xml:space="preserve">
+    <value>Open with…</value>
+  </data>
+  <data name="ContextShowInExplorer" xml:space="preserve">
+    <value>Show in Explorer</value>
+  </data>
+  <data name="MsgNoAssociationTitle" xml:space="preserve">
+    <value>No associated application</value>
+  </data>
+  <data name="MsgNoAssociation" xml:space="preserve">
+    <value>No application is associated with SVG files. Choose "Open with…" to pick a program.</value>
+  </data>
+  <data name="MsgOpenFailed" xml:space="preserve">
+    <value>The file could not be opened.</value>
+  </data>
+  <data name="MsgFileNotFound" xml:space="preserve">
+    <value>The file no longer exists.</value>
+  </data>
 </root>
