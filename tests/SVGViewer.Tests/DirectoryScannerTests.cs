@@ -68,4 +68,37 @@ public class DirectoryScannerTests
 
         Assert.Equal(new[] { "A", "B", "C" }, names);
     }
+
+    // Regression: a drive root arrives as "C:\". Trimming the trailing separator
+    // to "C:" makes Windows treat it as drive-relative (the process working
+    // directory), so the tree showed bin\Debug instead of the real drive root.
+    [Theory]
+    [InlineData(@"C:\", @"C:\")]
+    [InlineData(@"C:", @"C:\")]
+    [InlineData(@"Z:\", @"Z:\")]
+    [InlineData(@"C:\Windows\", @"C:\Windows")]
+    [InlineData(@"C:\Windows", @"C:\Windows")]
+    [InlineData(@"C:\a\b\", @"C:\a\b")]
+    public void NormalizeFolderPath_keeps_drive_roots_but_trims_folders(string input, string expected)
+    {
+        Assert.Equal(expected, DirectoryScanner.NormalizeFolderPath(input));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void NormalizeFolderPath_handles_blank_input(string input)
+    {
+        Assert.Equal(string.Empty, DirectoryScanner.NormalizeFolderPath(input));
+    }
+
+    [Fact]
+    public void NormalizeFolderPath_does_not_collapse_a_drive_root_to_the_working_directory()
+    {
+        // The bug in numbers: "C:" resolves to the current directory, "C:\" does not.
+        var root = DirectoryScanner.NormalizeFolderPath(@"C:\");
+
+        Assert.Equal(@"C:\", root);
+        Assert.NotEqual("C:", root);
+    }
 }

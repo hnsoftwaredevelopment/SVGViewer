@@ -23,7 +23,7 @@ public partial class DirectoryNodeViewModel : ObservableObject
         FolderFilterMode filterMode,
         SvgFolderIndex? index)
     {
-        FullPath = fullPath.TrimEnd('\\');
+        FullPath = DirectoryScanner.NormalizeFolderPath(fullPath);
         DisplayName = displayName;
         _filterMode = filterMode;
         _index = index;

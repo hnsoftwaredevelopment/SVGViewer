@@ -141,6 +141,25 @@ zonder kwaliteitsverlies. De previewgrootte bepaalt dus alleen de afmeting van d
 - In modus *Only details* wordt er niets gerenderd; er is dan alleen een lijst
   met naam, grootte en wijzigingsdatum.
 
+### Zoombare viewer
+
+Een klik op een thumbnail opent `Views/SvgZoomViewer`, een overlay over het hele
+venster. Muiswiel zoomt rond de cursor, slepen verschuift, en er zijn knoppen
+voor in-/uitzoomen, werkelijke grootte, passend en sluiten (ook Esc). Omdat de
+bron een vector-`DrawingImage` is, blijft elk zoomniveau perfect scherp. Dit is
+UI-gedrag zonder domeinlogica, dus het zit bewust in code-behind van het
+UserControl in plaats van in een ViewModel.
+
+### Padnormalisatie (belangrijke valkuil)
+
+Een drive-root komt binnen als `C:\`. Wie daar de trailing backslash afknipt,
+houdt `C:` over — en op Windows betekent `C:` *"de huidige map op schijf C:"*,
+niet de root. Het gevolg was dat de tree de werkmap van de app toonde
+(`bin\Debug\...`) in plaats van de schijf-root. `DirectoryScanner.NormalizeFolderPath`
+lost dit centraal op: het verwijdert trailing separators, behalve bij een
+drive-root, die juist `C:\` moet blijven. Alle padvergelijkingen en enumeraties
+lopen via deze helper. Regressietests leggen het gedrag vast.
+
 ## Nog te doen
 
 Zie [`UserStories.md`](./UserStories.md). Eerstvolgend: SE-4 (dubbelklik naar de

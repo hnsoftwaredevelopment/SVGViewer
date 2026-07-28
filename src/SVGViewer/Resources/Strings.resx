@@ -114,4 +114,22 @@
   <data name="SizeMegabytes" xml:space="preserve">
     <value>{0} MB</value>
   </data>
+  <data name="ViewerZoomIn" xml:space="preserve">
+    <value>Inzoomen</value>
+  </data>
+  <data name="ViewerZoomOut" xml:space="preserve">
+    <value>Uitzoomen</value>
+  </data>
+  <data name="ViewerZoomReset" xml:space="preserve">
+    <value>Werkelijke grootte</value>
+  </data>
+  <data name="ViewerZoomFit" xml:space="preserve">
+    <value>Passend</value>
+  </data>
+  <data name="ViewerClose" xml:space="preserve">
+    <value>Sluiten</value>
+  </data>
+  <data name="ViewerHint" xml:space="preserve">
+    <value>Scrollen om te zoomen · slepen om te verschuiven · Esc om te sluiten</value>
+  </data>
 </root>

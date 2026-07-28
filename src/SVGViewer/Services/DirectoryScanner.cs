@@ -23,6 +23,35 @@ public static class DirectoryScanner
         "Config.Msi"
     };
 
+    /// <summary>
+    /// Normalizes a folder path for comparison and enumeration.
+    /// </summary>
+    /// <remarks>
+    /// Trailing separators are removed so the same folder always yields the same
+    /// string, <b>except</b> for a drive root. On Windows "C:" is drive-relative
+    /// (it means "the current directory on C:"), so the root must keep its
+    /// separator as "C:\" — otherwise enumeration silently returns the contents
+    /// of the process working directory instead of the drive root.
+    /// </remarks>
+    public static string NormalizeFolderPath(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return string.Empty;
+        }
+
+        var trimmed = path.TrimEnd('\\', '/');
+
+        // "C:" or "Z:" -> restore the separator.
+        if (trimmed.Length == 2 && trimmed[1] == ':' && char.IsLetter(trimmed[0]))
+        {
+            return trimmed + "\\";
+        }
+
+        // A path consisting only of separators (e.g. "\\") has nothing to trim to.
+        return trimmed.Length == 0 ? path : trimmed;
+    }
+
     /// <summary>Returns true when the folder directly contains at least one SVG file.</summary>
     public static bool HasSvgFiles(string path)
     {

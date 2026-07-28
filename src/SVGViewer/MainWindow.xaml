@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:loc="clr-namespace:SVGViewer.Localization"
         xmlns:vm="clr-namespace:SVGViewer.ViewModels"
+        xmlns:views="clr-namespace:SVGViewer.Views"
         Title="{Binding Source={x:Static loc:Loc.Instance}, Path=[AppTitle]}"
         Height="720" Width="1180"
         WindowStartupLocation="CenterScreen">
@@ -46,7 +47,8 @@
         </HierarchicalDataTemplate>
     </Window.Resources>
 
-    <DockPanel>
+    <Grid>
+        <DockPanel>
 
         <!-- ============ Toolbar ============ -->
         <Border DockPanel.Dock="Top" Background="#F6F8FA" Padding="10,8"
@@ -168,6 +170,8 @@
                                 <Border Margin="6" Padding="8" CornerRadius="6"
                                         BorderBrush="#E4E8ED" BorderThickness="1"
                                         Background="#FCFDFE"
+                                        Cursor="Hand"
+                                        MouseLeftButtonUp="Thumbnail_Click"
                                         ToolTip="{Binding ToolTipText}">
                                     <StackPanel Width="{Binding DataContext.ThumbnailSize,
                                                                 RelativeSource={RelativeSource AncestorType=Window}}">
@@ -249,5 +253,9 @@
                 </StackPanel>
             </Grid>
         </Grid>
-    </DockPanel>
+        </DockPanel>
+
+        <!-- Zoomable full-window overlay, shown when a thumbnail is opened -->
+        <views:SvgZoomViewer x:Name="ZoomViewer" />
+    </Grid>
 </Window>

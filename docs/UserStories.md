@@ -52,6 +52,13 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 - ☑ **US-3.5** — Als ontwikkelaar wil ik thumbnails cachen voor snelheid.
   *(Vector-render, dus één render dient alle groottes; cache verloopt op
   wijzigingsdatum.)*
+- ☑ **US-3.6** — Als gebruiker wil ik op een preview kunnen klikken om de SVG groot
+  te zien in een popup die ik kan in- en uitzoomen. *(Zoombare overlay: muiswiel,
+  knoppen, slepen om te verschuiven, Esc om te sluiten; blijft messcherp omdat het
+  een vector is.)*
+- ☑ **US-3.7** — Als gebruiker wil ik dat een drive-root (bijv. `C:\`) daadwerkelijk
+  de root toont en niet de werkmap van de app. *(Regressie: `C:\` mag niet tot
+  `C:` worden verkort; `NormalizeFolderPath` + 9 tests.)*
 
 ## SE-4 · SVG bewerken
 

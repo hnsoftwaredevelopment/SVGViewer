@@ -27,12 +27,14 @@ public sealed class SvgFolderIndex
 
     public bool WasCancelled { get; internal set; }
 
-    public bool ContainsSvg(string path) => FoldersWithSvg.Contains(path.TrimEnd('\\'));
+    public bool ContainsSvg(string path) =>
+        FoldersWithSvg.Contains(DirectoryScanner.NormalizeFolderPath(path));
 
-    public bool IsRelevant(string path) => RelevantFolders.Contains(path.TrimEnd('\\'));
+    public bool IsRelevant(string path) =>
+        RelevantFolders.Contains(DirectoryScanner.NormalizeFolderPath(path));
 
     public int GetSvgCount(string path) =>
-        SvgCountPerFolder.TryGetValue(path.TrimEnd('\\'), out var count) ? count : 0;
+        SvgCountPerFolder.TryGetValue(DirectoryScanner.NormalizeFolderPath(path), out var count) ? count : 0;
 }
 
 /// <summary>
@@ -59,7 +61,7 @@ public sealed class SvgIndexService
     {
         var index = new SvgFolderIndex();
         var pending = new Stack<string>();
-        pending.Push(rootPath.TrimEnd('\\'));
+        pending.Push(DirectoryScanner.NormalizeFolderPath(rootPath));
 
         var scanned = 0;
 
@@ -84,7 +86,7 @@ public sealed class SvgIndexService
 
             foreach (var child in DirectoryScanner.GetSubDirectories(current))
             {
-                pending.Push(child.FullName.TrimEnd('\\'));
+                pending.Push(DirectoryScanner.NormalizeFolderPath(child.FullName));
             }
 
             if (scanned % ProgressInterval == 0)
@@ -104,8 +106,8 @@ public sealed class SvgIndexService
     /// </summary>
     private static void MarkAncestorsRelevant(SvgFolderIndex index, string folder, string rootPath)
     {
-        var root = rootPath.TrimEnd('\\');
-        var current = folder;
+        var root = DirectoryScanner.NormalizeFolderPath(rootPath);
+        var current = DirectoryScanner.NormalizeFolderPath(folder);
 
         while (!string.IsNullOrEmpty(current))
         {
@@ -120,7 +122,8 @@ public sealed class SvgIndexService
                 break;
             }
 
-            current = Path.GetDirectoryName(current)?.TrimEnd('\\');
+            var parent = Path.GetDirectoryName(current);
+            current = parent is null ? null : DirectoryScanner.NormalizeFolderPath(parent);
         }
     }
 }
