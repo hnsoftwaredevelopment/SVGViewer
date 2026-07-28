@@ -43,6 +43,11 @@
                         <Style TargetType="TextBlock">
                             <Setter Property="Foreground" Value="#24292F" />
                             <Style.Triggers>
+                                <!-- Leads to SVGs: blue, normal weight, no count. -->
+                                <DataTrigger Binding="{Binding IsAncestorOfSvg}" Value="True">
+                                    <Setter Property="Foreground" Value="{StaticResource SvgAccentBrush}" />
+                                </DataTrigger>
+                                <!-- Directly contains SVGs: blue and bold. -->
                                 <DataTrigger Binding="{Binding HasSvgFiles}" Value="True">
                                     <Setter Property="FontWeight" Value="SemiBold" />
                                     <Setter Property="Foreground" Value="{StaticResource SvgAccentBrush}" />

@@ -187,6 +187,31 @@ Zie [AD-2](./Epic.md#ad-2--dubbelklik-opent-de-preview-niet-de-editor) voor de
 onderbouwing. Dit is puur UI-gedrag en zit daarom in de code-behind, niet in een
 ViewModel.
 
+## Mappenmarkering & progressieve scan (SE-7)
+
+De tree is in "Alles"-modus meteen zichtbaar en laadt lazy (alleen uitgeklapte
+mappen worden echt aangemaakt). Tegelijk draait een achtergrondscan die een
+`SvgFolderIndex` vult. Die index is **thread-safe** (concurrent dictionaries),
+zodat de UI-thread markeringen kan lezen terwijl de scanthread nog schrijft.
+
+Twee soorten markering:
+
+- **Directe SVG-map** — blauw, vet, met aantal. De telling komt direct van schijf
+  bij het aanmaken van de node, dus een map met SVG's is meteen gemarkeerd zodra
+  hij verschijnt (geen wachten op de scan).
+- **Bovenliggende map** (`IsAncestorOfSvg`) — blauw, normaal gewicht, zonder
+  aantal. Dit betekent "leidt naar SVG's dieper in de boom" en komt uit de index;
+  het vult zich **progressief** terwijl de scan vordert.
+
+De markeringen worden **pull-based** bijgewerkt: de scan bouwt geen tree-knopen
+(200k knopen live bouwen zou te duur zijn en flikkeren), maar vult alleen de
+index. Op scanvoortgang en bij voltooiing loopt `RefreshMarkings()` over de reeds
+gerealiseerde (uitgeklapte) knopen en herberekent hun ancestor-status — goedkoop,
+want alleen zichtbare knopen worden geraakt. De repaint is gethrottled (~elke
+400 ms) zodat het vloeiend blijft. De statusbar toont ondertussen de voortgang en
+de scan is annuleerbaar; bij een nieuwe schijf-/filterkeuze wordt de lopende scan
+netjes afgebroken.
+
 ## Instellingen (SE-9)
 
 De taalkeuze is uit de toolbar gehaald en zit nu in een modaal

@@ -30,11 +30,13 @@ public partial class DirectoryNodeViewModel : ObservableObject
 
         Children = new ObservableCollection<DirectoryNodeViewModel>();
 
-        // In filtered mode the index already knows the counts, which avoids
-        // touching the disk again. In full mode we do a cheap direct check.
-        SvgFileCount = index is not null
-            ? index.GetSvgCount(FullPath)
-            : DirectoryScanner.CountSvgFiles(FullPath);
+        // The folder's own SVG count is read straight from disk so a folder with
+        // SVGs is marked the instant it appears, without waiting for the scan.
+        SvgFileCount = DirectoryScanner.CountSvgFiles(FullPath);
+
+        // "Ancestor" = leads to SVGs deeper down but has none itself. This comes
+        // from the background scan's index and fills in progressively.
+        _isAncestorOfSvg = ComputeIsAncestor();
 
         AddPlaceholderIfNeeded();
     }
@@ -43,13 +45,43 @@ public partial class DirectoryNodeViewModel : ObservableObject
 
     public string DisplayName { get; }
 
-    /// <summary>Number of SVG files directly in this folder (drives the marker).</summary>
+    /// <summary>Number of SVG files directly in this folder (drives the count badge).</summary>
     public int SvgFileCount { get; }
 
-    /// <summary>True when this folder should be highlighted in the tree.</summary>
+    /// <summary>True when this folder directly contains SVG files.</summary>
     public bool HasSvgFiles => SvgFileCount > 0;
 
+    /// <summary>True when this folder itself has no SVGs but a descendant does.</summary>
+    [ObservableProperty]
+    private bool _isAncestorOfSvg;
+
+    /// <summary>True when the folder should be highlighted (direct or ancestor).</summary>
+    public bool IsMarked => HasSvgFiles || IsAncestorOfSvg;
+
     public string SvgTooltip => Loc.Format("TooltipContainsSvg", SvgFileCount);
+
+    partial void OnIsAncestorOfSvgChanged(bool value) => OnPropertyChanged(nameof(IsMarked));
+
+    private bool ComputeIsAncestor() =>
+        _index is not null && SvgFileCount == 0 && _index.IsRelevant(FullPath);
+
+    /// <summary>
+    /// Re-reads the (still filling) scan index and updates the ancestor marking,
+    /// then does the same for any children already loaded. Cheap: only realized
+    /// nodes are touched.
+    /// </summary>
+    public void RefreshMarking()
+    {
+        IsAncestorOfSvg = ComputeIsAncestor();
+
+        foreach (var child in Children)
+        {
+            if (!child.IsPlaceholder)
+            {
+                child.RefreshMarking();
+            }
+        }
+    }
 
     public ObservableCollection<DirectoryNodeViewModel> Children { get; }
 

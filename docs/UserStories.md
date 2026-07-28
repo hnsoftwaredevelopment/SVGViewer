@@ -102,10 +102,11 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 - ☐ **US-7.7** — Talen in het Instellingen-scherm met vlaggen.
 
 ### Navigatie-verbeteringen
-- ☐ **US-7.8** — Als gebruiker wil ik dat **bovenliggende** mappen van een
+- ☑ **US-7.8** — Als gebruiker wil ik dat **bovenliggende** mappen van een
   SVG-map ook blauw gemarkeerd worden (zónder aantal), zodat ik in ingeklapte
-  staat direct zie langs welke tak ik SVG's vind.
-- ☐ **US-7.9** — Als gebruiker wil ik dat de mappenmarkeringen **progressief**
+  staat direct zie langs welke tak ik SVG's vind. *(Directe SVG-map: blauw + vet +
+  aantal; bovenliggende map: blauw, normaal gewicht, geen aantal.)*
+- ☑ **US-7.9** — Als gebruiker wil ik dat de mappenmarkeringen **progressief**
   verschijnen tijdens de achtergrondscan: de tree is meteen bruikbaar (lazy) en
   "licht op" naarmate de scan vordert. De statusbar met voortgang blijft.
 

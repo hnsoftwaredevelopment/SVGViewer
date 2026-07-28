@@ -23,6 +23,7 @@ public partial class MainViewModel : ObservableObject
 
     private CancellationTokenSource? _scanCancellation;
     private CancellationTokenSource? _previewCancellation;
+    private DateTime _lastMarkingRefreshUtc;
     private bool _isInitializing = true;
 
     // Remembered so the status line can be re-rendered after a language switch.
@@ -302,10 +303,64 @@ public partial class MainViewModel : ObservableObject
 
         if (filterMode == FolderFilterMode.All)
         {
-            var root = new DirectoryNodeViewModel(drive.RootPath, drive.DisplayName, filterMode, null);
+            // Show the tree immediately (lazy). A background scan then lights up
+            // folders that contain SVGs (blue + count) or that lead to them
+            // (blue, no count), so collapsed branches reveal where SVGs live.
+            var index = new SvgFolderIndex();
+            var root = new DirectoryNodeViewModel(drive.RootPath, drive.DisplayName, filterMode, index);
             RootNodes.Add(root);
             root.ExpandAndLoad();
-            SetStatus("StatusReady");
+
+            _scanCancellation = new CancellationTokenSource();
+            var scanToken = _scanCancellation.Token;
+
+            IsScanning = true;
+            SetStatus("StatusScanning");
+            _lastMarkingRefreshUtc = DateTime.UtcNow;
+
+            var scanProgress = new Progress<ScanProgress>(p =>
+            {
+                if (scanToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                SetStatus("StatusFoldersScanned", p.FoldersScanned, p.FoldersWithSvg);
+
+                // Repaint markings a few times per second at most while scanning.
+                if ((DateTime.UtcNow - _lastMarkingRefreshUtc).TotalMilliseconds >= 400)
+                {
+                    _lastMarkingRefreshUtc = DateTime.UtcNow;
+                    RefreshMarkings();
+                }
+            });
+
+            try
+            {
+                var built = await _indexService.BuildIndexAsync(drive.RootPath, index, scanProgress, scanToken);
+
+                if (scanToken.IsCancellationRequested)
+                {
+                    return; // A newer drive/filter change owns the UI now.
+                }
+
+                RefreshMarkings();
+
+                SetStatus(built.FoldersWithSvg.Count > 0 ? "StatusFoldersWithSvg" : "StatusNoSvgFound",
+                          built.FoldersWithSvg.Count);
+            }
+            catch (OperationCanceledException)
+            {
+                // Superseded by a newer rebuild.
+            }
+            finally
+            {
+                if (!scanToken.IsCancellationRequested)
+                {
+                    IsScanning = false;
+                }
+            }
+
             return;
         }
 
@@ -348,6 +403,15 @@ public partial class MainViewModel : ObservableObject
         finally
         {
             IsScanning = false;
+        }
+    }
+
+    /// <summary>Re-reads the scan index into the currently realized tree nodes.</summary>
+    private void RefreshMarkings()
+    {
+        foreach (var node in RootNodes)
+        {
+            node.RefreshMarking();
         }
     }
 
