@@ -153,4 +153,10 @@
   <data name="MsgFileNotFound" xml:space="preserve">
     <value>Het bestand bestaat niet meer.</value>
   </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Instellingen</value>
+  </data>
+  <data name="SettingsConfirmDelete" xml:space="preserve">
+    <value>Bevestiging vragen voordat een bestand wordt verwijderd</value>
+  </data>
 </root>

@@ -93,21 +93,18 @@
                           SelectedItem="{Binding SelectedPreviewSize}"
                           DisplayMemberPath="DisplayName" />
 
-                <TextBlock Text="{Binding Source={x:Static loc:Loc.Instance}, Path=[LabelLanguage]}"
-                           VerticalAlignment="Center" Margin="0,0,6,0" />
-                <ComboBox Width="120" Margin="0,0,18,0"
-                          ItemsSource="{Binding LanguageChoices}"
-                          SelectedItem="{Binding SelectedLanguage}"
-                          DisplayMemberPath="DisplayName" />
-
                 <Button Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonRefresh]}"
                         Command="{Binding RefreshCommand}"
                         Padding="12,3" Margin="0,0,8,0" />
 
-                <Button Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonCancel]}"
-                        Command="{Binding CancelScanCommand}"
-                        Padding="12,3"
+                <Button Command="{Binding CancelScanCommand}"
+                        Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonCancel]}"
+                        Padding="12,3" Margin="0,0,8,0"
                         Visibility="{Binding IsScanning, Converter={StaticResource BoolToVisibility}}" />
+
+                <Button Click="Settings_Click" Padding="10,3"
+                        Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[SettingsTitle]}"
+                        ToolTip="{Binding Source={x:Static loc:Loc.Instance}, Path=[SettingsTitle]}" />
             </WrapPanel>
         </Border>
 

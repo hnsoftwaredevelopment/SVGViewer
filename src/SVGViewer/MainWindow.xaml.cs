@@ -1,16 +1,24 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using SVGViewer.Models;
+using SVGViewer.Services;
 using SVGViewer.ViewModels;
+using SVGViewer.Views;
 
 namespace SVGViewer;
 
 public partial class MainWindow : Window
 {
-    public MainWindow(MainViewModel viewModel)
+    private readonly SettingsService _settingsService;
+    private readonly AppSettings _settings;
+
+    public MainWindow(MainViewModel viewModel, SettingsService settingsService, AppSettings settings)
     {
         InitializeComponent();
         DataContext = viewModel;
+        _settingsService = settingsService;
+        _settings = settings;
     }
 
     /// <summary>
@@ -23,6 +31,14 @@ public partial class MainWindow : Window
         {
             viewModel.SelectedNode = e.NewValue as DirectoryNodeViewModel;
         }
+    }
+
+    /// <summary>Opens the modal Settings dialog (language, confirmations).</summary>
+    private void Settings_Click(object sender, RoutedEventArgs e)
+    {
+        var viewModel = new SettingsViewModel(_settingsService, _settings);
+        var window = new SettingsWindow(viewModel) { Owner = this };
+        window.ShowDialog();
     }
 
     /// <summary>

@@ -20,7 +20,7 @@ public partial class App : Application
         Loc.SetCulture(settings.Language);
 
         var viewModel = new MainViewModel(settingsService, settings);
-        var window = new MainWindow(viewModel);
+        var window = new MainWindow(viewModel, settingsService, settings);
         window.Show();
     }
 }

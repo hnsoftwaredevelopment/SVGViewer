@@ -16,4 +16,10 @@ public sealed class AppSettings
 
     /// <summary>Drive selected during the previous session, e.g. "C:\".</summary>
     public string? LastDrive { get; set; }
+
+    /// <summary>
+    /// Whether to ask for confirmation before deleting a file (SE-8). Can be
+    /// switched off from the Settings screen and back on again. Defaults to on.
+    /// </summary>
+    public bool ConfirmBeforeDelete { get; set; } = true;
 }

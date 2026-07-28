@@ -58,19 +58,14 @@ public partial class MainViewModel : ObservableObject
             new(PreviewSize.DetailsOnly, "SizeDetailsOnly")
         };
 
-        LanguageChoices = new ObservableCollection<LanguageChoice>
-        {
-            new("nl", "Nederlands"),
-            new("en", "English"),
-            new("de", "Deutsch")
-        };
-
         // Restore persisted preferences without triggering a rebuild per change.
         _selectedFilter = FilterChoices.First(c => c.Value == _settings.FilterMode);
         _selectedPreviewSize = PreviewSizeChoices.First(c => c.Value == _settings.PreviewSize);
-        _selectedLanguage = LanguageChoices.FirstOrDefault(l => l.CultureName == _settings.Language)
-                            ?? LanguageChoices[0];
         _selectedDrive = Drives.FirstOrDefault(d => d.RootPath == _settings.LastDrive);
+
+        // Language now lives in the Settings screen; re-render composed strings
+        // (status line, file sizes/dates) whenever the culture changes there.
+        Loc.CultureChanged += (_, _) => RefreshLocalizedText();
 
         SetStatus("StatusSelectDrive");
         _isInitializing = false;
@@ -113,8 +108,6 @@ public partial class MainViewModel : ObservableObject
 
     public ObservableCollection<LocalizedChoice<PreviewSize>> PreviewSizeChoices { get; }
 
-    public ObservableCollection<LanguageChoice> LanguageChoices { get; }
-
     [ObservableProperty]
     private DriveChoice? _selectedDrive;
 
@@ -123,9 +116,6 @@ public partial class MainViewModel : ObservableObject
 
     [ObservableProperty]
     private LocalizedChoice<PreviewSize> _selectedPreviewSize;
-
-    [ObservableProperty]
-    private LanguageChoice _selectedLanguage;
 
     [ObservableProperty]
     private DirectoryNodeViewModel? _selectedNode;
@@ -182,21 +172,6 @@ public partial class MainViewModel : ObservableObject
         {
             _ = LoadThumbnailsAsync(CancellationToken.None);
         }
-    }
-
-    partial void OnSelectedLanguageChanged(LanguageChoice value)
-    {
-        if (_isInitializing)
-        {
-            return;
-        }
-
-        Loc.SetCulture(value.CultureName);
-        _settings.Language = value.CultureName;
-        _settingsService.Save(_settings);
-
-        // Re-render texts that were composed in the previous language.
-        RefreshLocalizedText();
     }
 
     partial void OnSelectedNodeChanged(DirectoryNodeViewModel? value)

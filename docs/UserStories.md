@@ -121,16 +121,17 @@ gekozen aanpak bij naamconflicten en bevestigingen.
 - ☐ **US-8.9** — Als gebruiker wil ik meerdere bestanden kunnen selecteren voor
   verplaatsen/kopiëren/verwijderen. *(Voorwaarde voor US-8.8.)*
 
-## SE-9 · Instellingen (backlog, nog niet ingepland)
+## SE-9 · Instellingen
 
-- ☐ **US-9.1** — Als gebruiker wil ik een "Instellingen"-menu/scherm waarin mijn
-  voorkeuren bij elkaar staan.
-- ☐ **US-9.2** — Als gebruiker wil ik mijn taal in Instellingen kunnen kiezen.
-  *(Beslissen: taalkeuze verhuizen uit de toolbar naar Instellingen, of beide.)*
-- ☐ **US-9.3** — Als gebruiker wil ik de verwijder-bevestiging aan/uit kunnen
-  zetten, óók nadat ik eerder "Niet meer tonen" heb gekozen.
-- ☐ **US-9.4** — Als gebruiker wil ik dat instellingen bewaard blijven.
-  *(`SettingsService` bestaat al; uitbreiden met de nieuwe voorkeuren.)*
+- ☑ **US-9.1** — Als gebruiker wil ik een "Instellingen"-scherm waarin mijn
+  voorkeuren bij elkaar staan. *(Modale dialoog via de knop "Instellingen".)*
+- ☑ **US-9.2** — Als gebruiker wil ik mijn taal in Instellingen kiezen.
+  *(Besluit: taalkeuze is **uit de toolbar gehaald** en staat nu alleen in
+  Instellingen.)*
+- ☑ **US-9.3** — Als gebruiker wil ik de verwijder-bevestiging aan/uit kunnen
+  zetten. *(Bewaarde voorkeur `ConfirmBeforeDelete`; wordt door SE-8 gebruikt.)*
+- ☑ **US-9.4** — Als gebruiker wil ik dat instellingen bewaard blijven.
+  *(Via de bestaande `SettingsService`.)*
 
 ---
 

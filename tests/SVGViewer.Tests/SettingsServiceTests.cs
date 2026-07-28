@@ -24,6 +24,7 @@ public class SettingsServiceTests : IDisposable
         Assert.Equal("nl", settings.Language);
         Assert.Equal(PreviewSize.Medium, settings.PreviewSize);
         Assert.Equal(FolderFilterMode.All, settings.FilterMode);
+        Assert.True(settings.ConfirmBeforeDelete);
     }
 
     [Fact]
@@ -36,7 +37,8 @@ public class SettingsServiceTests : IDisposable
             Language = "de",
             PreviewSize = PreviewSize.Small,
             FilterMode = FolderFilterMode.SvgOnly,
-            LastDrive = @"D:\"
+            LastDrive = @"D:\",
+            ConfirmBeforeDelete = false
         });
 
         var loaded = service.Load();
@@ -45,6 +47,7 @@ public class SettingsServiceTests : IDisposable
         Assert.Equal(PreviewSize.Small, loaded.PreviewSize);
         Assert.Equal(FolderFilterMode.SvgOnly, loaded.FilterMode);
         Assert.Equal(@"D:\", loaded.LastDrive);
+        Assert.False(loaded.ConfirmBeforeDelete);
     }
 
     [Fact]

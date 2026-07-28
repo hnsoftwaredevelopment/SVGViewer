@@ -62,8 +62,7 @@ meertalig (Nederlands, Engels, Duits).
 
 ```
 +------------------------------------------------------------------+
-| [Drive v]   Filter: (o) Alles ( ) Alleen SVG   Grootte:[Large v] |  <- toolbar
-|             Taal:[NL v]                              [? Help]     |
+| [Drive v]  Filter:[Alles v]  Grootte:[Large v]  [Vernieuwen] [⚙] |  <- toolbar
 +---------------------+--------------------------------------------+
 |  TreeView           |  Preview-grid (WrapPanel met thumbnails)   |
 |  C:\                |  +-------+  +-------+  +-------+            |
@@ -72,16 +71,20 @@ meertalig (Nederlands, Engels, Duits).
 |   └ Documenten      |  | naam  |  | naam  |  | naam  |            |
 |  (* = bevat SVG's)  |  +-------+  +-------+  +-------+            |
 +---------------------+--------------------------------------------+
-| Statusbar: pad · aantal SVG's · geselecteerde taal               |
+| Statusbar: pad · aantal SVG's                                    |
 +------------------------------------------------------------------+
 ```
+
+De taalkeuze en de bevestigingsvoorkeuren staan in het **Instellingen**-scherm
+(knop `⚙` rechts in de toolbar), niet meer in de toolbar zelf.
 
 ## 7. Lokalisatie-aanpak
 
 - Alle zichtbare teksten via `Strings.*.resx`; geen hardcoded strings.
 - Standaardtaal (neutraal) = Nederlands.
-- Taalkeuze in de toolbar wisselt `Thread.CurrentUICulture` at runtime en
-  herlaadt gebonden teksten (via een `LocalizationManager` met `INotifyPropertyChanged`).
+- Taalkeuze in het Instellingen-scherm wisselt `CurrentUICulture` at runtime en
+  herlaadt gebonden teksten via `Loc` (met `INotifyPropertyChanged` +
+  `CultureChanged`-event), zonder herstart.
 - Documentatie (`UserGuide.<taal>.md`) wordt in-app geopend op basis van de
   actieve taal.
 

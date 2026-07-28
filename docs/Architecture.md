@@ -187,6 +187,18 @@ Zie [AD-2](./Epic.md#ad-2--dubbelklik-opent-de-preview-niet-de-editor) voor de
 onderbouwing. Dit is puur UI-gedrag en zit daarom in de code-behind, niet in een
 ViewModel.
 
+## Instellingen (SE-9)
+
+De taalkeuze is uit de toolbar gehaald en zit nu in een modaal
+**Instellingen**-scherm (`Views/SettingsWindow`), samen met de aan/uit-schakelaar
+voor de verwijder-bevestiging (`ConfirmBeforeDelete`, gebruikt door SE-8).
+
+`SettingsViewModel` past elke wijziging direct toe en bewaart die via
+`SettingsService`. Omdat de taalwissel nu buiten het hoofdvenster gebeurt, luistert
+`MainViewModel` naar `Loc.CultureChanged` om zelf-samengestelde teksten
+(statusregel, bestandsgroottes/datums) opnieuw op te bouwen; de XAML-bindingen
+verversen al via het bestaande `Item[]`-signaal van `Loc`.
+
 ## Nog te doen
 
 Zie [`UserStories.md`](./UserStories.md). Eerstvolgend: SE-6 — documentatie met

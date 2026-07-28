@@ -1,0 +1,31 @@
+<Window x:Class="SVGViewer.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:SVGViewer.Localization"
+        Title="{Binding Source={x:Static loc:Loc.Instance}, Path=[SettingsTitle]}"
+        Width="440" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize" ShowInTaskbar="False">
+
+    <StackPanel Margin="20">
+
+        <!-- Language -->
+        <TextBlock Text="{Binding Source={x:Static loc:Loc.Instance}, Path=[LabelLanguage]}"
+                   FontWeight="SemiBold" Margin="0,0,0,6" />
+        <ComboBox Width="200" HorizontalAlignment="Left"
+                  ItemsSource="{Binding LanguageChoices}"
+                  SelectedItem="{Binding SelectedLanguage}"
+                  DisplayMemberPath="DisplayName" />
+
+        <Separator Margin="0,18" />
+
+        <!-- Confirmations -->
+        <CheckBox IsChecked="{Binding ConfirmBeforeDelete}"
+                  Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[SettingsConfirmDelete]}" />
+
+        <!-- Close -->
+        <Button Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[ViewerClose]}"
+                HorizontalAlignment="Right" Margin="0,24,0,0" Padding="16,4"
+                IsDefault="True" IsCancel="True" Click="Close_Click" />
+    </StackPanel>
+</Window>

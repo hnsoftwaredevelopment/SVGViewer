@@ -25,6 +25,10 @@ public sealed class Loc : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
+    /// <summary>Raised after the active UI culture changes, for code that composes
+    /// strings itself (status line, file sizes) and must re-render them.</summary>
+    public static event EventHandler? CultureChanged;
+
     /// <summary>Indexer used by XAML bindings. Returns !key! when a key is missing.</summary>
     public string this[string key] => Get(key);
 
@@ -57,5 +61,6 @@ public sealed class Loc : INotifyPropertyChanged
 
         // Notifying with "Item[]" tells WPF that every indexer binding is stale.
         Instance.PropertyChanged?.Invoke(Instance, new PropertyChangedEventArgs("Item[]"));
+        CultureChanged?.Invoke(Instance, EventArgs.Empty);
     }
 }
