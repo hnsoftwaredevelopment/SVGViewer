@@ -15,31 +15,52 @@ public partial class DirectoryNodeViewModel : ObservableObject
 {
     private readonly SvgFolderIndex? _index;
     private readonly FolderFilterMode _filterMode;
+    private readonly bool _explicit;
     private bool _childrenLoaded;
 
     public DirectoryNodeViewModel(
         string fullPath,
         string displayName,
         FolderFilterMode filterMode,
-        SvgFolderIndex? index)
+        SvgFolderIndex? index,
+        bool explicitlyBuilt = false)
     {
         FullPath = DirectoryScanner.NormalizeFolderPath(fullPath);
         DisplayName = displayName;
         _filterMode = filterMode;
         _index = index;
+        _explicit = explicitlyBuilt;
 
         Children = new ObservableCollection<DirectoryNodeViewModel>();
 
-        // The folder's own SVG count is read straight from disk so a folder with
-        // SVGs is marked the instant it appears, without waiting for the scan.
-        SvgFileCount = DirectoryScanner.CountSvgFiles(FullPath);
+        // Explicitly built nodes (the progressive "SVG only" tree) take their
+        // count from the index the scan already produced, avoiding disk I/O on
+        // the UI thread. Lazy nodes check disk so they mark the instant they show.
+        SvgFileCount = _explicit && index is not null
+            ? index.GetSvgCount(FullPath)
+            : DirectoryScanner.CountSvgFiles(FullPath);
 
         // "Ancestor" = leads to SVGs deeper down but has none itself. This comes
         // from the background scan's index and fills in progressively.
         _isAncestorOfSvg = ComputeIsAncestor();
 
-        AddPlaceholderIfNeeded();
+        if (_explicit)
+        {
+            // Children are inserted explicitly by the builder; no lazy loading.
+            _childrenLoaded = true;
+        }
+        else
+        {
+            AddPlaceholderIfNeeded();
+        }
     }
+
+    /// <summary>
+    /// Creates a node for the progressive "SVG only" tree. Such nodes are filled
+    /// by <see cref="SvgOnlyTreeBuilder"/> rather than by lazy expansion.
+    /// </summary>
+    public static DirectoryNodeViewModel CreateExplicit(string fullPath, string displayName, SvgFolderIndex index) =>
+        new(fullPath, displayName, FolderFilterMode.SvgOnly, index, explicitlyBuilt: true);
 
     public string FullPath { get; }
 

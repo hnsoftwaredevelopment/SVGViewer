@@ -212,6 +212,21 @@ want alleen zichtbare knopen worden geraakt. De repaint is gethrottled (~elke
 de scan is annuleerbaar; bij een nieuwe schijf-/filterkeuze wordt de lopende scan
 netjes afgebroken.
 
+### "Alleen SVG": progressief en toevoegend
+
+Ook de gefilterde weergave bouwt nu mee tijdens de scan. Omdat relevantie alleen
+maar aangroeit (een map die naar een SVG leidt blijft dat), is de opbouw puur
+**toevoegend**: zodra de scan een SVG-map ontdekt, zorgt `SvgOnlyTreeBuilder` dat
+het pad van de root naar die map bestaat (ontbrekende tussenmappen worden
+aangemaakt en gesorteerd ingevoegd). Er wordt nooit iets weggehaald of herschikt,
+dus geen geflikker. De schijf-root is meteen zichtbaar zodat het paneel nooit leeg
+oogt. Deze knopen worden expliciet gebouwd (geen lazy placeholders) en halen hun
+telling uit de index in plaats van van schijf, zodat er geen schijf-I/O op de
+UI-thread plaatsvindt tijdens het invoegen.
+
+De viewer start altijd in **Volledig**, zodat je meteen structuur ziet; "Alleen
+SVG" is een keuze per sessie en wordt niet bewaard.
+
 ## Instellingen (SE-9)
 
 De taalkeuze is uit de toolbar gehaald en zit nu in een modaal

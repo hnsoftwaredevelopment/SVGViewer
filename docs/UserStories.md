@@ -109,6 +109,12 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 - ☑ **US-7.9** — Als gebruiker wil ik dat de mappenmarkeringen **progressief**
   verschijnen tijdens de achtergrondscan: de tree is meteen bruikbaar (lazy) en
   "licht op" naarmate de scan vordert. De statusbar met voortgang blijft.
+- ☑ **US-7.10** — Als gebruiker wil ik dat ook de weergave **"Alleen SVG"**
+  gaandeweg wordt opgebouwd: zodra een SVG-map wordt gevonden, verschijnt die tak
+  (met bovenliggende mappen). Toevoegend, dus zonder geflikker.
+- ☑ **US-7.11** — Als gebruiker wil ik dat de viewer altijd in **Volledig**
+  opstart, zodat ik meteen structuur zie; de keuze "Alleen SVG" geldt per sessie
+  en wordt niet bewaard.
 
 ## SE-8 · Bestandsbeheer (backlog, nog niet ingepland)
 

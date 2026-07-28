@@ -60,7 +60,9 @@ public partial class MainViewModel : ObservableObject
         };
 
         // Restore persisted preferences without triggering a rebuild per change.
-        _selectedFilter = FilterChoices.First(c => c.Value == _settings.FilterMode);
+        // The tree filter always starts on "All" so startup shows structure
+        // immediately; the "SVG only" choice applies for the session only.
+        _selectedFilter = FilterChoices.First(c => c.Value == FolderFilterMode.All);
         _selectedPreviewSize = PreviewSizeChoices.First(c => c.Value == _settings.PreviewSize);
         _selectedDrive = Drives.FirstOrDefault(d => d.RootPath == _settings.LastDrive);
 
@@ -149,8 +151,8 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        _settings.FilterMode = value.Value;
-        _settingsService.Save(_settings);
+        // The filter is intentionally not persisted: the viewer always starts in
+        // "All" mode, and "SVG only" applies for the current session only.
         _ = RebuildTreeAsync();
     }
 
@@ -364,45 +366,70 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        // Filtered mode: scan the drive first.
+        // "SVG only": show a compact tree of just the SVG folders, built up
+        // progressively as the background scan discovers them (additive, no
+        // flicker). The drive root is shown at once so there is never a blank pane.
+        var svgIndex = new SvgFolderIndex();
+        var svgRoot = DirectoryNodeViewModel.CreateExplicit(drive.RootPath, drive.DisplayName, svgIndex);
+        RootNodes.Add(svgRoot);
+        svgRoot.IsExpanded = true;
+
         _scanCancellation = new CancellationTokenSource();
         var token = _scanCancellation.Token;
 
         IsScanning = true;
         SetStatus("StatusScanning");
+        _lastMarkingRefreshUtc = DateTime.UtcNow;
+
+        var inserted = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         var progress = new Progress<ScanProgress>(p =>
-            SetStatus("StatusFoldersScanned", p.FoldersScanned, p.FoldersWithSvg));
+        {
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+
+            SetStatus("StatusFoldersScanned", p.FoldersScanned, p.FoldersWithSvg);
+
+            if ((DateTime.UtcNow - _lastMarkingRefreshUtc).TotalMilliseconds >= 400)
+            {
+                _lastMarkingRefreshUtc = DateTime.UtcNow;
+                SvgOnlyTreeBuilder.Sync(svgRoot, drive.RootPath, svgIndex, inserted);
+            }
+        });
 
         try
         {
-            var index = await _indexService.BuildIndexAsync(drive.RootPath, progress, token);
+            var built = await _indexService.BuildIndexAsync(drive.RootPath, svgIndex, progress, token);
 
-            if (index.WasCancelled)
+            if (token.IsCancellationRequested)
             {
-                SetStatus("StatusScanCancelled");
-                return;
+                return; // A newer drive/filter change owns the UI now.
             }
 
-            if (index.FoldersWithSvg.Count == 0)
+            SvgOnlyTreeBuilder.Sync(svgRoot, drive.RootPath, svgIndex, inserted);
+
+            if (built.FoldersWithSvg.Count == 0)
             {
+                RootNodes.Clear();
                 SetStatus("StatusNoSvgFound");
-                return;
             }
-
-            var root = new DirectoryNodeViewModel(drive.RootPath, drive.DisplayName, filterMode, index);
-            RootNodes.Add(root);
-            root.ExpandAndLoad();
-
-            SetStatus("StatusFoldersWithSvg", index.FoldersWithSvg.Count);
+            else
+            {
+                SetStatus("StatusFoldersWithSvg", built.FoldersWithSvg.Count);
+            }
         }
         catch (OperationCanceledException)
         {
-            SetStatus("StatusScanCancelled");
+            // Superseded by a newer rebuild.
         }
         finally
         {
-            IsScanning = false;
+            if (!token.IsCancellationRequested)
+            {
+                IsScanning = false;
+            }
         }
     }
 
