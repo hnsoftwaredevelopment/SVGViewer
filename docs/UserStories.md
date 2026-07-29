@@ -99,9 +99,10 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 - ☐ **US-7.4** — Echte screenshots vastleggen en in docs verwerken.
 
 ### UI-makeover (iconen)
-- ☐ **US-7.5** — Weergavekeuze (previewgrootte) als Explorer-achtig icoonmenu
-  in plaats van een dropdown (Extra grote / Grote / Middelgrote iconen · Details),
-  het liefst direct bruikbaar in de view.
+- ☑ **US-7.5** — Weergavekeuze (previewgrootte) als Explorer-achtig icoonmenu
+  in plaats van een dropdown (Grote / Middelgrote / Kleine iconen · Details).
+  *(Segmented control van vier flat toggle-knoppen met vector-iconen; de actieve
+  keuze licht op. Bindt via een enum→bool-converter aan de previewgrootte.)*
 - ☐ **US-7.6** — Tandwiel-icoon (⚙) voor Instellingen; iconen voor Vernieuwen en
   Annuleren.
 - ☐ **US-7.7** — Talen in het Instellingen-scherm met vlaggen.

@@ -98,6 +98,22 @@ public partial class MainViewModel : ObservableObject
     /// <summary>True when the user chose "only details": a list instead of thumbnails.</summary>
     public bool IsDetailsMode => SelectedPreviewSize.Value == PreviewSize.DetailsOnly;
 
+    /// <summary>
+    /// The preview size as a plain enum, so the Explorer-style view toggle buttons
+    /// can bind two-way. Setting it selects the matching localized choice.
+    /// </summary>
+    public PreviewSize PreviewSize
+    {
+        get => SelectedPreviewSize.Value;
+        set
+        {
+            if (SelectedPreviewSize.Value != value)
+            {
+                SelectedPreviewSize = PreviewSizeChoices.First(c => c.Value == value);
+            }
+        }
+    }
+
     /// <summary>True when the selected folder contains at least one SVG file.</summary>
     public bool HasSvgFiles => SvgFiles.Count > 0;
 
@@ -160,6 +176,7 @@ public partial class MainViewModel : ObservableObject
     {
         OnPropertyChanged(nameof(ThumbnailSize));
         OnPropertyChanged(nameof(IsDetailsMode));
+        OnPropertyChanged(nameof(PreviewSize));
 
         if (_isInitializing)
         {

@@ -287,3 +287,15 @@ transparant logo weg. Daarom overschrijft `TitleBarIconFixer` na
 `OnSourceInitialized` alléén het **kleine** icoon via `WM_SETICON` (ICON_SMALL): het
 app-logo op een witte achtergrond. Het **grote** icoon (taakbalk/Alt-Tab) blijft het
 transparante `Window.Icon`. De native icon-handle wordt bij het sluiten opgeruimd.
+
+
+## Weergavekeuze als icoonmenu (SE-7)
+
+De previewgrootte kiest de gebruiker via een Explorer-achtige *segmented control*
+in de toolbar: vier flat toggle-knoppen (RadioButtons met een eigen template) met
+vector-iconen — één groot vlak (Grote iconen), 2×2 (Middelgrote), 3×3 (Kleine) en
+drie balken (Details). De actieve knop licht op in de accentkleur. Ze binden
+two-way via `EnumToBooleanConverter` aan de nieuwe `PreviewSize`-enum-property op
+`MainViewModel`, die de bestaande gelokaliseerde keuze (`SelectedPreviewSize`)
+aanstuurt. De icoonkleur volgt de `Foreground` van de knop, zodat de actieve staat
+vanzelf meekleurt.
