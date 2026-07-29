@@ -12,6 +12,7 @@ public partial class MainWindow : Window
 {
     private readonly SettingsService _settingsService;
     private readonly AppSettings _settings;
+    private IntPtr _titleBarIcon;
 
     public MainWindow(MainViewModel viewModel, SettingsService settingsService, AppSettings settings)
     {
@@ -39,6 +40,23 @@ public partial class MainWindow : Window
         {
             // No embedded icon (or load failed): fall back to the default icon.
         }
+    }
+
+    /// <summary>
+    /// Once the window handle exists, give the title-bar (small) icon a white
+    /// background so it stays visible on dark, theme-coloured title bars. The
+    /// taskbar / Alt-Tab (large) icon keeps the transparent artwork.
+    /// </summary>
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        _titleBarIcon = TitleBarIconFixer.ApplySmallIcon(this, System.Windows.Media.Colors.White);
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        TitleBarIconFixer.Destroy(_titleBarIcon);
+        base.OnClosed(e);
     }
 
     /// <summary>

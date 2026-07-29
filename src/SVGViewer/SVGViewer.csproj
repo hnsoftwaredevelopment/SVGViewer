@@ -16,8 +16,8 @@
     <!-- The .exe icon. Conditional so the build still works before the artwork
          is dropped into Assets\; it activates automatically once present. -->
     <ApplicationIcon Condition="Exists('Assets\appicon.ico')">Assets\appicon.ico</ApplicationIcon>
-    <AssemblyVersion>2026.7.29.4</AssemblyVersion>
-    <FileVersion>2026.7.29.4</FileVersion>
+    <AssemblyVersion>2026.7.29.7</AssemblyVersion>
+    <FileVersion>2026.7.29.7</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +28,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="SharpVectors.Reloaded" Version="1.8.5" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
   </ItemGroup>
 
   <!-- Ship the localized user guides next to the executable for the in-app Help. -->

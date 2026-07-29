@@ -277,3 +277,13 @@ HN-Software-logo. Beide logo's zijn ingebakken SVG-resources die via
 `SvgResourceImage` (SharpVectors → `DrawingImage`) worden geladen; ontbreekt het
 publisher-logo, dan verbergt de dialoog die strook netjes. De dialoog opent modaal
 via de knop **Over** in de toolbar. Alle teksten zijn gelokaliseerd (nl/en/de).
+
+
+### Titelbalk-icoon op donkere thema's
+
+De titelbalk en de taakbalk delen normaal één icoon (`Window.Icon`); Windows tekent
+het alleen kleiner in de titelbalk. Op een donker, thema-gekleurd titelbalk valt een
+transparant logo weg. Daarom overschrijft `TitleBarIconFixer` na
+`OnSourceInitialized` alléén het **kleine** icoon via `WM_SETICON` (ICON_SMALL): het
+app-logo op een witte achtergrond. Het **grote** icoon (taakbalk/Alt-Tab) blijft het
+transparante `Window.Icon`. De native icon-handle wordt bij het sluiten opgeruimd.
