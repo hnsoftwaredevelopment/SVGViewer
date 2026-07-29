@@ -93,7 +93,7 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 - ☑ **US-7.1** — App-icoon en over-dialoog. *(Icoon in titelbalk/taakbalk +
   `.exe`; startup-splash (WPF `SplashScreen`). Over-dialoog toont het app-logo, de
   versie en een korte beschrijving, met een donkere strook voor het HN-Software-
-  logo — dat verschijnt zodra `HN-Software_Logo_White.svg` in `Assets\` staat.)*
+  logo (`Assets\devicon.svg`, de witte variant).)*
 - ☐ **US-7.2** — Foutafhandeling & logging.
 - ☐ **US-7.3** — Handmatige testronde over alle features/talen.
 - ☐ **US-7.4** — Echte screenshots vastleggen en in docs verwerken.

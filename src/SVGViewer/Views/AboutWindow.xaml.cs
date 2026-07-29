@@ -12,7 +12,7 @@ public partial class AboutWindow : Window
 
         AppLogo.Source = SvgResourceImage.Load("/Assets/appicon.svg");
 
-        var companyLogo = SvgResourceImage.Load("/Assets/HN-Software_Logo_White.svg");
+        var companyLogo = SvgResourceImage.Load("/Assets/devicon.svg");
         if (companyLogo is not null)
         {
             CompanyLogo.Source = companyLogo;
