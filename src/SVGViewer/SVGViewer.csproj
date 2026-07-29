@@ -42,6 +42,7 @@
     <Resource Include="Assets\appicon.ico" Condition="Exists('Assets\appicon.ico')" />
     <Resource Include="Assets\appicon.png" Condition="Exists('Assets\appicon.png')" />
     <Resource Include="Assets\appicon.svg" Condition="Exists('Assets\appicon.svg')" />
+    <Resource Include="Assets\HN-Software_Logo_White.svg" Condition="Exists('Assets\HN-Software_Logo_White.svg')" />
   </ItemGroup>
 
   <!-- Native WPF splash screen: shown at startup, fades out when the window loads. -->

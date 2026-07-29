@@ -159,4 +159,19 @@
   <data name="SettingsConfirmDelete" xml:space="preserve">
     <value>Vor dem Löschen einer Datei um Bestätigung bitten</value>
   </data>
+  <data name="ButtonAbout" xml:space="preserve">
+    <value>Über</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>Über SVG Viewer</value>
+  </data>
+  <data name="AboutDescription" xml:space="preserve">
+    <value>Ein schlanker Viewer zum Ansehen und Verwalten von SVG-Dateien.</value>
+  </data>
+  <data name="AboutMadeBy" xml:space="preserve">
+    <value>Entwickelt von</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
 </root>

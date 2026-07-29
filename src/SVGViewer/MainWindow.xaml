@@ -111,9 +111,13 @@
                         Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[SettingsTitle]}"
                         ToolTip="{Binding Source={x:Static loc:Loc.Instance}, Path=[SettingsTitle]}" />
 
-                <Button Click="Help_Click" Padding="10,3"
+                <Button Click="Help_Click" Padding="10,3" Margin="0,0,8,0"
                         Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonHelp]}"
                         ToolTip="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonHelp]}" />
+
+                <Button Click="About_Click" Padding="10,3"
+                        Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonAbout]}"
+                        ToolTip="{Binding Source={x:Static loc:Loc.Instance}, Path=[AboutTitle]}" />
             </WrapPanel>
         </Border>
 

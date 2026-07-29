@@ -90,10 +90,10 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 ## SE-7 · Afwerking & UI-makeover
 
 ### Afwerking
-- ◐ **US-7.1** — App-icoon en over-dialoog. *(Icoon-bedrading klaar: titelbalk/
-  taakbalk laden `Assets\appicon.ico` bij het starten, en het `.exe`-icoon wordt
-  conditioneel meegebouwd — de build blijft werken tot de bestanden er staan. De
-  over-dialoog volgt nog.)*
+- ☑ **US-7.1** — App-icoon en over-dialoog. *(Icoon in titelbalk/taakbalk +
+  `.exe`; startup-splash (WPF `SplashScreen`). Over-dialoog toont het app-logo, de
+  versie en een korte beschrijving, met een donkere strook voor het HN-Software-
+  logo — dat verschijnt zodra `HN-Software_Logo_White.svg` in `Assets\` staat.)*
 - ☐ **US-7.2** — Foutafhandeling & logging.
 - ☐ **US-7.3** — Handmatige testronde over alle features/talen.
 - ☐ **US-7.4** — Echte screenshots vastleggen en in docs verwerken.

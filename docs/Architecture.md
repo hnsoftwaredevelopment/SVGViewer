@@ -267,3 +267,13 @@ het bestand, dan valt de app terug op het standaardicoon. Het `.exe`-icoon
 (`<ApplicationIcon>`) wordt **conditioneel** meegebouwd (`Condition="Exists(...)"`),
 zodat de build blijft werken zolang de illustratie nog niet in `Assets\` staat en
 automatisch activeert zodra dat wel zo is.
+
+
+## Over-dialoog (SE-7)
+
+De over-dialoog (`Views/AboutWindow`) toont het applicatielogo, het versienummer
+(uit de assembly) en een korte beschrijving, plus een donkere strook met het
+HN-Software-logo. Beide logo's zijn ingebakken SVG-resources die via
+`SvgResourceImage` (SharpVectors → `DrawingImage`) worden geladen; ontbreekt het
+publisher-logo, dan verbergt de dialoog die strook netjes. De dialoog opent modaal
+via de knop **Over** in de toolbar. Alle teksten zijn gelokaliseerd (nl/en/de).

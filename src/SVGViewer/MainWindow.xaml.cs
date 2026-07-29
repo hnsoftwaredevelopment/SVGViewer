@@ -75,6 +75,10 @@ public partial class MainWindow : Window
         }
     }
 
+    /// <summary>Opens the modal "About" dialog (logos, version, description).</summary>
+    private void About_Click(object sender, RoutedEventArgs e) =>
+        new AboutWindow { Owner = this }.ShowDialog();
+
     /// <summary>
     /// Double-clicking a thumbnail opens the zoom preview. A single click is left
     /// free for future file-management gestures (drag to move, select). Opening in

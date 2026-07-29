@@ -159,4 +159,19 @@
   <data name="SettingsConfirmDelete" xml:space="preserve">
     <value>Bevestiging vragen voordat een bestand wordt verwijderd</value>
   </data>
+  <data name="ButtonAbout" xml:space="preserve">
+    <value>Over</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>Over SVG Viewer</value>
+  </data>
+  <data name="AboutDescription" xml:space="preserve">
+    <value>Een lichtgewicht viewer om SVG-bestanden te bekijken en te beheren.</value>
+  </data>
+  <data name="AboutMadeBy" xml:space="preserve">
+    <value>Ontwikkeld door</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>Sluiten</value>
+  </data>
 </root>
