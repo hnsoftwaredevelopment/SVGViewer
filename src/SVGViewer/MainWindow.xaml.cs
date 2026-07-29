@@ -23,27 +23,21 @@ public partial class MainWindow : Window
     }
 
     /// <summary>
-    /// Sets the title-bar / taskbar icon from the shipped app icon when present.
-    /// A missing or invalid icon must never prevent the window from opening.
+    /// Sets the title-bar / taskbar icon from the embedded app icon resource when
+    /// present. Loading from the embedded resource (rather than a file on disk)
+    /// means it is always in sync with the build and never stale or locked. A
+    /// missing or invalid icon must never prevent the window from opening.
     /// </summary>
     private void TryLoadWindowIcon()
     {
-        var iconPath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets", "appicon.ico");
-        if (!System.IO.File.Exists(iconPath))
-        {
-            return;
-        }
-
         try
         {
             Icon = System.Windows.Media.Imaging.BitmapFrame.Create(
-                new Uri(iconPath),
-                System.Windows.Media.Imaging.BitmapCreateOptions.None,
-                System.Windows.Media.Imaging.BitmapCacheOption.OnLoad);
+                new Uri("pack://application:,,,/Assets/appicon.ico"));
         }
         catch
         {
-            // Ignore a broken icon file; the app just uses the default icon.
+            // No embedded icon (or load failed): fall back to the default icon.
         }
     }
 

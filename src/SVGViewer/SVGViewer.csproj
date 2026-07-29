@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -16,7 +16,14 @@
     <!-- The .exe icon. Conditional so the build still works before the artwork
          is dropped into Assets\; it activates automatically once present. -->
     <ApplicationIcon Condition="Exists('Assets\appicon.ico')">Assets\appicon.ico</ApplicationIcon>
+    <AssemblyVersion>2026.7.29.4</AssemblyVersion>
+    <FileVersion>2026.7.29.4</FileVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\appicon.png" />
+    <None Remove="Assets\splash.png" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
@@ -30,10 +37,16 @@
     <Content Include="..\..\docs\user-guide\UserGuide.de.md" Link="Help\UserGuide.de.md" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
-  <!-- App icon assets, shipped to the output folder once dropped into Assets\. -->
+  <!-- Icon artwork embedded as WPF resources (loaded via pack URIs at runtime). -->
   <ItemGroup>
-    <Content Include="Assets\appicon.ico" Condition="Exists('Assets\appicon.ico')" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="Assets\appicon.svg" Condition="Exists('Assets\appicon.svg')" CopyToOutputDirectory="PreserveNewest" />
+    <Resource Include="Assets\appicon.ico" Condition="Exists('Assets\appicon.ico')" />
+    <Resource Include="Assets\appicon.png" Condition="Exists('Assets\appicon.png')" />
+    <Resource Include="Assets\appicon.svg" Condition="Exists('Assets\appicon.svg')" />
+  </ItemGroup>
+
+  <!-- Native WPF splash screen: shown at startup, fades out when the window loads. -->
+  <ItemGroup>
+    <SplashScreen Include="Assets\splash.png" Condition="Exists('Assets\splash.png')" />
   </ItemGroup>
 
 </Project>

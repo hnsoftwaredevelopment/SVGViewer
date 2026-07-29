@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
     <UseWPF>true</UseWPF>
+    <AssemblyVersion>2026.7.29.1</AssemblyVersion>
+    <FileVersion>2026.7.29.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
