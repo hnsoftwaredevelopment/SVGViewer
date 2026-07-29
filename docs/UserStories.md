@@ -105,8 +105,8 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
   keuze licht op. Bindt via een enum→bool-converter aan de previewgrootte.)*
 - ☑ **US-7.6** — Tandwiel-icoon (⚙) voor Instellingen; iconen voor Vernieuwen en
   Annuleren. *(Flat icoon-knoppen met Segoe MDL2-glyphs — ⚙ Instellingen, ↻
-  Vernieuwen, ✕ Annuleren — met gelokaliseerde tooltips; kleuren mee met de
-  accentkleur bij hover/klik.)*
+  Vernieuwen, ✕ Annuleren, en ook ❓ Help en ℹ Over — met gelokaliseerde tooltips;
+  kleuren mee met de accentkleur bij hover/klik.)*
 - ☐ **US-7.7** — Talen in het Instellingen-scherm met vlaggen.
 
 ### Navigatie-verbeteringen
