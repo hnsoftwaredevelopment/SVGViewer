@@ -82,13 +82,18 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 - ☐ **US-6.1** — Als lezer wil ik een Engelse `README.md` met screenshots en een
   beknopte beschrijving.
 - ☐ **US-6.2** — Als gebruiker wil ik user guides in NL/EN/DE met screenshots.
-- ☐ **US-6.3** — Als gebruiker wil ik de help vanuit de app openen in mijn taal.
+- ☑ **US-6.3** — Als gebruiker wil ik de help vanuit de app openen in mijn taal.
+  *(Help-knop opent de meegeleverde gids van de actieve taal — nl/en/de, met
+  terugval op nl — omgezet naar HTML en geopend in de standaardbrowser; offline.)*
 - ☐ **US-6.4** — Als team wil ik dat alle MD-docs in de Obsidian-vault staan.
 
 ## SE-7 · Afwerking & UI-makeover
 
 ### Afwerking
-- ☐ **US-7.1** — App-icoon en over-dialoog.
+- ◐ **US-7.1** — App-icoon en over-dialoog. *(Icoon-bedrading klaar: titelbalk/
+  taakbalk laden `Assets\appicon.ico` bij het starten, en het `.exe`-icoon wordt
+  conditioneel meegebouwd — de build blijft werken tot de bestanden er staan. De
+  over-dialoog volgt nog.)*
 - ☐ **US-7.2** — Foutafhandeling & logging.
 - ☐ **US-7.3** — Handmatige testronde over alle features/talen.
 - ☐ **US-7.4** — Echte screenshots vastleggen en in docs verwerken.

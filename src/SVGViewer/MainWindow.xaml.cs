@@ -19,6 +19,32 @@ public partial class MainWindow : Window
         DataContext = viewModel;
         _settingsService = settingsService;
         _settings = settings;
+        TryLoadWindowIcon();
+    }
+
+    /// <summary>
+    /// Sets the title-bar / taskbar icon from the shipped app icon when present.
+    /// A missing or invalid icon must never prevent the window from opening.
+    /// </summary>
+    private void TryLoadWindowIcon()
+    {
+        var iconPath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets", "appicon.ico");
+        if (!System.IO.File.Exists(iconPath))
+        {
+            return;
+        }
+
+        try
+        {
+            Icon = System.Windows.Media.Imaging.BitmapFrame.Create(
+                new Uri(iconPath),
+                System.Windows.Media.Imaging.BitmapCreateOptions.None,
+                System.Windows.Media.Imaging.BitmapCacheOption.OnLoad);
+        }
+        catch
+        {
+            // Ignore a broken icon file; the app just uses the default icon.
+        }
     }
 
     /// <summary>
@@ -39,6 +65,20 @@ public partial class MainWindow : Window
         var viewModel = new SettingsViewModel(_settingsService, _settings);
         var window = new SettingsWindow(viewModel) { Owner = this };
         window.ShowDialog();
+    }
+
+    /// <summary>Opens the user guide for the active language in the default browser.</summary>
+    private void Help_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            new HelpService().OpenGuide(_settings.Language);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, ex.Message, "SVG Viewer",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 
     /// <summary>

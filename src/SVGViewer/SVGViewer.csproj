@@ -12,11 +12,28 @@
     <!-- Dutch is the default (neutral) language; en/de ship as satellite assemblies. -->
     <NeutralResourcesLanguage>nl</NeutralResourcesLanguage>
     <SatelliteResourceLanguages>nl;en;de</SatelliteResourceLanguages>
+
+    <!-- The .exe icon. Conditional so the build still works before the artwork
+         is dropped into Assets\; it activates automatically once present. -->
+    <ApplicationIcon Condition="Exists('Assets\appicon.ico')">Assets\appicon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="SharpVectors.Reloaded" Version="1.8.5" />
+  </ItemGroup>
+
+  <!-- Ship the localized user guides next to the executable for the in-app Help. -->
+  <ItemGroup>
+    <Content Include="..\..\docs\user-guide\UserGuide.nl.md" Link="Help\UserGuide.nl.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\docs\user-guide\UserGuide.en.md" Link="Help\UserGuide.en.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\docs\user-guide\UserGuide.de.md" Link="Help\UserGuide.de.md" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- App icon assets, shipped to the output folder once dropped into Assets\. -->
+  <ItemGroup>
+    <Content Include="Assets\appicon.ico" Condition="Exists('Assets\appicon.ico')" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Assets\appicon.svg" Condition="Exists('Assets\appicon.svg')" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
