@@ -42,6 +42,37 @@
             </Setter>
         </Style>
 
+        <!-- Flat icon button for the toolbar (Segoe MDL2 glyph as content). -->
+        <Style x:Key="ToolIconButton" TargetType="Button">
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Foreground" Value="#57606A" />
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="Margin" Value="0,0,4,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="Transparent" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#EAEEF2" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#DCE6F7" />
+                                <Setter Property="Foreground" Value="{StaticResource SvgAccentBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.4" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- Shared right-click menu for an SVG item (thumbnail or list row).
              PlacementTarget.Tag holds the MainViewModel; PlacementTarget's
              DataContext is the SvgFileViewModel used as command parameter. -->
@@ -155,17 +186,20 @@
                     </StackPanel>
                 </Border>
 
-                <Button Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonRefresh]}"
+                <Button Style="{StaticResource ToolIconButton}"
                         Command="{Binding RefreshCommand}"
-                        Padding="12,3" Margin="0,0,8,0" />
+                        Content="&#xE72C;"
+                        ToolTip="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonRefresh]}" />
 
-                <Button Command="{Binding CancelScanCommand}"
-                        Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonCancel]}"
-                        Padding="12,3" Margin="0,0,8,0"
+                <Button Style="{StaticResource ToolIconButton}"
+                        Command="{Binding CancelScanCommand}"
+                        Content="&#xE711;"
+                        ToolTip="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonCancel]}"
                         Visibility="{Binding IsScanning, Converter={StaticResource BoolToVisibility}}" />
 
-                <Button Click="Settings_Click" Padding="10,3" Margin="0,0,8,0"
-                        Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[SettingsTitle]}"
+                <Button Style="{StaticResource ToolIconButton}" Margin="0,0,10,0"
+                        Click="Settings_Click"
+                        Content="&#xE713;"
                         ToolTip="{Binding Source={x:Static loc:Loc.Instance}, Path=[SettingsTitle]}" />
 
                 <Button Click="Help_Click" Padding="10,3" Margin="0,0,8,0"
