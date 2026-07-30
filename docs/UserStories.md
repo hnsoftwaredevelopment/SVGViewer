@@ -125,6 +125,12 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 - ☑ **US-7.11** — Als gebruiker wil ik dat de viewer altijd in **Volledig**
   opstart, zodat ik meteen structuur zie; de keuze "Alleen SVG" geldt per sessie
   en wordt niet bewaard.
+- ☑ **US-7.12** — Als gebruiker wil ik dat er **één keer** wordt gescand per
+  schijf, zodat ik tijdens een lopende scan van view kan wisselen (Alles ↔ Alleen
+  SVG) **zonder dat de scan opnieuw begint**. *(De scan hoort bij de schijf, niet
+  bij de view: één gedeelde index; van filter wisselen herprojecteert alleen. Een
+  lopende scan blijft beide views vullen. Alleen bij schijfwissel/Vernieuwen wordt
+  opnieuw gescand; Annuleren behoudt het tot dan gevondene.)*
 
 ## SE-8 · Bestandsbeheer (backlog, nog niet ingepland)
 

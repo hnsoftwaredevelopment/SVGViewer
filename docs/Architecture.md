@@ -318,3 +318,19 @@ Engels) onder `Assets\flags\`, ingebakken als WPF-resource. `LanguageChoice` hee
 een `Flag`-property die de bijbehorende vlag eenmalig via `SvgResourceImage` laadt
 (op basis van de cultuurcode). De ComboBox gebruikt een `ItemTemplate` met een klein
 omkaderd vlagje plus de taalnaam; dat geldt zowel voor de lijst als voor de selectie.
+
+
+## Eén scan per schijf, gedeeld door beide views (SE-7)
+
+De mappenscan hoort bij de **schijf**, niet bij de view. `MainViewModel` houdt één
+gedeelde `SvgFolderIndex` (`_index`) per gekozen schijf bij. `StartScanAsync` maakt
+een verse index en start één achtergrondscan (`SvgIndexService.BuildIndexAsync`);
+`ProjectView` bouwt `RootNodes` voor het huidige filter uit die index, zónder te
+scannen. Van filter wisselen roept alleen `ProjectView` aan — nooit een nieuwe scan.
+Terwijl de scan loopt werkt `RefreshActiveView` (throttled) de actieve view bij:
+markeringen verversen in "Alles", of `SvgOnlyTreeBuilder.Sync` in "Alleen SVG".
+
+Zo begint de scan niet opnieuw als de gebruiker halverwege van view wisselt; een
+lopende scan blijft beide projecties vullen. Alleen een schijfwissel of Vernieuwen
+start een nieuwe scan (oude wordt geannuleerd). Annuleren stopt de scan maar behoudt
+het tot dan gevondene, en markeert dat als "klaar" zodat view-wissels het hergebruiken.

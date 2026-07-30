@@ -26,6 +26,14 @@ public partial class MainViewModel : ObservableObject
     private DateTime _lastMarkingRefreshUtc;
     private bool _isInitializing = true;
 
+    // One scan per drive, shared by both views. Switching the filter re-projects
+    // this index instead of starting a new scan; a running scan keeps feeding
+    // whichever view is active.
+    private SvgFolderIndex _index = new();
+    private bool _scanComplete;
+    private DirectoryNodeViewModel? _svgOnlyRoot;
+    private HashSet<string> _svgOnlyInserted = new(StringComparer.OrdinalIgnoreCase);
+
     // Remembered so the status line can be re-rendered after a language switch.
     private string _statusKey = "StatusSelectDrive";
     private object[] _statusArgs = Array.Empty<object>();
@@ -75,7 +83,7 @@ public partial class MainViewModel : ObservableObject
 
         if (_selectedDrive is not null)
         {
-            _ = RebuildTreeAsync();
+            _ = StartScanAsync();
         }
     }
 
@@ -157,7 +165,7 @@ public partial class MainViewModel : ObservableObject
 
         _settings.LastDrive = value?.RootPath;
         _settingsService.Save(_settings);
-        _ = RebuildTreeAsync();
+        _ = StartScanAsync();
     }
 
     partial void OnSelectedFilterChanged(LocalizedChoice<FolderFilterMode> value)
@@ -167,9 +175,16 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        // The filter is intentionally not persisted: the viewer always starts in
-        // "All" mode, and "SVG only" applies for the current session only.
-        _ = RebuildTreeAsync();
+        // Switching the filter never rescans: it re-projects the shared index for
+        // the current drive. A scan that is still running keeps filling both views.
+        // (The filter is intentionally not persisted: the viewer always starts in
+        // "All" mode, and "SVG only" applies for the current session only.)
+        ProjectView();
+
+        if (_scanComplete)
+        {
+            ApplyFinalStatus();
+        }
     }
 
     partial void OnSelectedPreviewSizeChanged(LocalizedChoice<PreviewSize> value)
@@ -206,12 +221,21 @@ public partial class MainViewModel : ObservableObject
     {
         // Drop cached renders so edited files show their new content.
         _thumbnailService.ClearCache();
-        return RebuildTreeAsync();
+        return StartScanAsync();
     }
 
-    /// <summary>Stops a running drive scan.</summary>
+    /// <summary>
+    /// Stops the running drive scan. Whatever was already found stays on screen and
+    /// switching the filter will reuse it (no rescan) until the drive is changed.
+    /// </summary>
     [RelayCommand]
-    private void CancelScan() => _scanCancellation?.Cancel();
+    private void CancelScan()
+    {
+        _scanCancellation?.Cancel();
+        IsScanning = false;
+        _scanComplete = true;
+        ApplyFinalStatus();
+    }
 
     /// <summary>Opens the file in its associated application (e.g. Inkscape).</summary>
     [RelayCommand]
@@ -302,94 +326,31 @@ public partial class MainViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Rebuilds the tree for the selected drive. In "SVG only" mode this first
-    /// walks the whole drive on a background thread to find the relevant folders.
+    /// Starts (or restarts) the single background scan for the selected drive and
+    /// shows the current view immediately. The scan fills one shared index that
+    /// both views read from, so switching the filter never triggers a new scan.
     /// </summary>
-    private async Task RebuildTreeAsync()
+    private async Task StartScanAsync()
     {
         _scanCancellation?.Cancel();
-        RootNodes.Clear();
         SelectedNode = null;
 
         var drive = SelectedDrive;
+
+        // Fresh shared index for this drive.
+        _index = new SvgFolderIndex();
+        _scanComplete = false;
+
         if (drive is null)
         {
+            RootNodes.Clear();
+            IsScanning = false;
             SetStatus("StatusSelectDrive");
             return;
         }
 
-        var filterMode = SelectedFilter.Value;
-
-        if (filterMode == FolderFilterMode.All)
-        {
-            // Show the tree immediately (lazy). A background scan then lights up
-            // folders that contain SVGs (blue + count) or that lead to them
-            // (blue, no count), so collapsed branches reveal where SVGs live.
-            var index = new SvgFolderIndex();
-            var root = new DirectoryNodeViewModel(drive.RootPath, drive.DisplayName, filterMode, index);
-            RootNodes.Add(root);
-            root.ExpandAndLoad();
-
-            _scanCancellation = new CancellationTokenSource();
-            var scanToken = _scanCancellation.Token;
-
-            IsScanning = true;
-            SetStatus("StatusScanning");
-            _lastMarkingRefreshUtc = DateTime.UtcNow;
-
-            var scanProgress = new Progress<ScanProgress>(p =>
-            {
-                if (scanToken.IsCancellationRequested)
-                {
-                    return;
-                }
-
-                SetStatus("StatusFoldersScanned", p.FoldersScanned, p.FoldersWithSvg);
-
-                // Repaint markings a few times per second at most while scanning.
-                if ((DateTime.UtcNow - _lastMarkingRefreshUtc).TotalMilliseconds >= 400)
-                {
-                    _lastMarkingRefreshUtc = DateTime.UtcNow;
-                    RefreshMarkings();
-                }
-            });
-
-            try
-            {
-                var built = await _indexService.BuildIndexAsync(drive.RootPath, index, scanProgress, scanToken);
-
-                if (scanToken.IsCancellationRequested)
-                {
-                    return; // A newer drive/filter change owns the UI now.
-                }
-
-                RefreshMarkings();
-
-                SetStatus(built.FoldersWithSvg.Count > 0 ? "StatusFoldersWithSvg" : "StatusNoSvgFound",
-                          built.FoldersWithSvg.Count);
-            }
-            catch (OperationCanceledException)
-            {
-                // Superseded by a newer rebuild.
-            }
-            finally
-            {
-                if (!scanToken.IsCancellationRequested)
-                {
-                    IsScanning = false;
-                }
-            }
-
-            return;
-        }
-
-        // "SVG only": show a compact tree of just the SVG folders, built up
-        // progressively as the background scan discovers them (additive, no
-        // flicker). The drive root is shown at once so there is never a blank pane.
-        var svgIndex = new SvgFolderIndex();
-        var svgRoot = DirectoryNodeViewModel.CreateExplicit(drive.RootPath, drive.DisplayName, svgIndex);
-        RootNodes.Add(svgRoot);
-        svgRoot.IsExpanded = true;
+        // Project the (still empty) index into the current view right away.
+        ProjectView();
 
         _scanCancellation = new CancellationTokenSource();
         var token = _scanCancellation.Token;
@@ -397,8 +358,6 @@ public partial class MainViewModel : ObservableObject
         IsScanning = true;
         SetStatus("StatusScanning");
         _lastMarkingRefreshUtc = DateTime.UtcNow;
-
-        var inserted = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         var progress = new Progress<ScanProgress>(p =>
         {
@@ -409,37 +368,36 @@ public partial class MainViewModel : ObservableObject
 
             SetStatus("StatusFoldersScanned", p.FoldersScanned, p.FoldersWithSvg);
 
+            // Repaint the active view a few times per second at most while scanning.
             if ((DateTime.UtcNow - _lastMarkingRefreshUtc).TotalMilliseconds >= 400)
             {
                 _lastMarkingRefreshUtc = DateTime.UtcNow;
-                SvgOnlyTreeBuilder.Sync(svgRoot, drive.RootPath, svgIndex, inserted);
+                RefreshActiveView();
             }
         });
 
         try
         {
-            var built = await _indexService.BuildIndexAsync(drive.RootPath, svgIndex, progress, token);
+            await _indexService.BuildIndexAsync(drive.RootPath, _index, progress, token);
 
             if (token.IsCancellationRequested)
             {
-                return; // A newer drive/filter change owns the UI now.
+                return; // A newer drive change (or cancel) owns the UI now.
             }
 
-            SvgOnlyTreeBuilder.Sync(svgRoot, drive.RootPath, svgIndex, inserted);
+            _scanComplete = true;
+            RefreshActiveView();
 
-            if (built.FoldersWithSvg.Count == 0)
+            if (SelectedFilter.Value == FolderFilterMode.SvgOnly && _index.FoldersWithSvg.Count == 0)
             {
                 RootNodes.Clear();
-                SetStatus("StatusNoSvgFound");
             }
-            else
-            {
-                SetStatus("StatusFoldersWithSvg", built.FoldersWithSvg.Count);
-            }
+
+            ApplyFinalStatus();
         }
         catch (OperationCanceledException)
         {
-            // Superseded by a newer rebuild.
+            // Superseded by a newer scan.
         }
         finally
         {
@@ -447,6 +405,77 @@ public partial class MainViewModel : ObservableObject
             {
                 IsScanning = false;
             }
+        }
+    }
+
+    /// <summary>
+    /// Rebuilds <see cref="RootNodes"/> for the current filter from the shared
+    /// index, without scanning. Called on start-up, on every filter switch, and
+    /// once more when a scan completes.
+    /// </summary>
+    private void ProjectView()
+    {
+        RootNodes.Clear();
+        _svgOnlyRoot = null;
+
+        var drive = SelectedDrive;
+        if (drive is null)
+        {
+            return;
+        }
+
+        if (SelectedFilter.Value == FolderFilterMode.All)
+        {
+            // Lazy tree, usable immediately; markings come from the shared index.
+            var root = new DirectoryNodeViewModel(drive.RootPath, drive.DisplayName, FolderFilterMode.All, _index);
+            RootNodes.Add(root);
+            root.ExpandAndLoad();
+            RefreshMarkings();
+            return;
+        }
+
+        // "SVG only": a compact tree of just the SVG folders, built additively
+        // (no flicker). The drive root shows at once so the pane is never blank.
+        _svgOnlyInserted = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        _svgOnlyRoot = DirectoryNodeViewModel.CreateExplicit(drive.RootPath, drive.DisplayName, _index);
+        RootNodes.Add(_svgOnlyRoot);
+        _svgOnlyRoot.IsExpanded = true;
+        SvgOnlyTreeBuilder.Sync(_svgOnlyRoot, drive.RootPath, _index, _svgOnlyInserted);
+
+        // If the scan already finished and found nothing, show the empty state.
+        if (_scanComplete && _index.FoldersWithSvg.Count == 0)
+        {
+            RootNodes.Clear();
+        }
+    }
+
+    /// <summary>Applies the latest scan progress to whichever view is showing.</summary>
+    private void RefreshActiveView()
+    {
+        if (SelectedFilter.Value == FolderFilterMode.All)
+        {
+            RefreshMarkings();
+            return;
+        }
+
+        var drive = SelectedDrive;
+        if (_svgOnlyRoot is not null && drive is not null)
+        {
+            SvgOnlyTreeBuilder.Sync(_svgOnlyRoot, drive.RootPath, _index, _svgOnlyInserted);
+        }
+    }
+
+    /// <summary>Sets the status line based on the finished (or cancelled) scan.</summary>
+    private void ApplyFinalStatus()
+    {
+        var count = _index.FoldersWithSvg.Count;
+        if (SelectedFilter.Value == FolderFilterMode.SvgOnly && count == 0)
+        {
+            SetStatus("StatusNoSvgFound");
+        }
+        else
+        {
+            SetStatus(count > 0 ? "StatusFoldersWithSvg" : "StatusNoSvgFound", count);
         }
     }
 
