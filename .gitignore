@@ -18,9 +18,6 @@ x86/
 [Aa][Rr][Mm]64/
 build/artifacts/
 
-# Auto-version build counter (local, per-machine)
-build/version-counter.txt
-
 # .NET
 project.lock.json
 project.fragment.lock.json
