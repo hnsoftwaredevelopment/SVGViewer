@@ -247,18 +247,17 @@ echte screenshots, in-app help in de gekozen taal, en de afwerking (SE-7).
 
 ## In-app help (SE-6)
 
-De Help-knop in de toolbar opent de **quick reference** van de **actieve taal**. De
-drie bestanden (`docs/user-guide/QuickReference.<taal>.md`) worden als inhoud
-meegeleverd naast de `.exe` (map `Help/`). `HelpService` kiest het bestand voor de
-huidige taal
-(met terugval op nl), zet de Markdown om naar een gestylede HTML-pagina
-(`MarkdownToHtml`), schrijft die naar `%TEMP%\SVGViewer\` en opent 'm in de
-standaardbrowser. Dit werkt volledig offline en hangt niet af van een
-bestandskoppeling voor `.md`. Relatieve afbeeldingspaden in de gids worden
-herschreven naar absolute `file://`-paden, zodat screenshots (later toegevoegd in
-`Help/images/`) meteen laden. `MarkdownToHtml` is een compacte, zelfstandige
-omzetter (koppen, alinea's, vet/cursief, code, lijsten, citaten, links,
-afbeeldingen) — bewust geen volledige CommonMark, wél goed te testen.
+De Help-knop in de toolbar opent de **quick reference** van de **actieve taal** in
+een klein **venster binnen de app** (`Views/HelpWindow`) — geen browser, zodat de
+gebruiker de app niet verlaat. De drie bestanden
+(`docs/user-guide/QuickReference.<taal>.md`) worden als inhoud meegeleverd naast de
+`.exe` (map `Help/`). `HelpService` kiest het bestand voor de huidige taal (met
+terugval op nl) en leest de Markdown. `MarkdownParser` (WPF-vrij, dus goed te
+testen) parseert de kleine Markdown-subset — koppen, alinea's, opsommingen en
+inline `**vet**`, `*cursief*` en `` `code` `` — naar een klein model, en
+`MarkdownToFlowDocument` rendert dat model naar een WPF `FlowDocument` dat in een
+`FlowDocumentScrollViewer` wordt getoond. De titelbalk-X, Esc en de Sluiten-knop
+sluiten alleen dit venster.
 
 ## App-icoon (SE-7)
 

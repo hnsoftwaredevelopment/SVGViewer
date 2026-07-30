@@ -1,0 +1,21 @@
+<Window x:Class="SVGViewer.Views.HelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:SVGViewer.Localization"
+        Width="620" Height="580"
+        MinWidth="420" MinHeight="320"
+        WindowStartupLocation="CenterOwner"
+        Background="White">
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Background="#F6F8FA"
+                BorderBrush="#D8DEE4" BorderThickness="0,1,0,0" Padding="16,12">
+            <Button Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonClose]}"
+                    HorizontalAlignment="Right" MinWidth="90" Padding="16,4"
+                    IsCancel="True" IsDefault="True" Click="Close_Click" />
+        </Border>
+        <FlowDocumentScrollViewer x:Name="Viewer"
+                                  IsToolBarVisible="False"
+                                  VerticalScrollBarVisibility="Auto"
+                                  Background="White" />
+    </DockPanel>
+</Window>

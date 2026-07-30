@@ -1,102 +1,93 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using SVGViewer.Services;
 using Xunit;
 
 namespace SVGViewer.Tests;
 
-public class MarkdownToHtmlTests
+public class MarkdownParserTests
 {
+    private static string Text(IReadOnlyList<MarkdownSegment> segments) =>
+        string.Concat(segments.Select(s => s.Text));
+
     [Fact]
-    public void Renders_headings()
+    public void Hash_line_is_a_heading()
     {
-        var html = MarkdownToHtml.Convert("# Title\n\n## Sub");
-        Assert.Contains("<h1>Title</h1>", html);
-        Assert.Contains("<h2>Sub</h2>", html);
+        var block = Assert.Single(MarkdownParser.Parse("# Title"));
+        Assert.Equal(MarkdownBlockKind.Heading1, block.Kind);
+        Assert.Equal("Title", Text(block.Lines[0]));
     }
 
     [Fact]
-    public void Renders_bold_italic_and_inline_code()
+    public void Double_hash_is_a_sub_heading()
     {
-        var html = MarkdownToHtml.Convert("This is **bold**, *italic* and `code`.");
-        Assert.Contains("<strong>bold</strong>", html);
-        Assert.Contains("<em>italic</em>", html);
-        Assert.Contains("<code>code</code>", html);
+        var block = Assert.Single(MarkdownParser.Parse("## Sub"));
+        Assert.Equal(MarkdownBlockKind.Heading2, block.Kind);
+        Assert.Equal("Sub", Text(block.Lines[0]));
     }
 
     [Fact]
-    public void Renders_unordered_and_ordered_lists()
+    public void Plain_text_is_a_paragraph()
     {
-        var ul = MarkdownToHtml.Convert("- one\n- two");
-        Assert.Contains("<ul>", ul);
-        Assert.Contains("<li>one</li>", ul);
-
-        var ol = MarkdownToHtml.Convert("1. first\n2. second");
-        Assert.Contains("<ol>", ol);
-        Assert.Contains("<li>second</li>", ol);
+        var block = Assert.Single(MarkdownParser.Parse("Hello world."));
+        Assert.Equal(MarkdownBlockKind.Paragraph, block.Kind);
+        Assert.Equal("Hello world.", Text(block.Lines[0]));
     }
 
     [Fact]
-    public void Renders_links()
+    public void Dash_lines_become_a_bullet_list()
     {
-        var html = MarkdownToHtml.Convert("See [the site](https://example.com).");
-        Assert.Contains("<a href=\"https://example.com\">the site</a>", html);
+        var block = Assert.Single(MarkdownParser.Parse("- one\n- two\n- three"));
+        Assert.Equal(MarkdownBlockKind.BulletList, block.Kind);
+        Assert.Equal(3, block.Lines.Count);
+        Assert.Equal("one", Text(block.Lines[0]));
     }
 
     [Fact]
-    public void Rewrites_relative_image_sources_against_base()
+    public void Wrapped_bullet_continuation_is_merged()
     {
-        var html = MarkdownToHtml.Convert("![shot](images/main.png)", null, "file:///C:/app/Help/");
-        Assert.Contains("src=\"file:///C:/app/Help/images/main.png\"", html);
-        Assert.Contains("alt=\"shot\"", html);
+        var block = Assert.Single(MarkdownParser.Parse("- first line\n  continued\n- second"));
+        Assert.Equal(2, block.Lines.Count);
+        Assert.Equal("first line continued", Text(block.Lines[0]));
     }
 
     [Fact]
-    public void Leaves_absolute_image_sources_untouched()
+    public void Bold_markup_is_flagged()
     {
-        var html = MarkdownToHtml.Convert("![x](https://cdn/x.png)", null, "file:///C:/app/Help/images/");
-        Assert.Contains("src=\"https://cdn/x.png\"", html);
+        var segments = MarkdownParser.ParseInline("This is **bold** text.");
+        Assert.Contains(segments, s => s.Bold && s.Text == "bold");
+        Assert.Equal("This is bold text.", Text(segments));
     }
 
     [Fact]
-    public void Escapes_html_special_characters()
+    public void Code_markup_is_flagged()
     {
-        var html = MarkdownToHtml.Convert("a < b & c > d");
-        Assert.Contains("a &lt; b &amp; c &gt; d", html);
+        var segments = MarkdownParser.ParseInline("Use `code` now.");
+        Assert.Contains(segments, s => s.Code && s.Text == "code");
     }
 
     [Fact]
-    public void Fenced_code_is_preserved_and_escaped()
+    public void Italic_markup_is_flagged()
     {
-        var html = MarkdownToHtml.Convert("```\n<tag> & stuff\n```");
-        Assert.Contains("<pre><code>", html);
-        Assert.Contains("&lt;tag&gt; &amp; stuff", html);
-    }
-
-    [Fact]
-    public void Produces_a_full_document()
-    {
-        var html = MarkdownToHtml.Convert("# Hi", "MyTitle");
-        Assert.StartsWith("<!DOCTYPE html>", html);
-        Assert.Contains("<title>MyTitle</title>", html);
+        var segments = MarkdownParser.ParseInline("An *italic* word.");
+        Assert.Contains(segments, s => s.Italic && s.Text == "italic");
     }
 }
 
 public class HelpServiceTests : IDisposable
 {
     private readonly string _help;
-    private readonly string _out;
 
     public HelpServiceTests()
     {
         _help = Path.Combine(Path.GetTempPath(), "svgv-help-" + Guid.NewGuid().ToString("N"));
-        _out = Path.Combine(Path.GetTempPath(), "svgv-out-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_help);
     }
 
     public void Dispose()
     {
         try { Directory.Delete(_help, true); } catch { }
-        try { Directory.Delete(_out, true); } catch { }
     }
 
     [Theory]
@@ -112,7 +103,7 @@ public class HelpServiceTests : IDisposable
     public void ResolveGuidePath_falls_back_to_dutch_when_language_missing()
     {
         File.WriteAllText(Path.Combine(_help, "QuickReference.nl.md"), "# NL");
-        var service = new HelpService(_help, _out);
+        var service = new HelpService(_help);
 
         Assert.EndsWith("QuickReference.nl.md", service.ResolveGuidePath("de"));
     }
@@ -122,29 +113,27 @@ public class HelpServiceTests : IDisposable
     {
         File.WriteAllText(Path.Combine(_help, "QuickReference.nl.md"), "# NL");
         File.WriteAllText(Path.Combine(_help, "QuickReference.en.md"), "# EN");
-        var service = new HelpService(_help, _out);
+        var service = new HelpService(_help);
 
         Assert.EndsWith("QuickReference.en.md", service.ResolveGuidePath("en"));
     }
 
     [Fact]
-    public void GenerateHelpFile_writes_converted_html()
+    public void ReadQuickReference_returns_the_markdown()
     {
         File.WriteAllText(Path.Combine(_help, "QuickReference.nl.md"), "# Welkom\n\nHallo.");
-        var service = new HelpService(_help, _out);
+        var service = new HelpService(_help);
 
-        var path = service.GenerateHelpFile("nl");
+        var markdown = service.ReadQuickReference("nl");
 
-        Assert.True(File.Exists(path));
-        var html = File.ReadAllText(path);
-        Assert.Contains("<h1>Welkom</h1>", html);
-        Assert.Contains("<!DOCTYPE html>", html);
+        Assert.Contains("# Welkom", markdown);
+        Assert.Contains("Hallo.", markdown);
     }
 
     [Fact]
-    public void GenerateHelpFile_throws_when_no_guide_exists()
+    public void ReadQuickReference_throws_when_no_file_exists()
     {
-        var service = new HelpService(_help, _out);
-        Assert.Throws<FileNotFoundException>(() => service.GenerateHelpFile("nl"));
+        var service = new HelpService(_help);
+        Assert.Throws<FileNotFoundException>(() => service.ReadQuickReference("nl"));
     }
 }

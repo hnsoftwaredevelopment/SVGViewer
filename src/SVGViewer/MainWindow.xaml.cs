@@ -79,16 +79,18 @@ public partial class MainWindow : Window
         window.ShowDialog();
     }
 
-    /// <summary>Opens the user guide for the active language in the default browser.</summary>
+    /// <summary>Shows the quick reference for the active language in an in-app window.</summary>
     private void Help_Click(object sender, RoutedEventArgs e)
     {
         try
         {
-            new HelpService().OpenGuide(_settings.Language);
+            var markdown = new HelpService().ReadQuickReference(_settings.Language);
+            var document = MarkdownToFlowDocument.Convert(markdown);
+            new HelpWindow(document) { Owner = this }.Show();
         }
         catch (Exception ex)
         {
-            Logger.Warn("Could not open the user guide.", ex);
+            Logger.Warn("Could not open the quick reference.", ex);
             MessageBox.Show(this, ex.Message, "SVG Viewer",
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }

@@ -87,8 +87,9 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
   is eenvoudig en zelfverklarend. Zie `docs/user-guide/QuickReference.<taal>.md`,
   ook geopend door de Help-knop.)*
 - ☑ **US-6.3** — Als gebruiker wil ik de help vanuit de app openen in mijn taal.
-  *(Help-knop opent de meegeleverde quick reference van de actieve taal — nl/en/de,
-  met terugval op nl — omgezet naar HTML en geopend in de standaardbrowser; offline.)*
+  *(Help-knop opent de quick reference van de actieve taal — nl/en/de, met terugval
+  op nl — gerenderd als WPF `FlowDocument` in een klein venster **binnen de app**,
+  dus geen browser.)*
 - ☐ **US-6.4** — Als team wil ik dat alle MD-docs in de Obsidian-vault staan.
 
 ## SE-7 · Afwerking & UI-makeover
