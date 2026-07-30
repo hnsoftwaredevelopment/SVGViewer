@@ -52,8 +52,9 @@ public static class SvgResourceImage
                 (reader as IDisposable)?.Dispose();
             }
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.Warn($"Could not load SVG resource '{relativeResourceUri}'.", ex);
             return null;
         }
     }

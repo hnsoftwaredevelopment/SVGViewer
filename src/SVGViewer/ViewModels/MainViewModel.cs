@@ -469,13 +469,13 @@ public partial class MainViewModel : ObservableObject
     private void ApplyFinalStatus()
     {
         var count = _index.FoldersWithSvg.Count;
-        if (SelectedFilter.Value == FolderFilterMode.SvgOnly && count == 0)
+        if (count > 0)
         {
-            SetStatus("StatusNoSvgFound");
+            SetStatus("StatusFoldersWithSvg", count);
         }
         else
         {
-            SetStatus(count > 0 ? "StatusFoldersWithSvg" : "StatusNoSvgFound", count);
+            SetStatus("StatusNoSvgFound");
         }
     }
 

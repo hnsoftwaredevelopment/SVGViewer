@@ -334,3 +334,17 @@ Zo begint de scan niet opnieuw als de gebruiker halverwege van view wisselt; een
 lopende scan blijft beide projecties vullen. Alleen een schijfwissel of Vernieuwen
 start een nieuwe scan (oude wordt geannuleerd). Annuleren stopt de scan maar behoudt
 het tot dan gevondene, en markeert dat als "klaar" zodat view-wissels het hergebruiken.
+
+
+## Foutafhandeling & logging (SE-7)
+
+Onverwachte fouten worden centraal afgevangen in `App`: `DispatcherUnhandledException`
+(UI-thread) logt de fout, toont een nette, gelokaliseerde melding met de logmap en
+houdt de app in de lucht (`Handled = true`); `AppDomain.UnhandledException` en
+`TaskScheduler.UnobservedTaskException` loggen fouten van niet-UI-threads en
+achtergrondtaken. De `Logger` (in `Services`) is bewust licht en dependency-vrij:
+thread-safe, best-effort (logging mag de app nooit laten crashen), schrijft naar
+`%AppData%\SVGViewer\logs\app.log` en roteert naar `app.prev.log` zodra het bestand
+~1 MB passeert. Bestaande stille `catch`-blokken (o.a. `SvgResourceImage`,
+`TitleBarIconFixer`, het openen van de handleiding) loggen nu ook, zodat problemen
+bij gebruikers traceerbaar zijn zonder de werking te verstoren.

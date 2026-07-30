@@ -88,6 +88,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
+            Logger.Warn("Could not open the user guide.", ex);
             MessageBox.Show(this, ex.Message, "SVG Viewer",
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }

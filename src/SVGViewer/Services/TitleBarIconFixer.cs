@@ -67,8 +67,9 @@ public static class TitleBarIconFixer
             SendMessage(hwnd, WmSetIcon, IconSmall, hIcon);
             return hIcon;
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.Warn("Could not set the title-bar icon.", ex);
             return IntPtr.Zero;
         }
     }

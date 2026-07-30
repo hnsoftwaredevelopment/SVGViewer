@@ -174,4 +174,7 @@
   <data name="ButtonClose" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="MsgUnexpectedError" xml:space="preserve">
+    <value>An unexpected error occurred. Details are in the log file: {0}</value>
+  </data>
 </root>
