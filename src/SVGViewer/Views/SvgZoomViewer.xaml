@@ -43,8 +43,9 @@
             </DockPanel>
         </Border>
 
-        <!-- Canvas: scroll to zoom, drag to pan -->
-        <Border Grid.Row="1" ClipToBounds="True" Background="Transparent"
+        <!-- Canvas: scroll to zoom, drag to pan. Solid white so transparent SVGs
+             read well and the dimmed window behind never shows through. -->
+        <Border Grid.Row="1" ClipToBounds="True" Background="White"
                 x:Name="ViewportBorder"
                 MouseWheel="Viewport_MouseWheel"
                 MouseLeftButtonDown="Viewport_MouseLeftButtonDown"

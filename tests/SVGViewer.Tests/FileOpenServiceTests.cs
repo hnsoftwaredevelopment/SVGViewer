@@ -83,16 +83,19 @@ public class FileOpenServiceTests
     }
 
     [Fact]
-    public void OpenWithDialog_uses_the_openas_verb()
+    public void OpenWithDialog_invokes_the_openas_picker_via_rundll32()
     {
         using var tree = new TestTree();
         var launcher = new FakeLauncher();
         var service = new FileOpenService(launcher);
 
-        var outcome = service.OpenWithDialog(ExistingSvg(tree));
+        var svg = ExistingSvg(tree);
+        var outcome = service.OpenWithDialog(svg);
 
         Assert.Equal(FileActionOutcome.Opened, outcome);
-        Assert.Equal("openas", launcher.LastStart!.Verb);
+        Assert.Equal("rundll32.exe", launcher.LastStart!.FileName);
+        Assert.Contains("OpenAs_RunDLL", launcher.LastStart.Arguments);
+        Assert.Contains(svg, launcher.LastStart.Arguments);
         Assert.True(launcher.LastStart.UseShellExecute);
     }
 

@@ -348,3 +348,16 @@ thread-safe, best-effort (logging mag de app nooit laten crashen), schrijft naar
 ~1 MB passeert. Bestaande stille `catch`-blokken (o.a. `SvgResourceImage`,
 `TitleBarIconFixer`, het openen van de handleiding) loggen nu ook, zodat problemen
 bij gebruikers traceerbaar zijn zonder de werking te verstoren.
+
+
+## Automatisch versienummer (SE-7)
+
+De assembly-versie wordt bij elke build automatisch bepaald als `YYYY.M.D.N`: `N`
+begint elke dag op 0 en hoogt met 1 op per build op dezelfde dag. Een MSBuild-target
+(`ComputeDateVersion`) leest een teller uit `build\version-counter.txt` (git-ignored,
+per machine), berekent de nieuwe waarde en zet `Version`/`AssemblyVersion`/
+`FileVersion`/`InformationalVersion`. Omdat WPF in twee passes compileert (een geneste
+build voor de XAML-code), is het **berekenen** read-only (beide passes krijgen dezelfde
+waarde) en schrijft een apart target (`PersistVersionCounter`, na `Build`) de teller
+één keer weg — zo blijft het bij precies +1 per build. Er staan geen vaste
+versienummers meer in de csproj.

@@ -30,10 +30,22 @@ public sealed class LocalizedChoice<T> : ObservableObject
 
 /// <summary>
 /// A language entry. Language names are shown in their own language and are
-/// therefore not translated.
+/// therefore not translated. This is a class (reference equality) on purpose: it
+/// caches its flag image lazily, and a record's value equality would change when
+/// that field is set, which breaks ComboBox selection tracking.
 /// </summary>
-public sealed record LanguageChoice(string CultureName, string DisplayName)
+public sealed class LanguageChoice
 {
+    public LanguageChoice(string cultureName, string displayName)
+    {
+        CultureName = cultureName;
+        DisplayName = displayName;
+    }
+
+    public string CultureName { get; }
+
+    public string DisplayName { get; }
+
     private ImageSource? _flag;
     private bool _flagLoaded;
 

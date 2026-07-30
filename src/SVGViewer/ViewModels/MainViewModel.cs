@@ -243,7 +243,7 @@ public partial class MainViewModel : ObservableObject
     {
         if (file is not null)
         {
-            Report(_fileOpenService.OpenInAssociatedApp(file.FullPath));
+            Report(_fileOpenService.OpenInAssociatedApp(file.FullPath), file.FullPath);
         }
     }
 
@@ -253,7 +253,7 @@ public partial class MainViewModel : ObservableObject
     {
         if (file is not null)
         {
-            Report(_fileOpenService.OpenWithDialog(file.FullPath));
+            Report(_fileOpenService.OpenWithDialog(file.FullPath), file.FullPath);
         }
     }
 
@@ -263,22 +263,25 @@ public partial class MainViewModel : ObservableObject
     {
         if (file is not null)
         {
-            Report(_fileOpenService.ShowInExplorer(file.FullPath));
+            Report(_fileOpenService.ShowInExplorer(file.FullPath), file.FullPath);
         }
     }
 
-    /// <summary>Turns a failed file action into a localized, user-visible message.</summary>
-    private void Report(FileActionOutcome outcome)
+    /// <summary>Turns a failed file action into a localized, user-visible message, and logs it.</summary>
+    private void Report(FileActionOutcome outcome, string path)
     {
         switch (outcome)
         {
             case FileActionOutcome.NoAssociation:
+                Logger.Warn($"No associated application for '{path}'.");
                 _notifier.Notify(Loc.Get("MsgNoAssociation"), Loc.Get("MsgNoAssociationTitle"));
                 break;
             case FileActionOutcome.FileNotFound:
+                Logger.Warn($"File no longer exists: '{path}'.");
                 _notifier.Notify(Loc.Get("MsgFileNotFound"), Loc.Get("AppTitle"));
                 break;
             case FileActionOutcome.Failed:
+                Logger.Error($"File action failed for '{path}'.");
                 _notifier.Notify(Loc.Get("MsgOpenFailed"), Loc.Get("AppTitle"));
                 break;
             case FileActionOutcome.Opened:

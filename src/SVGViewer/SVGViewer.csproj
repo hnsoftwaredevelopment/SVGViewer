@@ -16,8 +16,9 @@
     <!-- The .exe icon. Conditional so the build still works before the artwork
          is dropped into Assets\; it activates automatically once present. -->
     <ApplicationIcon Condition="Exists('Assets\appicon.ico')">Assets\appicon.ico</ApplicationIcon>
-    <AssemblyVersion>2026.7.30.0</AssemblyVersion>
-    <FileVersion>2026.7.30.0</FileVersion>
+
+    <!-- Version is computed automatically per build (see the ComputeDateVersion
+         target below): YYYY.M.D.N, where N increments per build on the same day. -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -53,5 +54,45 @@
   <ItemGroup>
     <SplashScreen Include="Assets\splash.png" Condition="Exists('Assets\splash.png')" Width="800" />
   </ItemGroup>
+
+  <!--
+    Automatic version: YYYY.M.D.N, where N restarts at 0 each day and increments by
+    one on every build that day. The counter lives in build\version-counter.txt
+    (git-ignored) so it survives clean/rebuild and never causes repo churn.
+
+    WPF compiles in two passes (an inner build for the XAML-generated code), so the
+    version is only *computed* in ComputeDateVersion (read-only; both passes get the
+    same value) and the counter is *written* once in PersistVersionCounter, after the
+    outer Build. That keeps the increment at exactly +1 per build.
+  -->
+  <Target Name="ComputeDateVersion" BeforeTargets="GetAssemblyVersion">
+    <PropertyGroup>
+      <_VersionDate>$([System.DateTime]::Now.ToString('yyyy.M.d'))</_VersionDate>
+      <_CounterFile>$(MSBuildThisFileDirectory)..\..\build\version-counter.txt</_CounterFile>
+    </PropertyGroup>
+
+    <ReadLinesFromFile File="$(_CounterFile)" Condition="Exists('$(_CounterFile)')">
+      <Output TaskParameter="Lines" PropertyName="_Counter" />
+    </ReadLinesFromFile>
+
+    <PropertyGroup>
+      <_PrevDate Condition="'$(_Counter)' != ''">$(_Counter.Split(';')[0])</_PrevDate>
+      <_PrevRev Condition="$(_Counter.Contains(';'))">$(_Counter.Split(';')[1])</_PrevRev>
+      <_PrevRev Condition="'$(_PrevRev)' == ''">0</_PrevRev>
+      <_Rev Condition="'$(_PrevDate)' == '$(_VersionDate)'">$([MSBuild]::Add($(_PrevRev), 1))</_Rev>
+      <_Rev Condition="'$(_PrevDate)' != '$(_VersionDate)'">0</_Rev>
+
+      <Version>$(_VersionDate).$(_Rev)</Version>
+      <AssemblyVersion>$(Version)</AssemblyVersion>
+      <FileVersion>$(Version)</FileVersion>
+      <InformationalVersion>$(Version)</InformationalVersion>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="PersistVersionCounter" AfterTargets="Build" Condition="'$(_Rev)' != ''">
+    <MakeDir Directories="$(MSBuildThisFileDirectory)..\..\build" />
+    <WriteLinesToFile File="$(_CounterFile)" Lines="$(_VersionDate);$(_Rev)" Overwrite="true" />
+    <Message Importance="high" Text="SVGViewer version: $(Version)" />
+  </Target>
 
 </Project>

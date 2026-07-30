@@ -85,11 +85,13 @@ public sealed class FileOpenService
 
         try
         {
-            // The "openas" verb shows the shell's "Open with" picker.
-            _launcher.Start(new ProcessStartInfo(path)
+            // The "openas" shell verb is unreliable across Windows versions, so we
+            // invoke the picker directly. OpenAs_RunDLL treats the remainder of the
+            // command line as the path, so spaces work without quoting.
+            _launcher.Start(new ProcessStartInfo("rundll32.exe")
             {
-                UseShellExecute = true,
-                Verb = "openas"
+                Arguments = $"shell32.dll,OpenAs_RunDLL {path}",
+                UseShellExecute = true
             });
             return FileActionOutcome.Opened;
         }
