@@ -384,8 +384,5 @@
             </Grid>
         </Grid>
         </DockPanel>
-
-        <!-- Zoomable full-window overlay, shown when a thumbnail is opened -->
-        <views:SvgZoomViewer x:Name="ZoomViewer" />
     </Grid>
 </Window>

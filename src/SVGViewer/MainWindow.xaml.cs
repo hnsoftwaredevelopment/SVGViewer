@@ -139,7 +139,8 @@ public partial class MainWindow : Window
 
         if (file.Thumbnail is not null)
         {
-            ZoomViewer.Show(file.Thumbnail, file.FileName);
+            // A standalone window: its close button dismisses only the preview.
+            new SvgZoomWindow(file.Thumbnail, file.FileName) { Owner = this }.Show();
         }
     }
 }

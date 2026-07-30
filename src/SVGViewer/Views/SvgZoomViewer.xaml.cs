@@ -41,14 +41,8 @@ public partial class SvgZoomViewer : UserControl
         Focus();
     }
 
-    /// <summary>Hides the overlay and releases the image.</summary>
-    public void Close()
-    {
-        Visibility = Visibility.Collapsed;
-        PreviewImage.Source = null;
-        ImageTransform.Matrix = Matrix.Identity;
-        UpdateZoomLabel();
-    }
+    /// <summary>Closes the preview by closing its host window.</summary>
+    public void Close() => Window.GetWindow(this)?.Close();
 
     protected override void OnKeyDown(KeyEventArgs e)
     {

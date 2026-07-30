@@ -6,9 +6,6 @@ adjustable preview sizes, and one double‑click to open a file in your associat
 editor (e.g. Inkscape). The interface is fully multilingual (Dutch, English,
 German).
 
-> ⚠️ Screenshots below are placeholders and will be replaced with real captures
-> in the final milestone.
-
 ## Features
 
 - **Drive & folder navigation** — pick a drive and click through a tree view.
@@ -22,16 +19,9 @@ German).
 - **Multilingual UI** — Dutch (default), English, German, switchable at runtime.
 - **In‑app help** — user guide opens in the currently selected language.
 
-## Screenshots
+## Screenshot
 
-### Main window
-![Main window](docs/images/main-window.png)
-
-### SVG folders highlighted in the tree
-![Highlighted folders](docs/images/tree-highlight.png)
-
-### Preview sizes
-![Preview sizes](docs/images/preview-sizes.png)
+![SVG Viewer main window](docs/images/Screenshot01.png)
 
 ## Tech stack
 

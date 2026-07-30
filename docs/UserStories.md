@@ -99,8 +99,15 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
   naar het logbestand; lichte, dependency-vrije `Logger` naar
   `%AppData%\SVGViewer\logs\app.log` met rotatie bij ~1 MB. Stille catch-blokken
   loggen nu ook.)*
-- ☐ **US-7.3** — Handmatige testronde over alle features/talen.
-- ☐ **US-7.4** — Echte screenshots vastleggen en in docs verwerken.
+- ☑ **US-7.3** — Handmatige testronde over alle features/talen. *(Uitgevoerd met
+  `docs\TestChecklist.nl.md`; gevonden punten opgelost: taalwissel, "Openen met…",
+  logging van fouten, witte preview-achtergrond, en de preview als los venster.)*
+- ☑ **US-7.4** — Eén algemene screenshot van de app vastgelegd
+  (`docs\images\Screenshot01.png`) en in de README verwerkt. *(Verdere screenshots
+  niet nodig: de functionaliteit spreekt voor zich; de handleidingen blijven tekst.)*
+- ☑ **US-7.13** — Preview opent in een **eigen venster** (popup) i.p.v. een overlay
+  in het hoofdvenster. *(De titelbalk-X sluit nu alleen de preview, niet de hele
+  app. De zoom-viewer wordt gehost in `SvgZoomWindow`.)*
 
 ### UI-makeover (iconen)
 - ☑ **US-7.5** — Weergavekeuze (previewgrootte) als Explorer-achtig icoonmenu

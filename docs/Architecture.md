@@ -348,3 +348,14 @@ thread-safe, best-effort (logging mag de app nooit laten crashen), schrijft naar
 ~1 MB passeert. Bestaande stille `catch`-blokken (o.a. `SvgResourceImage`,
 `TitleBarIconFixer`, het openen van de handleiding) loggen nu ook, zodat problemen
 bij gebruikers traceerbaar zijn zonder de werking te verstoren.
+
+
+## Preview in een eigen venster (SE-3 / SE-7)
+
+De zoom-preview opent in een los venster (`Views/SvgZoomWindow`) dat de bestaande
+`SvgZoomViewer`-UserControl host, in plaats van een overlay in het hoofdvenster.
+Reden: bij een overlay sluit de titelbalk-X van Windows de hele applicatie, terwijl
+gebruikers die knop intuïtief gebruiken om de preview te sluiten. Als eigen venster
+sluit de X (en Esc, en de Sluiten-knop in de viewer) alleen de preview. Het venster
+wordt niet-modaal geopend met de hoofdvenster als eigenaar; `SvgZoomViewer.Close()`
+sluit simpelweg zijn host-venster via `Window.GetWindow(this)`.
