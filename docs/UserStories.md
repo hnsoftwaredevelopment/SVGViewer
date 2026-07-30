@@ -107,7 +107,9 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
   Annuleren. *(Flat icoon-knoppen met Segoe MDL2-glyphs — ⚙ Instellingen, ↻
   Vernieuwen, ✕ Annuleren, en ook ❓ Help en ℹ Over — met gelokaliseerde tooltips;
   kleuren mee met de accentkleur bij hover/klik.)*
-- ☐ **US-7.7** — Talen in het Instellingen-scherm met vlaggen.
+- ☑ **US-7.7** — Talen in het Instellingen-scherm met vlaggen. *(Zelfgetekende
+  SVG-vlaggen NL/EN/DE, ingebakken als resource; de taal-ComboBox toont vlag +
+  naam via een ItemTemplate.)*
 
 ### Navigatie-verbeteringen
 - ☑ **US-7.8** — Als gebruiker wil ik dat **bovenliggende** mappen van een

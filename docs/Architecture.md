@@ -308,3 +308,13 @@ glyphs komen uit het Windows-symboolfont **Segoe MDL2 Assets** (⚙ Instellingen
 `E713`, ↻ Vernieuwen `E72C`, ✕ Annuleren `E711`, ❓ Help `E897`, ℹ Over `E946`),
 gedeeld via de `ToolIconButton`-stijl: transparant met een lichte hover, en
 accentkleur bij indrukken. De tekst zit als gelokaliseerde tooltip op elke knop.
+
+
+## Taalkeuze met vlaggen (SE-7)
+
+De taalkeuze in het Instellingen-scherm toont per taal een vlag naast de naam. De
+vlaggen zijn zelfgetekende SVG's (NL, DE en een vereenvoudigde Union Jack voor
+Engels) onder `Assets\flags\`, ingebakken als WPF-resource. `LanguageChoice` heeft
+een `Flag`-property die de bijbehorende vlag eenmalig via `SvgResourceImage` laadt
+(op basis van de cultuurcode). De ComboBox gebruikt een `ItemTemplate` met een klein
+omkaderd vlagje plus de taalnaam; dat geldt zowel voor de lijst als voor de selectie.

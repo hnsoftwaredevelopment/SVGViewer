@@ -14,8 +14,20 @@
                    FontWeight="SemiBold" Margin="0,0,0,6" />
         <ComboBox Width="200" HorizontalAlignment="Left"
                   ItemsSource="{Binding LanguageChoices}"
-                  SelectedItem="{Binding SelectedLanguage}"
-                  DisplayMemberPath="DisplayName" />
+                  SelectedItem="{Binding SelectedLanguage}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Border Width="22" Height="15" Margin="0,0,8,0"
+                                BorderBrush="#C0C6CC" BorderThickness="0.5"
+                                SnapsToDevicePixels="True">
+                            <Image Source="{Binding Flag}" Stretch="Uniform" />
+                        </Border>
+                        <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
 
         <Separator Margin="0,18" />
 

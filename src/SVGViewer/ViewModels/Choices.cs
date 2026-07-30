@@ -1,5 +1,7 @@
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SVGViewer.Localization;
+using SVGViewer.Services;
 
 namespace SVGViewer.ViewModels;
 
@@ -32,6 +34,24 @@ public sealed class LocalizedChoice<T> : ObservableObject
 /// </summary>
 public sealed record LanguageChoice(string CultureName, string DisplayName)
 {
+    private ImageSource? _flag;
+    private bool _flagLoaded;
+
+    /// <summary>The country flag for this language, loaded once from the embedded SVG.</summary>
+    public ImageSource? Flag
+    {
+        get
+        {
+            if (!_flagLoaded)
+            {
+                _flag = SvgResourceImage.Load($"/Assets/flags/{CultureName}.svg");
+                _flagLoaded = true;
+            }
+
+            return _flag;
+        }
+    }
+
     public override string ToString() => DisplayName;
 }
 
