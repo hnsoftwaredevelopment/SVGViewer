@@ -111,26 +111,26 @@ public class HelpServiceTests : IDisposable
     [Fact]
     public void ResolveGuidePath_falls_back_to_dutch_when_language_missing()
     {
-        File.WriteAllText(Path.Combine(_help, "UserGuide.nl.md"), "# NL");
+        File.WriteAllText(Path.Combine(_help, "QuickReference.nl.md"), "# NL");
         var service = new HelpService(_help, _out);
 
-        Assert.EndsWith("UserGuide.nl.md", service.ResolveGuidePath("de"));
+        Assert.EndsWith("QuickReference.nl.md", service.ResolveGuidePath("de"));
     }
 
     [Fact]
     public void ResolveGuidePath_uses_requested_language_when_present()
     {
-        File.WriteAllText(Path.Combine(_help, "UserGuide.nl.md"), "# NL");
-        File.WriteAllText(Path.Combine(_help, "UserGuide.en.md"), "# EN");
+        File.WriteAllText(Path.Combine(_help, "QuickReference.nl.md"), "# NL");
+        File.WriteAllText(Path.Combine(_help, "QuickReference.en.md"), "# EN");
         var service = new HelpService(_help, _out);
 
-        Assert.EndsWith("UserGuide.en.md", service.ResolveGuidePath("en"));
+        Assert.EndsWith("QuickReference.en.md", service.ResolveGuidePath("en"));
     }
 
     [Fact]
     public void GenerateHelpFile_writes_converted_html()
     {
-        File.WriteAllText(Path.Combine(_help, "UserGuide.nl.md"), "# Welkom\n\nHallo.");
+        File.WriteAllText(Path.Combine(_help, "QuickReference.nl.md"), "# Welkom\n\nHallo.");
         var service = new HelpService(_help, _out);
 
         var path = service.GenerateHelpFile("nl");

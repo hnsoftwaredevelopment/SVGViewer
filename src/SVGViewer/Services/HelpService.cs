@@ -53,10 +53,10 @@ public sealed class HelpService
     /// </summary>
     public string ResolveGuidePath(string? culture)
     {
-        var wanted = Path.Combine(_helpDirectory, $"UserGuide.{NormalizeCulture(culture)}.md");
+        var wanted = Path.Combine(_helpDirectory, $"QuickReference.{NormalizeCulture(culture)}.md");
         if (File.Exists(wanted)) return wanted;
 
-        var dutch = Path.Combine(_helpDirectory, "UserGuide.nl.md");
+        var dutch = Path.Combine(_helpDirectory, "QuickReference.nl.md");
         return File.Exists(dutch) ? dutch : wanted;
     }
 

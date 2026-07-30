@@ -58,7 +58,7 @@ trial notice) or falls back to the standard WPF controls.
 
 ## Documentation
 
-- User guides: [`docs/user-guide/`](docs/user-guide/) — available in NL / EN / DE.
+- Quick reference: [`docs/user-guide/`](docs/user-guide/) — a short overview in NL / EN / DE (also opened by the in‑app Help button).
 - Design & planning: [`docs/Epic.md`](docs/Epic.md) and
   [`docs/UserStories.md`](docs/UserStories.md).
 

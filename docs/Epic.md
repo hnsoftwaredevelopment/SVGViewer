@@ -85,13 +85,14 @@ De taalkeuze en de bevestigingsvoorkeuren staan in het **Instellingen**-scherm
 - Taalkeuze in het Instellingen-scherm wisselt `CurrentUICulture` at runtime en
   herlaadt gebonden teksten via `Loc` (met `INotifyPropertyChanged` +
   `CultureChanged`-event), zonder herstart.
-- Documentatie (`UserGuide.<taal>.md`) wordt in-app geopend op basis van de
-  actieve taal.
+- De quick reference (`QuickReference.<taal>.md`) wordt in-app geopend op basis van
+  de actieve taal.
 
 ## 8. Documentatie-aanpak
 
 - `README.md` (Engels) in de repo-root, met screenshots uit `docs/images/`.
-- `docs/user-guide/UserGuide.nl|en|de.md` — eindgebruikershandleiding per taal.
+- `docs/user-guide/QuickReference.nl|en|de.md` — beknopte quick reference per taal
+  (bewust géén uitgebreide handleiding: de app is eenvoudig en zelfverklarend).
 - `docs/Epic.md` (dit document) en `docs/UserStories.md` — werkverdeling.
 - Alle MD-docs worden per milestone gekopieerd naar de Obsidian-vault:
   `...\Obsidian\Development\HNSoftwareDevelopment\SVGViewer\`

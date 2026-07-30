@@ -33,11 +33,11 @@
     <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
   </ItemGroup>
 
-  <!-- Ship the localized user guides next to the executable for the in-app Help. -->
+  <!-- Ship the localized quick reference next to the executable for the in-app Help. -->
   <ItemGroup>
-    <Content Include="..\..\docs\user-guide\UserGuide.nl.md" Link="Help\UserGuide.nl.md" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="..\..\docs\user-guide\UserGuide.en.md" Link="Help\UserGuide.en.md" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="..\..\docs\user-guide\UserGuide.de.md" Link="Help\UserGuide.de.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\docs\user-guide\QuickReference.nl.md" Link="Help\QuickReference.nl.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\docs\user-guide\QuickReference.en.md" Link="Help\QuickReference.en.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\docs\user-guide\QuickReference.de.md" Link="Help\QuickReference.de.md" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <!-- Icon artwork embedded as WPF resources (loaded via pack URIs at runtime). -->

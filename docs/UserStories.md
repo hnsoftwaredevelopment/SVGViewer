@@ -79,12 +79,16 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
 
 ## SE-6 · Documentatie
 
-- ☐ **US-6.1** — Als lezer wil ik een Engelse `README.md` met screenshots en een
-  beknopte beschrijving.
-- ☐ **US-6.2** — Als gebruiker wil ik user guides in NL/EN/DE met screenshots.
+- ☑ **US-6.1** — Als lezer wil ik een Engelse `README.md` met screenshots en een
+  beknopte beschrijving. *(README met twee screenshots — hoofdvenster en preview —
+  features, tech stack en getting-started.)*
+- ☑ **US-6.2** — Als gebruiker wil ik beknopte documentatie per taal (NL/EN/DE).
+  *(Bewust een korte **quick reference** i.p.v. een uitgebreide handleiding: de app
+  is eenvoudig en zelfverklarend. Zie `docs/user-guide/QuickReference.<taal>.md`,
+  ook geopend door de Help-knop.)*
 - ☑ **US-6.3** — Als gebruiker wil ik de help vanuit de app openen in mijn taal.
-  *(Help-knop opent de meegeleverde gids van de actieve taal — nl/en/de, met
-  terugval op nl — omgezet naar HTML en geopend in de standaardbrowser; offline.)*
+  *(Help-knop opent de meegeleverde quick reference van de actieve taal — nl/en/de,
+  met terugval op nl — omgezet naar HTML en geopend in de standaardbrowser; offline.)*
 - ☐ **US-6.4** — Als team wil ik dat alle MD-docs in de Obsidian-vault staan.
 
 ## SE-7 · Afwerking & UI-makeover

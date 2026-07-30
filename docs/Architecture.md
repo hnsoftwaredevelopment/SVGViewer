@@ -247,9 +247,10 @@ echte screenshots, in-app help in de gekozen taal, en de afwerking (SE-7).
 
 ## In-app help (SE-6)
 
-De Help-knop in de toolbar opent de gebruikersgids van de **actieve taal**. De
-drie gidsen (`docs/user-guide/UserGuide.<taal>.md`) worden als inhoud meegeleverd
-naast de `.exe` (map `Help/`). `HelpService` kiest de gids voor de huidige taal
+De Help-knop in de toolbar opent de **quick reference** van de **actieve taal**. De
+drie bestanden (`docs/user-guide/QuickReference.<taal>.md`) worden als inhoud
+meegeleverd naast de `.exe` (map `Help/`). `HelpService` kiest het bestand voor de
+huidige taal
 (met terugval op nl), zet de Markdown om naar een gestylede HTML-pagina
 (`MarkdownToHtml`), schrijft die naar `%TEMP%\SVGViewer\` en opent 'm in de
 standaardbrowser. Dit werkt volledig offline en hangt niet af van een
