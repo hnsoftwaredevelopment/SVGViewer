@@ -19,9 +19,15 @@ German).
 - **Multilingual UI** — Dutch (default), English, German, switchable at runtime.
 - **In‑app help** — user guide opens in the currently selected language.
 
-## Screenshot
+## Screenshots
+
+Main window:
 
 ![SVG Viewer main window](docs/images/Screenshot01.png)
+
+Preview window (zoom & pan):
+
+![SVG preview window](docs/images/Screenshot02.png)
 
 ## Tech stack
 
