@@ -148,7 +148,7 @@ Status-legenda: ☐ = todo · ◐ = bezig · ☑ = klaar
   lopende scan blijft beide views vullen. Alleen bij schijfwissel/Vernieuwen wordt
   opnieuw gescand; Annuleren behoudt het tot dan gevondene.)*
 
-## SE-8 · Bestandsbeheer (backlog, nog niet ingepland)
+## SE-8 · Bestandsbeheer (in uitvoering)
 
 Uit gebruik blijkt behoefte aan minimaal bestandsbeheer binnen de viewer.
 Zie [AD-3](./Epic.md#ad-3--conflictafhandeling-bij-bestandsbewerkingen) voor de
@@ -156,9 +156,12 @@ gekozen aanpak bij naamconflicten en bevestigingen.
 
 - ☐ **US-8.1** — Als gebruiker wil ik een SVG met slepen naar een andere map
   verplaatsen. *(Hiervoor is de enkele klik/drag gereserveerd.)*
-- ☐ **US-8.2** — Als gebruiker wil ik via het contextmenu een SVG verwijderen,
+- ☑ **US-8.2** — Als gebruiker wil ik via het contextmenu een SVG verwijderen,
   met bevestiging en bij voorkeur naar de prullenbak. De bevestiging heeft een
   "Niet meer tonen"-optie; weer inschakelbaar via Instellingen (SE-9).
+  *(Contextmenu "Verwijderen" → eigen gelokaliseerde bevestiging met "Niet meer
+  vragen" (zet `ConfirmBeforeDelete` uit); verwijdert naar de prullenbak via
+  `FileOperationService`; preview en markering/telling verversen meteen.)*
 - ☐ **US-8.3** — Als gebruiker wil ik via het contextmenu een SVG kopiëren
   (en plakken in een andere map).
 - ☐ **US-8.4** — Als gebruiker wil ik via het contextmenu een SVG hernoemen.

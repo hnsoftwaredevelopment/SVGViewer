@@ -359,3 +359,19 @@ gebruikers die knop intuïtief gebruiken om de preview te sluiten. Als eigen ven
 sluit de X (en Esc, en de Sluiten-knop in de viewer) alleen de preview. Het venster
 wordt niet-modaal geopend met de hoofdvenster als eigenaar; `SvgZoomViewer.Close()`
 sluit simpelweg zijn host-venster via `Window.GetWindow(this)`.
+
+
+## Bestandsbeheer: verwijderen (SE-8)
+
+Bestandsacties lopen via `FileOperationService` (achter `IFileOperationService`),
+dat uitkomsten teruggeeft (`Success` / `FileNotFound` / `Failed`) en fouten logt in
+plaats van te gooien. Verwijderen gaat naar de **prullenbak** (omkeerbaar) via
+`Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile` met `RecycleOption.SendToRecycleBin`
+en zonder Windows-eigen bevestiging (`UIOption.OnlyErrorDialogs`).
+
+De bevestiging is onze eigen, gelokaliseerde dialoog (`Views/ConfirmDeleteWindow`,
+achter `IDeleteConfirmer`) met een **"Niet meer vragen"**-optie die
+`ConfirmBeforeDelete` (SE-9) uitzet; staat die uit, dan wordt niet gevraagd. Na een
+succesvolle verwijdering haalt `MainViewModel` het bestand uit de previewlijst,
+werkt de SVG-telling van de map in de index bij (`SvgFolderIndex.SetSvgCount`) en
+ververst de markeringen — een gerichte refresh zonder volledige herscan.

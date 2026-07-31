@@ -19,6 +19,8 @@ public partial class MainViewModel : ObservableObject
     private readonly SvgThumbnailService _thumbnailService = new();
     private readonly FileOpenService _fileOpenService;
     private readonly IUserNotifier _notifier;
+    private readonly IFileOperationService _fileOperations;
+    private readonly IDeleteConfirmer _deleteConfirmer;
     private readonly AppSettings _settings;
 
     private CancellationTokenSource? _scanCancellation;
@@ -42,12 +44,16 @@ public partial class MainViewModel : ObservableObject
         SettingsService settingsService,
         AppSettings settings,
         FileOpenService? fileOpenService = null,
-        IUserNotifier? notifier = null)
+        IUserNotifier? notifier = null,
+        IFileOperationService? fileOperations = null,
+        IDeleteConfirmer? deleteConfirmer = null)
     {
         _settingsService = settingsService;
         _settings = settings;
         _fileOpenService = fileOpenService ?? new FileOpenService();
         _notifier = notifier ?? new MessageBoxNotifier();
+        _fileOperations = fileOperations ?? new FileOperationService();
+        _deleteConfirmer = deleteConfirmer ?? new DialogDeleteConfirmer();
 
         Drives = new ObservableCollection<DriveChoice>(LoadDrives());
         RootNodes = new ObservableCollection<DirectoryNodeViewModel>();
@@ -265,6 +271,61 @@ public partial class MainViewModel : ObservableObject
         {
             Report(_fileOpenService.ShowInExplorer(file.FullPath), file.FullPath);
         }
+    }
+
+    /// <summary>Deletes the file (to the Recycle Bin) after an optional confirmation.</summary>
+    [RelayCommand]
+    private void DeleteFile(SvgFileViewModel? file)
+    {
+        if (file is null)
+        {
+            return;
+        }
+
+        if (_settings.ConfirmBeforeDelete)
+        {
+            var confirmation = _deleteConfirmer.Confirm(file.FileName);
+            if (!confirmation.Confirmed)
+            {
+                return;
+            }
+
+            if (confirmation.DoNotAskAgain)
+            {
+                _settings.ConfirmBeforeDelete = false;
+                _settingsService.Save(_settings);
+            }
+        }
+
+        var outcome = _fileOperations.DeleteToRecycleBin(file.FullPath);
+        switch (outcome)
+        {
+            case FileOperationOutcome.Success:
+                RemoveFromView(file);
+                break;
+            case FileOperationOutcome.FileNotFound:
+                RemoveFromView(file); // It is gone anyway; keep the list in sync.
+                _notifier.Notify(Loc.Get("MsgFileNotFound"), Loc.Get("AppTitle"));
+                break;
+            default:
+                _notifier.Notify(Loc.Get("MsgDeleteFailed"), Loc.Get("AppTitle"));
+                break;
+        }
+    }
+
+    /// <summary>Removes a deleted file from the preview list and refreshes markings.</summary>
+    private void RemoveFromView(SvgFileViewModel file)
+    {
+        SvgFiles.Remove(file);
+
+        var folder = System.IO.Path.GetDirectoryName(file.FullPath);
+        if (folder is not null)
+        {
+            _index.SetSvgCount(folder, DirectoryScanner.CountSvgFiles(folder));
+            RefreshMarkings();
+        }
+
+        UpdateSelectedFolderInfo();
     }
 
     /// <summary>Turns a failed file action into a localized, user-visible message, and logs it.</summary>

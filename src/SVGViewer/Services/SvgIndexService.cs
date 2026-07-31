@@ -45,6 +45,25 @@ public sealed class SvgFolderIndex
     internal void AddSvgFolder(string normalizedPath, int count) =>
         _svgCounts[normalizedPath] = count;
 
+    /// <summary>
+    /// Updates a folder's SVG count after a file operation (e.g. a delete). When
+    /// the count reaches zero the folder drops out of <see cref="FoldersWithSvg"/>
+    /// so its highlight/count badge disappears. Ancestor relevance is left as-is;
+    /// a full Refresh recomputes it.
+    /// </summary>
+    internal void SetSvgCount(string path, int count)
+    {
+        var normalized = DirectoryScanner.NormalizeFolderPath(path);
+        if (count > 0)
+        {
+            _svgCounts[normalized] = count;
+        }
+        else
+        {
+            _svgCounts.TryRemove(normalized, out _);
+        }
+    }
+
     /// <summary>Marks a folder as on-the-path-to an SVG folder. Returns false if
     /// it was already marked (so the caller can stop walking up).</summary>
     internal bool AddRelevant(string normalizedPath) =>

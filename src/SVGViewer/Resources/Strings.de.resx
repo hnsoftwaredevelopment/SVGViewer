@@ -177,4 +177,19 @@
   <data name="MsgUnexpectedError" xml:space="preserve">
     <value>Ein unerwarteter Fehler ist aufgetreten. Details stehen in der Protokolldatei: {0}</value>
   </data>
+  <data name="ContextDelete" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="ConfirmDeleteTitle" xml:space="preserve">
+    <value>Löschen bestätigen</value>
+  </data>
+  <data name="ConfirmDeleteMessage" xml:space="preserve">
+    <value>Möchtest du '{0}' wirklich in den Papierkorb verschieben?</value>
+  </data>
+  <data name="ConfirmDeleteDoNotAskAgain" xml:space="preserve">
+    <value>Nicht mehr fragen</value>
+  </data>
+  <data name="MsgDeleteFailed" xml:space="preserve">
+    <value>Die Datei konnte nicht gelöscht werden.</value>
+  </data>
 </root>
