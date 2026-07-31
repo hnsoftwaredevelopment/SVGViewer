@@ -164,7 +164,10 @@ gekozen aanpak bij naamconflicten en bevestigingen.
   `FileOperationService`; preview en markering/telling verversen meteen.)*
 - ☐ **US-8.3** — Als gebruiker wil ik via het contextmenu een SVG kopiëren
   (en plakken in een andere map).
-- ☐ **US-8.4** — Als gebruiker wil ik via het contextmenu een SVG hernoemen.
+- ☑ **US-8.4** — Als gebruiker wil ik via het contextmenu een SVG hernoemen.
+  *(Contextmenu "Hernoemen" → dialoog met de nieuwe naam (extensie blijft behouden);
+  bestaat de doelnaam al dan wordt **elke keer** om overschrijven gevraagd (US-8.7);
+  daarna ververst de preview. Ongeldige namen worden netjes gemeld.)*
 - ☐ **US-8.5** — Als gebruiker wil ik een nieuwe map kunnen aanmaken.
 - ☐ **US-8.6** — Als gebruiker wil ik dat de tree en preview zich verversen na een
   bestandsbewerking.

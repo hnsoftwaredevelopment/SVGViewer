@@ -192,4 +192,25 @@
   <data name="MsgDeleteFailed" xml:space="preserve">
     <value>Die Datei konnte nicht gelöscht werden.</value>
   </data>
+  <data name="ContextRename" xml:space="preserve">
+    <value>Umbenennen</value>
+  </data>
+  <data name="RenameTitle" xml:space="preserve">
+    <value>Datei umbenennen</value>
+  </data>
+  <data name="RenameLabel" xml:space="preserve">
+    <value>Neuer Name:</value>
+  </data>
+  <data name="ConfirmOverwriteTitle" xml:space="preserve">
+    <value>Überschreiben?</value>
+  </data>
+  <data name="ConfirmOverwriteMessage" xml:space="preserve">
+    <value>Eine Datei mit dem Namen '{0}' existiert bereits. Möchtest du sie überschreiben?</value>
+  </data>
+  <data name="MsgRenameFailed" xml:space="preserve">
+    <value>Die Datei konnte nicht umbenannt werden.</value>
+  </data>
+  <data name="MsgInvalidName" xml:space="preserve">
+    <value>Dieser Name ist ungültig.</value>
+  </data>
 </root>

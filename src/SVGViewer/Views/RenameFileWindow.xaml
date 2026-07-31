@@ -1,0 +1,25 @@
+<Window x:Class="SVGViewer.Views.RenameFileWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:SVGViewer.Localization"
+        Title="{Binding Source={x:Static loc:Loc.Instance}, Path=[RenameTitle]}"
+        SizeToContent="Height" Width="420"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize" ShowInTaskbar="False">
+    <StackPanel Margin="20">
+        <TextBlock Text="{Binding Source={x:Static loc:Loc.Instance}, Path=[RenameLabel]}"
+                   Margin="0,0,0,6" />
+        <DockPanel Margin="0,0,0,18">
+            <TextBlock x:Name="ExtensionText" DockPanel.Dock="Right"
+                       VerticalAlignment="Center" Margin="6,0,0,0" Foreground="#57606A" />
+            <TextBox x:Name="NameBox" />
+        </DockPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonCancel]}"
+                    MinWidth="90" Padding="14,4" Margin="0,0,8,0"
+                    IsCancel="True" Click="Cancel_Click" />
+            <Button Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[ContextRename]}"
+                    MinWidth="90" Padding="14,4" IsDefault="True" Click="Rename_Click" />
+        </StackPanel>
+    </StackPanel>
+</Window>

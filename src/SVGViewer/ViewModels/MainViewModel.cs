@@ -21,6 +21,7 @@ public partial class MainViewModel : ObservableObject
     private readonly IUserNotifier _notifier;
     private readonly IFileOperationService _fileOperations;
     private readonly IDeleteConfirmer _deleteConfirmer;
+    private readonly IRenameDialog _renameDialog;
     private readonly AppSettings _settings;
 
     private CancellationTokenSource? _scanCancellation;
@@ -46,7 +47,8 @@ public partial class MainViewModel : ObservableObject
         FileOpenService? fileOpenService = null,
         IUserNotifier? notifier = null,
         IFileOperationService? fileOperations = null,
-        IDeleteConfirmer? deleteConfirmer = null)
+        IDeleteConfirmer? deleteConfirmer = null,
+        IRenameDialog? renameDialog = null)
     {
         _settingsService = settingsService;
         _settings = settings;
@@ -54,6 +56,7 @@ public partial class MainViewModel : ObservableObject
         _notifier = notifier ?? new MessageBoxNotifier();
         _fileOperations = fileOperations ?? new FileOperationService();
         _deleteConfirmer = deleteConfirmer ?? new DialogDeleteConfirmer();
+        _renameDialog = renameDialog ?? new RenameDialog();
 
         Drives = new ObservableCollection<DriveChoice>(LoadDrives());
         RootNodes = new ObservableCollection<DirectoryNodeViewModel>();
@@ -270,6 +273,53 @@ public partial class MainViewModel : ObservableObject
         if (file is not null)
         {
             Report(_fileOpenService.ShowInExplorer(file.FullPath), file.FullPath);
+        }
+    }
+
+    /// <summary>Renames the file after prompting for a new name (asks before overwriting).</summary>
+    [RelayCommand]
+    private void RenameFile(SvgFileViewModel? file)
+    {
+        if (file is null)
+        {
+            return;
+        }
+
+        var newName = _renameDialog.AskNewName(file.FileName);
+        if (newName is null || string.Equals(newName, file.FileName, StringComparison.OrdinalIgnoreCase))
+        {
+            return; // cancelled or unchanged
+        }
+
+        var outcome = _fileOperations.Rename(file.FullPath, newName, overwrite: false);
+
+        if (outcome == FileOperationOutcome.TargetExists)
+        {
+            // US-8.7: a single-file conflict is always asked, every time.
+            if (!_notifier.Confirm(Loc.Format("ConfirmOverwriteMessage", newName), Loc.Get("ConfirmOverwriteTitle")))
+            {
+                return;
+            }
+
+            outcome = _fileOperations.Rename(file.FullPath, newName, overwrite: true);
+        }
+
+        switch (outcome)
+        {
+            case FileOperationOutcome.Success:
+                // Reload the folder so the new name (and its thumbnail) show.
+                _ = LoadPreviewAsync(SelectedNode);
+                break;
+            case FileOperationOutcome.FileNotFound:
+                _notifier.Notify(Loc.Get("MsgFileNotFound"), Loc.Get("AppTitle"));
+                RemoveFromView(file);
+                break;
+            case FileOperationOutcome.InvalidName:
+                _notifier.Notify(Loc.Get("MsgInvalidName"), Loc.Get("AppTitle"));
+                break;
+            default:
+                _notifier.Notify(Loc.Get("MsgRenameFailed"), Loc.Get("AppTitle"));
+                break;
         }
     }
 

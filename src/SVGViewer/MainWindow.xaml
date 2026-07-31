@@ -89,6 +89,9 @@
                       Command="{Binding PlacementTarget.Tag.ShowInExplorerCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
             <Separator />
+            <MenuItem Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[ContextRename]}"
+                      Command="{Binding PlacementTarget.Tag.RenameFileCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
             <MenuItem Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[ContextDelete]}"
                       Command="{Binding PlacementTarget.Tag.DeleteFileCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />

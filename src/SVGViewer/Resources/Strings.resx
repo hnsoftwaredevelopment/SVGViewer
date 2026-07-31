@@ -192,4 +192,25 @@
   <data name="MsgDeleteFailed" xml:space="preserve">
     <value>Het bestand kon niet worden verwijderd.</value>
   </data>
+  <data name="ContextRename" xml:space="preserve">
+    <value>Hernoemen</value>
+  </data>
+  <data name="RenameTitle" xml:space="preserve">
+    <value>Bestand hernoemen</value>
+  </data>
+  <data name="RenameLabel" xml:space="preserve">
+    <value>Nieuwe naam:</value>
+  </data>
+  <data name="ConfirmOverwriteTitle" xml:space="preserve">
+    <value>Overschrijven?</value>
+  </data>
+  <data name="ConfirmOverwriteMessage" xml:space="preserve">
+    <value>Er bestaat al een bestand met de naam '{0}'. Wil je het overschrijven?</value>
+  </data>
+  <data name="MsgRenameFailed" xml:space="preserve">
+    <value>Het bestand kon niet worden hernoemd.</value>
+  </data>
+  <data name="MsgInvalidName" xml:space="preserve">
+    <value>Die naam is ongeldig.</value>
+  </data>
 </root>

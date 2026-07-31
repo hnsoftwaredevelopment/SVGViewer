@@ -375,3 +375,19 @@ achter `IDeleteConfirmer`) met een **"Niet meer vragen"**-optie die
 succesvolle verwijdering haalt `MainViewModel` het bestand uit de previewlijst,
 werkt de SVG-telling van de map in de index bij (`SvgFolderIndex.SetSvgCount`) en
 ververst de markeringen — een gerichte refresh zonder volledige herscan.
+
+
+## Bestandsbeheer: hernoemen (SE-8)
+
+`FileOperationService.Rename(path, newName, overwrite)` hernoemt binnen dezelfde map
+en geeft uitkomsten terug: `Success`, `FileNotFound`, `InvalidName` (lege naam of
+ongeldige tekens), `TargetExists` (doelnaam bestaat al en `overwrite` is false) en
+`Failed`. De naam-invoer gaat via `Views/RenameFileWindow` (achter `IRenameDialog`),
+dat de extensie als vaste suffix toont en behoudt, zodat het resultaat altijd een
+geldige bestandsnaam van hetzelfde type is.
+
+Conform [AD-3]/US-8.7 wordt bij één bestand **elke keer** om bevestiging gevraagd als
+de doelnaam al bestaat (geen persistente "altijd overschrijven"). Die ja/nee-vraag
+loopt via `IUserNotifier.Confirm`. Na een succesvolle hernoeming herlaadt
+`MainViewModel` de preview van de geselecteerde map, zodat de nieuwe naam en
+thumbnail verschijnen; de telling verandert niet.

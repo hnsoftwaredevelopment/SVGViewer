@@ -192,4 +192,25 @@
   <data name="MsgDeleteFailed" xml:space="preserve">
     <value>The file could not be deleted.</value>
   </data>
+  <data name="ContextRename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="RenameTitle" xml:space="preserve">
+    <value>Rename file</value>
+  </data>
+  <data name="RenameLabel" xml:space="preserve">
+    <value>New name:</value>
+  </data>
+  <data name="ConfirmOverwriteTitle" xml:space="preserve">
+    <value>Overwrite?</value>
+  </data>
+  <data name="ConfirmOverwriteMessage" xml:space="preserve">
+    <value>A file named '{0}' already exists. Do you want to overwrite it?</value>
+  </data>
+  <data name="MsgRenameFailed" xml:space="preserve">
+    <value>The file could not be renamed.</value>
+  </data>
+  <data name="MsgInvalidName" xml:space="preserve">
+    <value>That name is not valid.</value>
+  </data>
 </root>
