@@ -22,6 +22,7 @@ public partial class MainViewModel : ObservableObject
     private readonly IFileOperationService _fileOperations;
     private readonly IDeleteConfirmer _deleteConfirmer;
     private readonly IRenameDialog _renameDialog;
+    private readonly INewFolderDialog _newFolderDialog;
     private readonly AppSettings _settings;
 
     private CancellationTokenSource? _scanCancellation;
@@ -48,7 +49,8 @@ public partial class MainViewModel : ObservableObject
         IUserNotifier? notifier = null,
         IFileOperationService? fileOperations = null,
         IDeleteConfirmer? deleteConfirmer = null,
-        IRenameDialog? renameDialog = null)
+        IRenameDialog? renameDialog = null,
+        INewFolderDialog? newFolderDialog = null)
     {
         _settingsService = settingsService;
         _settings = settings;
@@ -57,6 +59,7 @@ public partial class MainViewModel : ObservableObject
         _fileOperations = fileOperations ?? new FileOperationService();
         _deleteConfirmer = deleteConfirmer ?? new DialogDeleteConfirmer();
         _renameDialog = renameDialog ?? new RenameDialog();
+        _newFolderDialog = newFolderDialog ?? new NewFolderDialog();
 
         Drives = new ObservableCollection<DriveChoice>(LoadDrives());
         RootNodes = new ObservableCollection<DirectoryNodeViewModel>();
@@ -273,6 +276,41 @@ public partial class MainViewModel : ObservableObject
         if (file is not null)
         {
             Report(_fileOpenService.ShowInExplorer(file.FullPath), file.FullPath);
+        }
+    }
+
+    /// <summary>Creates a new sub-folder inside the given (or selected) folder node.</summary>
+    [RelayCommand]
+    private void NewFolder(DirectoryNodeViewModel? node)
+    {
+        var parent = node ?? SelectedNode;
+        if (parent is null || parent.IsPlaceholder || string.IsNullOrEmpty(parent.FullPath))
+        {
+            return;
+        }
+
+        var name = _newFolderDialog.AskFolderName();
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return;
+        }
+
+        var outcome = _fileOperations.CreateFolder(parent.FullPath, name);
+        switch (outcome)
+        {
+            case FileOperationOutcome.Success:
+                parent.ReloadChildren();
+                parent.IsExpanded = true;
+                break;
+            case FileOperationOutcome.TargetExists:
+                _notifier.Notify(Loc.Get("MsgFolderExists"), Loc.Get("AppTitle"));
+                break;
+            case FileOperationOutcome.InvalidName:
+                _notifier.Notify(Loc.Get("MsgInvalidName"), Loc.Get("AppTitle"));
+                break;
+            default:
+                _notifier.Notify(Loc.Get("MsgNewFolderFailed"), Loc.Get("AppTitle"));
+                break;
         }
     }
 

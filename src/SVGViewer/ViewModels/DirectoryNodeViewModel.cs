@@ -227,4 +227,24 @@ public partial class DirectoryNodeViewModel : ObservableObject
         LoadChildren();
         IsExpanded = true;
     }
+
+    /// <summary>
+    /// Re-reads this folder's child folders from disk (e.g. after creating a new
+    /// sub-folder). Realized children are rebuilt; a collapsed node just gets a
+    /// fresh placeholder so it lazy-loads again on the next expand.
+    /// </summary>
+    public void ReloadChildren()
+    {
+        _childrenLoaded = false;
+        Children.Clear();
+
+        if (IsExpanded)
+        {
+            LoadChildren();
+        }
+        else
+        {
+            AddPlaceholderIfNeeded();
+        }
+    }
 }

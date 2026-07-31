@@ -1,0 +1,21 @@
+<Window x:Class="SVGViewer.Views.NewFolderWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:SVGViewer.Localization"
+        Title="{Binding Source={x:Static loc:Loc.Instance}, Path=[NewFolderTitle]}"
+        SizeToContent="Height" Width="420"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize" ShowInTaskbar="False">
+    <StackPanel Margin="20">
+        <TextBlock Text="{Binding Source={x:Static loc:Loc.Instance}, Path=[NewFolderLabel]}"
+                   Margin="0,0,0,6" />
+        <TextBox x:Name="NameBox" Margin="0,0,0,18" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonCancel]}"
+                    MinWidth="90" Padding="14,4" Margin="0,0,8,0"
+                    IsCancel="True" Click="Cancel_Click" />
+            <Button Content="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonCreate]}"
+                    MinWidth="90" Padding="14,4" IsDefault="True" Click="Create_Click" />
+        </StackPanel>
+    </StackPanel>
+</Window>

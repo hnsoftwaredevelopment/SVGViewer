@@ -24,6 +24,12 @@ public interface IFileOperationService
     /// is false, so the caller can ask first.
     /// </summary>
     FileOperationOutcome Rename(string path, string newName, bool overwrite);
+
+    /// <summary>
+    /// Creates a new sub-folder. Returns <see cref="FileOperationOutcome.TargetExists"/>
+    /// when a file or folder with that name is already present.
+    /// </summary>
+    FileOperationOutcome CreateFolder(string parentPath, string name);
 }
 
 /// <summary>
@@ -92,6 +98,32 @@ public sealed class FileOperationService : IFileOperationService
         catch (Exception ex)
         {
             Logger.Error($"Failed to rename '{path}' to '{newName}'.", ex);
+            return FileOperationOutcome.Failed;
+        }
+    }
+
+    public FileOperationOutcome CreateFolder(string parentPath, string name)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(name) ||
+                name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            {
+                return FileOperationOutcome.InvalidName;
+            }
+
+            var target = Path.Combine(parentPath, name);
+            if (Directory.Exists(target) || File.Exists(target))
+            {
+                return FileOperationOutcome.TargetExists;
+            }
+
+            Directory.CreateDirectory(target);
+            return FileOperationOutcome.Success;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"Failed to create folder '{name}' in '{parentPath}'.", ex);
             return FileOperationOutcome.Failed;
         }
     }

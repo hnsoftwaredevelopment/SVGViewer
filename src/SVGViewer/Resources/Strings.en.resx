@@ -213,4 +213,22 @@
   <data name="MsgInvalidName" xml:space="preserve">
     <value>That name is not valid.</value>
   </data>
+  <data name="ContextNewFolder" xml:space="preserve">
+    <value>New folder</value>
+  </data>
+  <data name="NewFolderTitle" xml:space="preserve">
+    <value>Create new folder</value>
+  </data>
+  <data name="NewFolderLabel" xml:space="preserve">
+    <value>Folder name:</value>
+  </data>
+  <data name="ButtonCreate" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="MsgFolderExists" xml:space="preserve">
+    <value>A folder with that name already exists.</value>
+  </data>
+  <data name="MsgNewFolderFailed" xml:space="preserve">
+    <value>The folder could not be created.</value>
+  </data>
 </root>

@@ -391,3 +391,15 @@ de doelnaam al bestaat (geen persistente "altijd overschrijven"). Die ja/nee-vra
 loopt via `IUserNotifier.Confirm`. Na een succesvolle hernoeming herlaadt
 `MainViewModel` de preview van de geselecteerde map, zodat de nieuwe naam en
 thumbnail verschijnen; de telling verandert niet.
+
+
+## Bestandsbeheer: nieuwe map (SE-8)
+
+`FileOperationService.CreateFolder(parentPath, name)` maakt een submap en geeft
+`Success`, `InvalidName`, `TargetExists` (naam al in gebruik) of `Failed` terug. De
+actie zit in het rechtsklik-menu van een **map in de boom** (`INewFolderDialog` /
+`Views/NewFolderWindow` voor de naam). Na aanmaken herleest de betreffende node zijn
+kinderen via `DirectoryNodeViewModel.ReloadChildren` en klapt open, zodat de nieuwe
+map meteen zichtbaar is — opnieuw een gerichte verversing zonder herscan. In het
+filter "Alleen SVG" verschijnt een lege nieuwe map pas zodra er SVG's in staan
+(consistent met de bedoeling van dat filter).

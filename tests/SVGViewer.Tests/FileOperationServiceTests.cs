@@ -101,4 +101,31 @@ public class FileOperationServiceTests : IDisposable
         Assert.Equal(FileOperationOutcome.InvalidName, outcome);
         Assert.True(File.Exists(path));
     }
+
+    [Fact]
+    public void CreateFolder_creates_a_sub_folder()
+    {
+        var outcome = _service.CreateFolder(_dir, "new-folder");
+
+        Assert.Equal(FileOperationOutcome.Success, outcome);
+        Assert.True(Directory.Exists(Path.Combine(_dir, "new-folder")));
+    }
+
+    [Fact]
+    public void CreateFolder_reports_an_existing_folder()
+    {
+        Directory.CreateDirectory(Path.Combine(_dir, "existing"));
+
+        var outcome = _service.CreateFolder(_dir, "existing");
+
+        Assert.Equal(FileOperationOutcome.TargetExists, outcome);
+    }
+
+    [Fact]
+    public void CreateFolder_rejects_an_invalid_name()
+    {
+        var outcome = _service.CreateFolder(_dir, "bad:name");
+
+        Assert.Equal(FileOperationOutcome.InvalidName, outcome);
+    }
 }

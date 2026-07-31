@@ -168,7 +168,11 @@ gekozen aanpak bij naamconflicten en bevestigingen.
   *(Contextmenu "Hernoemen" → dialoog met de nieuwe naam (extensie blijft behouden);
   bestaat de doelnaam al dan wordt **elke keer** om overschrijven gevraagd (US-8.7);
   daarna ververst de preview. Ongeldige namen worden netjes gemeld.)*
-- ☐ **US-8.5** — Als gebruiker wil ik een nieuwe map kunnen aanmaken.
+- ☑ **US-8.5** — Als gebruiker wil ik een nieuwe map kunnen aanmaken.
+  *(Rechtsklik op een map in de boom → "Nieuwe map" → naamdialoog; de submap wordt
+  aangemaakt via `FileOperationService.CreateFolder` en de boom klapt open zodat de
+  nieuwe map zichtbaar is. Bestaat de naam al of is 'ie ongeldig, dan een nette
+  melding. In "Alleen SVG" verschijnt een lege nieuwe map pas als er SVG's in staan.)*
 - ☐ **US-8.6** — Als gebruiker wil ik dat de tree en preview zich verversen na een
   bestandsbewerking.
 - ☐ **US-8.7** — Als gebruiker wil ik bij één bestand dat al bestaat, **elke keer
