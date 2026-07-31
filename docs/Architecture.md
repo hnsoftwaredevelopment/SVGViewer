@@ -403,3 +403,15 @@ kinderen via `DirectoryNodeViewModel.ReloadChildren` en klapt open, zodat de nie
 map meteen zichtbaar is — opnieuw een gerichte verversing zonder herscan. In het
 filter "Alleen SVG" verschijnt een lege nieuwe map pas zodra er SVG's in staan
 (consistent met de bedoeling van dat filter).
+
+
+## Bestandsbeheer: kopiëren/plakken (SE-8)
+
+Kopiëren gebruikt het **Windows-klembord** (achter `IFileClipboard`), zodat
+bestanden ook van/naar de Verkenner werken. "Kopiëren" op een SVG zet het bestand op
+het klembord; "Plakken" op een map-node kopieert het klembord-bestand erin via
+`FileOperationService.Copy`. Conform US-8.7 wordt bij een naamconflict in de doelmap
+**elke keer** om overschrijven gevraagd (`IUserNotifier.Confirm`); plakken in de
+eigen map van het bestand maakt bewust een uniek `(2)`-duplicaat in plaats van te
+vragen. Na een geslaagde plak-actie werkt `MainViewModel` de telling/markering van
+de doelmap bij en herlaadt, als dat de geselecteerde map is, de preview.

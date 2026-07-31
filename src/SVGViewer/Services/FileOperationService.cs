@@ -30,6 +30,14 @@ public interface IFileOperationService
     /// when a file or folder with that name is already present.
     /// </summary>
     FileOperationOutcome CreateFolder(string parentPath, string name);
+
+    /// <summary>
+    /// Copies a file into a target folder. Pasting into the file's own folder makes
+    /// a uniquely-named duplicate. Returns <see cref="FileOperationOutcome.TargetExists"/>
+    /// when a different folder already holds a file of that name and
+    /// <paramref name="overwrite"/> is false, so the caller can ask first.
+    /// </summary>
+    FileOperationOutcome Copy(string sourcePath, string targetDirectory, bool overwrite);
 }
 
 /// <summary>
@@ -126,5 +134,68 @@ public sealed class FileOperationService : IFileOperationService
             Logger.Error($"Failed to create folder '{name}' in '{parentPath}'.", ex);
             return FileOperationOutcome.Failed;
         }
+    }
+
+    public FileOperationOutcome Copy(string sourcePath, string targetDirectory, bool overwrite)
+    {
+        try
+        {
+            if (!File.Exists(sourcePath))
+            {
+                return FileOperationOutcome.FileNotFound;
+            }
+
+            if (!Directory.Exists(targetDirectory))
+            {
+                return FileOperationOutcome.Failed;
+            }
+
+            var fileName = Path.GetFileName(sourcePath);
+            var sourceDir = Path.GetDirectoryName(sourcePath) ?? string.Empty;
+            var sameFolder = string.Equals(
+                Path.GetFullPath(sourceDir),
+                Path.GetFullPath(targetDirectory),
+                StringComparison.OrdinalIgnoreCase);
+
+            string target;
+            if (sameFolder)
+            {
+                // Pasting into its own folder is an intentional duplicate: give it a
+                // fresh "(n)" name rather than asking to overwrite the original.
+                target = UniqueTarget(targetDirectory, fileName);
+            }
+            else
+            {
+                target = Path.Combine(targetDirectory, fileName);
+                if (!overwrite && File.Exists(target))
+                {
+                    return FileOperationOutcome.TargetExists;
+                }
+            }
+
+            File.Copy(sourcePath, target, overwrite && !sameFolder);
+            return FileOperationOutcome.Success;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"Failed to copy '{sourcePath}' to '{targetDirectory}'.", ex);
+            return FileOperationOutcome.Failed;
+        }
+    }
+
+    private static string UniqueTarget(string directory, string fileName)
+    {
+        var baseName = Path.GetFileNameWithoutExtension(fileName);
+        var extension = Path.GetExtension(fileName);
+
+        var candidate = Path.Combine(directory, fileName);
+        var counter = 2;
+        while (File.Exists(candidate))
+        {
+            candidate = Path.Combine(directory, $"{baseName} ({counter}){extension}");
+            counter++;
+        }
+
+        return candidate;
     }
 }

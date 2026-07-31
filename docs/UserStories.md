@@ -162,8 +162,11 @@ gekozen aanpak bij naamconflicten en bevestigingen.
   *(Contextmenu "Verwijderen" → eigen gelokaliseerde bevestiging met "Niet meer
   vragen" (zet `ConfirmBeforeDelete` uit); verwijdert naar de prullenbak via
   `FileOperationService`; preview en markering/telling verversen meteen.)*
-- ☐ **US-8.3** — Als gebruiker wil ik via het contextmenu een SVG kopiëren
-  (en plakken in een andere map).
+- ☑ **US-8.3** — Als gebruiker wil ik via het contextmenu een SVG kopiëren
+  (en plakken in een andere map). *(SVG-contextmenu "Kopiëren" zet het bestand op
+  het Windows-klembord; rechtsklik op een map → "Plakken" kopieert het erin. Werkt
+  ook van/naar de Verkenner. Bestaat de naam al in de doelmap → elke keer vragen
+  (US-8.7); plakken in dezelfde map maakt een uniek "(2)"-duplicaat.)*
 - ☑ **US-8.4** — Als gebruiker wil ik via het contextmenu een SVG hernoemen.
   *(Contextmenu "Hernoemen" → dialoog met de nieuwe naam (extensie blijft behouden);
   bestaat de doelnaam al dan wordt **elke keer** om overschrijven gevraagd (US-8.7);

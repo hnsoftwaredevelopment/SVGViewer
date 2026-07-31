@@ -23,6 +23,7 @@ public partial class MainViewModel : ObservableObject
     private readonly IDeleteConfirmer _deleteConfirmer;
     private readonly IRenameDialog _renameDialog;
     private readonly INewFolderDialog _newFolderDialog;
+    private readonly IFileClipboard _clipboard;
     private readonly AppSettings _settings;
 
     private CancellationTokenSource? _scanCancellation;
@@ -50,7 +51,8 @@ public partial class MainViewModel : ObservableObject
         IFileOperationService? fileOperations = null,
         IDeleteConfirmer? deleteConfirmer = null,
         IRenameDialog? renameDialog = null,
-        INewFolderDialog? newFolderDialog = null)
+        INewFolderDialog? newFolderDialog = null,
+        IFileClipboard? clipboard = null)
     {
         _settingsService = settingsService;
         _settings = settings;
@@ -60,6 +62,7 @@ public partial class MainViewModel : ObservableObject
         _deleteConfirmer = deleteConfirmer ?? new DialogDeleteConfirmer();
         _renameDialog = renameDialog ?? new RenameDialog();
         _newFolderDialog = newFolderDialog ?? new NewFolderDialog();
+        _clipboard = clipboard ?? new WpfFileClipboard();
 
         Drives = new ObservableCollection<DriveChoice>(LoadDrives());
         RootNodes = new ObservableCollection<DirectoryNodeViewModel>();
@@ -276,6 +279,70 @@ public partial class MainViewModel : ObservableObject
         if (file is not null)
         {
             Report(_fileOpenService.ShowInExplorer(file.FullPath), file.FullPath);
+        }
+    }
+
+    /// <summary>Copies the file to the clipboard so it can be pasted into a folder.</summary>
+    [RelayCommand]
+    private void CopyFile(SvgFileViewModel? file)
+    {
+        if (file is not null)
+        {
+            _clipboard.SetFile(file.FullPath);
+        }
+    }
+
+    /// <summary>Pastes the clipboard file(s) into the given (or selected) folder.</summary>
+    [RelayCommand]
+    private void PasteIntoFolder(DirectoryNodeViewModel? node)
+    {
+        var target = node ?? SelectedNode;
+        if (target is null || target.IsPlaceholder || string.IsNullOrEmpty(target.FullPath))
+        {
+            return;
+        }
+
+        var files = _clipboard.GetFiles();
+        if (files.Count == 0)
+        {
+            return;
+        }
+
+        var copiedAny = false;
+        foreach (var source in files)
+        {
+            var outcome = _fileOperations.Copy(source, target.FullPath, overwrite: false);
+
+            if (outcome == FileOperationOutcome.TargetExists)
+            {
+                // US-8.7: a single-file conflict is always asked, every time.
+                var name = System.IO.Path.GetFileName(source);
+                if (!_notifier.Confirm(Loc.Format("ConfirmOverwriteMessage", name), Loc.Get("ConfirmOverwriteTitle")))
+                {
+                    continue; // skip this one
+                }
+
+                outcome = _fileOperations.Copy(source, target.FullPath, overwrite: true);
+            }
+
+            if (outcome == FileOperationOutcome.Success)
+            {
+                copiedAny = true;
+            }
+            else if (outcome != FileOperationOutcome.TargetExists)
+            {
+                _notifier.Notify(Loc.Get("MsgCopyFailed"), Loc.Get("AppTitle"));
+            }
+        }
+
+        if (copiedAny)
+        {
+            _index.SetSvgCount(target.FullPath, DirectoryScanner.CountSvgFiles(target.FullPath));
+            target.RefreshSvgCount();
+            if (ReferenceEquals(target, SelectedNode))
+            {
+                _ = LoadPreviewAsync(SelectedNode);
+            }
         }
     }
 

@@ -231,4 +231,13 @@
   <data name="MsgNewFolderFailed" xml:space="preserve">
     <value>The folder could not be created.</value>
   </data>
+  <data name="ContextCopy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="ContextPaste" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="MsgCopyFailed" xml:space="preserve">
+    <value>The file could not be copied.</value>
+  </data>
 </root>

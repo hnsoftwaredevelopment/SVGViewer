@@ -231,4 +231,13 @@
   <data name="MsgNewFolderFailed" xml:space="preserve">
     <value>De map kon niet worden aangemaakt.</value>
   </data>
+  <data name="ContextCopy" xml:space="preserve">
+    <value>Kopiëren</value>
+  </data>
+  <data name="ContextPaste" xml:space="preserve">
+    <value>Plakken</value>
+  </data>
+  <data name="MsgCopyFailed" xml:space="preserve">
+    <value>Het bestand kon niet worden gekopieerd.</value>
+  </data>
 </root>

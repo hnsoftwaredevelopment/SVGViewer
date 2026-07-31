@@ -128,4 +128,65 @@ public class FileOperationServiceTests : IDisposable
 
         Assert.Equal(FileOperationOutcome.InvalidName, outcome);
     }
+
+    [Fact]
+    public void Copy_places_the_file_in_another_folder()
+    {
+        var source = CreateFile("logo.svg", "<svg>x</svg>");
+        var target = Path.Combine(_dir, "sub");
+        Directory.CreateDirectory(target);
+
+        var outcome = _service.Copy(source, target, overwrite: false);
+
+        Assert.Equal(FileOperationOutcome.Success, outcome);
+        Assert.True(File.Exists(source), "the source should remain");
+        Assert.Equal("<svg>x</svg>", File.ReadAllText(Path.Combine(target, "logo.svg")));
+    }
+
+    [Fact]
+    public void Copy_reports_a_conflict_without_overwrite()
+    {
+        var source = CreateFile("logo.svg");
+        var target = Path.Combine(_dir, "sub");
+        Directory.CreateDirectory(target);
+        File.WriteAllText(Path.Combine(target, "logo.svg"), "<svg>old</svg>");
+
+        var outcome = _service.Copy(source, target, overwrite: false);
+
+        Assert.Equal(FileOperationOutcome.TargetExists, outcome);
+    }
+
+    [Fact]
+    public void Copy_overwrites_the_target_when_allowed()
+    {
+        var source = CreateFile("logo.svg", "<svg>new</svg>");
+        var target = Path.Combine(_dir, "sub");
+        Directory.CreateDirectory(target);
+        File.WriteAllText(Path.Combine(target, "logo.svg"), "<svg>old</svg>");
+
+        var outcome = _service.Copy(source, target, overwrite: true);
+
+        Assert.Equal(FileOperationOutcome.Success, outcome);
+        Assert.Equal("<svg>new</svg>", File.ReadAllText(Path.Combine(target, "logo.svg")));
+    }
+
+    [Fact]
+    public void Copy_into_the_same_folder_makes_a_uniquely_named_duplicate()
+    {
+        var source = CreateFile("logo.svg");
+
+        var outcome = _service.Copy(source, _dir, overwrite: false);
+
+        Assert.Equal(FileOperationOutcome.Success, outcome);
+        Assert.True(File.Exists(source), "the original should remain");
+        Assert.True(File.Exists(Path.Combine(_dir, "logo (2).svg")), "a duplicate should be created");
+    }
+
+    [Fact]
+    public void Copy_reports_a_missing_source()
+    {
+        var outcome = _service.Copy(Path.Combine(_dir, "ghost.svg"), _dir, overwrite: false);
+
+        Assert.Equal(FileOperationOutcome.FileNotFound, outcome);
+    }
 }

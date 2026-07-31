@@ -89,6 +89,9 @@
                       Command="{Binding PlacementTarget.Tag.ShowInExplorerCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
             <Separator />
+            <MenuItem Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[ContextCopy]}"
+                      Command="{Binding PlacementTarget.Tag.CopyFileCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
             <MenuItem Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[ContextRename]}"
                       Command="{Binding PlacementTarget.Tag.RenameFileCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
@@ -107,6 +110,9 @@
                     <ContextMenu>
                         <MenuItem Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[ContextNewFolder]}"
                                   Command="{Binding PlacementTarget.Tag.NewFolderCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                        <MenuItem Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[ContextPaste]}"
+                                  Command="{Binding PlacementTarget.Tag.PasteIntoFolderCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                   CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
                     </ContextMenu>
                 </StackPanel.ContextMenu>

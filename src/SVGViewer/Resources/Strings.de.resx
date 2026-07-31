@@ -231,4 +231,13 @@
   <data name="MsgNewFolderFailed" xml:space="preserve">
     <value>Der Ordner konnte nicht erstellt werden.</value>
   </data>
+  <data name="ContextCopy" xml:space="preserve">
+    <value>Kopieren</value>
+  </data>
+  <data name="ContextPaste" xml:space="preserve">
+    <value>Einfügen</value>
+  </data>
+  <data name="MsgCopyFailed" xml:space="preserve">
+    <value>Die Datei konnte nicht kopiert werden.</value>
+  </data>
 </root>
