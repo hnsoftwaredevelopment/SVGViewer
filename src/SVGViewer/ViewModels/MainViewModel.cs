@@ -321,8 +321,17 @@ public partial class MainViewModel : ObservableObject
         var folder = System.IO.Path.GetDirectoryName(file.FullPath);
         if (folder is not null)
         {
-            _index.SetSvgCount(folder, DirectoryScanner.CountSvgFiles(folder));
-            RefreshMarkings();
+            var count = DirectoryScanner.CountSvgFiles(folder);
+            _index.SetSvgCount(folder, count);
+
+            // The deleted file lives in the selected folder, so refresh its node's
+            // count badge and marking directly (targeted, no rescan).
+            var normalized = DirectoryScanner.NormalizeFolderPath(folder);
+            if (SelectedNode is not null &&
+                string.Equals(SelectedNode.FullPath, normalized, StringComparison.OrdinalIgnoreCase))
+            {
+                SelectedNode.RefreshSvgCount();
+            }
         }
 
         UpdateSelectedFolderInfo();

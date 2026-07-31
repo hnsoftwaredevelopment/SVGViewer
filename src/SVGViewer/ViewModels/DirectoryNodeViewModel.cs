@@ -67,7 +67,8 @@ public partial class DirectoryNodeViewModel : ObservableObject
     public string DisplayName { get; }
 
     /// <summary>Number of SVG files directly in this folder (drives the count badge).</summary>
-    public int SvgFileCount { get; }
+    [ObservableProperty]
+    private int _svgFileCount;
 
     /// <summary>True when this folder directly contains SVG files.</summary>
     public bool HasSvgFiles => SvgFileCount > 0;
@@ -82,6 +83,13 @@ public partial class DirectoryNodeViewModel : ObservableObject
     public string SvgTooltip => Loc.Format("TooltipContainsSvg", SvgFileCount);
 
     partial void OnIsAncestorOfSvgChanged(bool value) => OnPropertyChanged(nameof(IsMarked));
+
+    partial void OnSvgFileCountChanged(int value)
+    {
+        OnPropertyChanged(nameof(HasSvgFiles));
+        OnPropertyChanged(nameof(IsMarked));
+        OnPropertyChanged(nameof(SvgTooltip));
+    }
 
     private bool ComputeIsAncestor() =>
         _index is not null && SvgFileCount == 0 && _index.IsRelevant(FullPath);
@@ -102,6 +110,39 @@ public partial class DirectoryNodeViewModel : ObservableObject
                 child.RefreshMarking();
             }
         }
+    }
+
+    /// <summary>
+    /// Recomputes this folder's own SVG count from disk after a file operation
+    /// (e.g. a delete) and updates its marking: it becomes unmarked when it has no
+    /// SVGs and no SVG-bearing descendants. A targeted refresh, no rescan.
+    /// </summary>
+    public void RefreshSvgCount()
+    {
+        SvgFileCount = DirectoryScanner.CountSvgFiles(FullPath);
+        IsAncestorOfSvg = SvgFileCount == 0 && HasSvgDescendantInIndex();
+    }
+
+    private bool HasSvgDescendantInIndex()
+    {
+        if (_index is null)
+        {
+            return false;
+        }
+
+        var prefix = FullPath.EndsWith(System.IO.Path.DirectorySeparatorChar)
+            ? FullPath
+            : FullPath + System.IO.Path.DirectorySeparatorChar;
+
+        foreach (var folder in _index.FoldersWithSvg)
+        {
+            if (folder.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public ObservableCollection<DirectoryNodeViewModel> Children { get; }
