@@ -447,8 +447,8 @@ blijft bestaan en is de aangewezen manier voor drag & drop (later).
 
 ## Bestandsbeheer: verplaatsen via drag & drop (SE-8)
 
-Een SVG kan uit de icon-view naar een mapnode in de boom worden **gesleept**. De
-sleep start pas als de muis voorbij de systeem-sleepdrempel beweegt
+Een SVG kan uit de icon-view **of de detaillijst** naar een mapnode in de boom
+worden **gesleept**. De sleep start pas als de muis voorbij de systeem-sleepdrempel beweegt
 (`Thumbnail_MouseMove`), zodat een klik/dubbelklik (preview openen) niet in de weg
 zit. De sleep draagt een standaard `FileDrop` (`DoDragDrop`), dus je kunt ook naar de
 Verkenner slepen. Mapnodes accepteren de drop (`AllowDrop`, `Folder_DragOver` /

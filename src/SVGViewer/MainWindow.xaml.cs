@@ -188,6 +188,17 @@ public partial class MainWindow : Window
     }
 
     /// <summary>
+    /// Records a possible drag start for a detail-list row. Opening the preview is
+    /// handled separately by <see cref="ListItem_DoubleClick"/>, so here we only
+    /// remember the pressed file; the drag itself begins in Thumbnail_MouseMove.
+    /// </summary>
+    private void ListItem_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+        _dragStartPoint = e.GetPosition(null);
+        _dragCandidate = (sender as FrameworkElement)?.DataContext as SvgFileViewModel;
+    }
+
+    /// <summary>
     /// Shows the SVG in the zoom viewer. In the detail view no thumbnail has been
     /// rendered yet, so it is rendered on demand first.
     /// </summary>

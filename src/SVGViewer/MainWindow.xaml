@@ -370,6 +370,8 @@
                                     Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}" />
                             <Setter Property="ContextMenu" Value="{StaticResource SvgItemContextMenu}" />
                             <EventSetter Event="MouseDoubleClick" Handler="ListItem_DoubleClick" />
+                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListItem_MouseDown" />
+                            <EventSetter Event="PreviewMouseMove" Handler="Thumbnail_MouseMove" />
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.Style>
