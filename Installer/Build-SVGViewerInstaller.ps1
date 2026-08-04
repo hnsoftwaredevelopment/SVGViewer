@@ -30,8 +30,7 @@ if (-not (Test-Path (Join-Path $publishDir "SVGViewer.exe"))) {
 
 if ([string]::IsNullOrWhiteSpace($InnoCompilerPath)) {
     $candidates = @(
-        "C:\Program Files (x86)\Inno Setup 6\ISCC.exe",
-        "C:\Program Files\Inno Setup 6\ISCC.exe",
+        "c:\Program Files\Inno Setup 7\ISCC.exe",
         "C:\Users\hnijk\OneDrive\DevOps\hnsoftwaredevelopment\InnoSetup\Inno-All-in-One-Setup-master\IsPack_5_5_2\isfiles-unicode\ISCC.exe",
         "C:\Users\hnijk\OneDrive\DevOps\hnsoftwaredevelopment\InnoSetup\Inno-All-in-One-Setup-master\IsPack_5_5_2\isfiles\ISCC.exe"
     )

@@ -1,6 +1,6 @@
 #define AppName "SVGViewer"
 #define AppExeName "SVGViewer.exe"
-#define AppPublisher "HN Software development"
+#define AppPublisher "© HN Software development - 2026"
 #define AppVersion GetVersionNumbersString("..\src\SVGViewer\bin\Publish\" + AppExeName)
 
 [Setup]
@@ -14,7 +14,7 @@ AppSupportURL=https://hnsoftwaredevelopment.nl/
 AppUpdatesURL=https://hnsoftwaredevelopment.nl/
 DefaultDirName={autopf}\HnSoftwaredevelopment\SVGViewer
 DisableDirPage=yes
-DisableProgramGroupPage=yes
+DisableProgramGroupPage=no
 DisableReadyMemo=yes
 DisableFinishedPage=yes
 DisableWelcomePage=yes
@@ -40,6 +40,8 @@ VersionInfoDescription={#AppName} installer
 VersionInfoProductName={#AppName}
 VersionInfoProductVersion={#AppVersion}
 VersionInfoVersion={#AppVersion}
+AppCopyright={#AppPublisher}
+VersionInfoCopyright={#AppPublisher}
 
 [Languages]
 Name: "dutch"; MessagesFile: "compiler:Languages\Dutch.isl"
