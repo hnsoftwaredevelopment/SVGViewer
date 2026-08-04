@@ -240,4 +240,10 @@
   <data name="MsgCopyFailed" xml:space="preserve">
     <value>Het bestand kon niet worden gekopieerd.</value>
   </data>
+  <data name="ContextCut" xml:space="preserve">
+    <value>Knippen</value>
+  </data>
+  <data name="MsgMoveFailed" xml:space="preserve">
+    <value>Het bestand kon niet worden verplaatst.</value>
+  </data>
 </root>

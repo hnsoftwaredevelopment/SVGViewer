@@ -38,6 +38,13 @@ public interface IFileOperationService
     /// <paramref name="overwrite"/> is false, so the caller can ask first.
     /// </summary>
     FileOperationOutcome Copy(string sourcePath, string targetDirectory, bool overwrite);
+
+    /// <summary>
+    /// Moves a file into a target folder. Moving into its own folder is a no-op.
+    /// Returns <see cref="FileOperationOutcome.TargetExists"/> when the target folder
+    /// already holds a file of that name and <paramref name="overwrite"/> is false.
+    /// </summary>
+    FileOperationOutcome Move(string sourcePath, string targetDirectory, bool overwrite);
 }
 
 /// <summary>
@@ -179,6 +186,45 @@ public sealed class FileOperationService : IFileOperationService
         catch (Exception ex)
         {
             Logger.Error($"Failed to copy '{sourcePath}' to '{targetDirectory}'.", ex);
+            return FileOperationOutcome.Failed;
+        }
+    }
+
+    public FileOperationOutcome Move(string sourcePath, string targetDirectory, bool overwrite)
+    {
+        try
+        {
+            if (!File.Exists(sourcePath))
+            {
+                return FileOperationOutcome.FileNotFound;
+            }
+
+            if (!Directory.Exists(targetDirectory))
+            {
+                return FileOperationOutcome.Failed;
+            }
+
+            var sourceDir = Path.GetDirectoryName(sourcePath) ?? string.Empty;
+            if (string.Equals(
+                    Path.GetFullPath(sourceDir),
+                    Path.GetFullPath(targetDirectory),
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return FileOperationOutcome.Success; // already in this folder: nothing to do
+            }
+
+            var target = Path.Combine(targetDirectory, Path.GetFileName(sourcePath));
+            if (!overwrite && File.Exists(target))
+            {
+                return FileOperationOutcome.TargetExists;
+            }
+
+            File.Move(sourcePath, target, overwrite);
+            return FileOperationOutcome.Success;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"Failed to move '{sourcePath}' to '{targetDirectory}'.", ex);
             return FileOperationOutcome.Failed;
         }
     }

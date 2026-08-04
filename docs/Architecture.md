@@ -415,3 +415,19 @@ het klembord; "Plakken" op een map-node kopieert het klembord-bestand erin via
 eigen map van het bestand maakt bewust een uniek `(2)`-duplicaat in plaats van te
 vragen. Na een geslaagde plak-actie werkt `MainViewModel` de telling/markering van
 de doelmap bij en herlaadt, als dat de geselecteerde map is, de preview.
+
+
+## Bestandsbeheer: knippen/verplaatsen (SE-8)
+
+Naast kopiëren kan een SVG worden **geknipt** (verplaatsen). "Knippen" zet het
+bestand op het Windows-klembord mét de standaard `Preferred DropEffect` = *move*
+(`IFileClipboard.SetMove`); het bestand wordt daarbij **niet** aangeraakt. Pas bij
+"Plakken" leest `MainViewModel` de klembord-inhoud én -operatie
+(`IFileClipboard.GetContents`): bij *move* verplaatst het via
+`FileOperationService.Move`, anders kopieert het. Zo blijft een geknipt-maar-nooit-
+geplakt bestand gewoon staan. Naamconflicten worden per bestand gevraagd (US-8.7);
+verplaatsen binnen dezelfde map is een no-op. Na een geslaagde verplaatsing wordt het
+klembord geleegd (de knip is "verbruikt") en verversen zowel de **doelmap** als de
+**bronmap(pen)** hun telling/markering — bronnodes worden opgezocht met een kleine
+`FindNode`-helper. Dit spoor werkt ook samen met knippen/plakken in de Verkenner. Een
+tweede, visuele manier (drag & drop) staat nog op de rol.

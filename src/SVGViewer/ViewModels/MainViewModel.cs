@@ -288,7 +288,17 @@ public partial class MainViewModel : ObservableObject
     {
         if (file is not null)
         {
-            _clipboard.SetFile(file.FullPath);
+            _clipboard.SetCopy(file.FullPath);
+        }
+    }
+
+    /// <summary>Marks the file for moving (cut). It is only moved once pasted.</summary>
+    [RelayCommand]
+    private void CutFile(SvgFileViewModel? file)
+    {
+        if (file is not null)
+        {
+            _clipboard.SetMove(file.FullPath);
         }
     }
 
@@ -302,16 +312,21 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        var files = _clipboard.GetFiles();
-        if (files.Count == 0)
+        var contents = _clipboard.GetContents();
+        if (contents.Files.Count == 0)
         {
             return;
         }
 
-        var copiedAny = false;
-        foreach (var source in files)
+        var isMove = contents.Operation == ClipboardOperation.Move;
+        var failedMessage = isMove ? "MsgMoveFailed" : "MsgCopyFailed";
+
+        var changed = false;
+        var sourceFolders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var source in contents.Files)
         {
-            var outcome = _fileOperations.Copy(source, target.FullPath, overwrite: false);
+            var outcome = Transfer(source, target.FullPath, isMove, overwrite: false);
 
             if (outcome == FileOperationOutcome.TargetExists)
             {
@@ -322,28 +337,98 @@ public partial class MainViewModel : ObservableObject
                     continue; // skip this one
                 }
 
-                outcome = _fileOperations.Copy(source, target.FullPath, overwrite: true);
+                outcome = Transfer(source, target.FullPath, isMove, overwrite: true);
             }
 
             if (outcome == FileOperationOutcome.Success)
             {
-                copiedAny = true;
+                changed = true;
+                if (isMove)
+                {
+                    var dir = System.IO.Path.GetDirectoryName(source);
+                    if (dir is not null)
+                    {
+                        sourceFolders.Add(DirectoryScanner.NormalizeFolderPath(dir));
+                    }
+                }
             }
             else if (outcome != FileOperationOutcome.TargetExists)
             {
-                _notifier.Notify(Loc.Get("MsgCopyFailed"), Loc.Get("AppTitle"));
+                _notifier.Notify(Loc.Get(failedMessage), Loc.Get("AppTitle"));
             }
         }
 
-        if (copiedAny)
+        if (!changed)
         {
-            _index.SetSvgCount(target.FullPath, DirectoryScanner.CountSvgFiles(target.FullPath));
-            target.RefreshSvgCount();
-            if (ReferenceEquals(target, SelectedNode))
+            return;
+        }
+
+        RefreshFolderMarking(target.FullPath, target);
+        foreach (var folder in sourceFolders)
+        {
+            RefreshFolderMarking(folder, FindNode(folder));
+        }
+
+        if (SelectedNode is not null)
+        {
+            _ = LoadPreviewAsync(SelectedNode);
+        }
+
+        if (isMove)
+        {
+            _clipboard.Clear(); // a cut is consumed by pasting it
+        }
+    }
+
+    private FileOperationOutcome Transfer(string source, string targetDir, bool move, bool overwrite) =>
+        move
+            ? _fileOperations.Move(source, targetDir, overwrite)
+            : _fileOperations.Copy(source, targetDir, overwrite);
+
+    /// <summary>Updates the SVG count in the index and refreshes the node, if realized.</summary>
+    private void RefreshFolderMarking(string folderPath, DirectoryNodeViewModel? realizedNode)
+    {
+        _index.SetSvgCount(folderPath, DirectoryScanner.CountSvgFiles(folderPath));
+        realizedNode?.RefreshSvgCount();
+    }
+
+    /// <summary>Finds a realized tree node by its (normalized) path, if it is loaded.</summary>
+    private DirectoryNodeViewModel? FindNode(string normalizedPath)
+    {
+        foreach (var root in RootNodes)
+        {
+            var found = FindNode(root, normalizedPath);
+            if (found is not null)
             {
-                _ = LoadPreviewAsync(SelectedNode);
+                return found;
             }
         }
+
+        return null;
+    }
+
+    private static DirectoryNodeViewModel? FindNode(DirectoryNodeViewModel node, string normalizedPath)
+    {
+        if (string.Equals(node.FullPath, normalizedPath, StringComparison.OrdinalIgnoreCase))
+        {
+            return node;
+        }
+
+        foreach (var child in node.Children)
+        {
+            if (child.IsPlaceholder)
+            {
+                continue;
+            }
+
+            var found = FindNode(child, normalizedPath);
+            if (found is not null)
+            {
+                return found;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>Creates a new sub-folder inside the given (or selected) folder node.</summary>

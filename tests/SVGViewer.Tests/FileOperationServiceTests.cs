@@ -189,4 +189,69 @@ public class FileOperationServiceTests : IDisposable
 
         Assert.Equal(FileOperationOutcome.FileNotFound, outcome);
     }
+
+    [Fact]
+    public void Move_places_the_file_in_another_folder_and_removes_the_source()
+    {
+        var source = CreateFile("logo.svg", "<svg>x</svg>");
+        var target = Path.Combine(_dir, "sub");
+        Directory.CreateDirectory(target);
+
+        var outcome = _service.Move(source, target, overwrite: false);
+
+        Assert.Equal(FileOperationOutcome.Success, outcome);
+        Assert.False(File.Exists(source), "the source should be gone after a move");
+        Assert.Equal("<svg>x</svg>", File.ReadAllText(Path.Combine(target, "logo.svg")));
+    }
+
+    [Fact]
+    public void Move_reports_a_conflict_without_overwrite_and_keeps_the_source()
+    {
+        var source = CreateFile("logo.svg");
+        var target = Path.Combine(_dir, "sub");
+        Directory.CreateDirectory(target);
+        File.WriteAllText(Path.Combine(target, "logo.svg"), "<svg>old</svg>");
+
+        var outcome = _service.Move(source, target, overwrite: false);
+
+        Assert.Equal(FileOperationOutcome.TargetExists, outcome);
+        Assert.True(File.Exists(source), "the source should remain on a conflict");
+    }
+
+    [Fact]
+    public void Move_overwrites_the_target_when_allowed()
+    {
+        var source = CreateFile("logo.svg", "<svg>new</svg>");
+        var target = Path.Combine(_dir, "sub");
+        Directory.CreateDirectory(target);
+        File.WriteAllText(Path.Combine(target, "logo.svg"), "<svg>old</svg>");
+
+        var outcome = _service.Move(source, target, overwrite: true);
+
+        Assert.Equal(FileOperationOutcome.Success, outcome);
+        Assert.False(File.Exists(source));
+        Assert.Equal("<svg>new</svg>", File.ReadAllText(Path.Combine(target, "logo.svg")));
+    }
+
+    [Fact]
+    public void Move_into_the_same_folder_is_a_no_op()
+    {
+        var source = CreateFile("logo.svg");
+
+        var outcome = _service.Move(source, _dir, overwrite: false);
+
+        Assert.Equal(FileOperationOutcome.Success, outcome);
+        Assert.True(File.Exists(source), "the file should stay where it is");
+    }
+
+    [Fact]
+    public void Move_reports_a_missing_source()
+    {
+        var target = Path.Combine(_dir, "sub");
+        Directory.CreateDirectory(target);
+
+        var outcome = _service.Move(Path.Combine(_dir, "ghost.svg"), target, overwrite: false);
+
+        Assert.Equal(FileOperationOutcome.FileNotFound, outcome);
+    }
 }
