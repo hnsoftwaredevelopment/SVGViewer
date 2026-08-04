@@ -431,3 +431,15 @@ klembord geleegd (de knip is "verbruikt") en verversen zowel de **doelmap** als 
 **bronmap(pen)** hun telling/markering — bronnodes worden opgezocht met een kleine
 `FindNode`-helper. Dit spoor werkt ook samen met knippen/plakken in de Verkenner. Een
 tweede, visuele manier (drag & drop) staat nog op de rol.
+
+
+## Plakken in de geopende map (SE-8)
+
+Naast "Plakken" op een **map in de boom** (logisch als je vooraf een doel kiest), kan
+nu ook rechtsgeklikt worden op de **lege ruimte van het preview-paneel** om in de
+**nu-geopende map** te plakken. Dit sluit aan bij de natuurlijke knip/plak-flow: map
+openen, tussen de iconen rechtsklikken, plakken. Het contextmenu zit op de witte
+preview-`Grid`; rechtsklik op een thumbnail toont het bestandsmenu, rechtsklik op de
+lege ruimte (die transparant doorvalt naar de `Grid`) toont "Plakken", dat plakt in
+`SelectedNode`. Werkt ook in een lege map — juist dán wil je plakken. De boom-variant
+blijft bestaan en is de aangewezen manier voor drag & drop (later).

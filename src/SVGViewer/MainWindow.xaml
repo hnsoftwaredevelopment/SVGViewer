@@ -285,6 +285,14 @@
             <!-- Preview pane: thumbnails, or a detail list in "only details" mode -->
             <Grid Grid.Column="2" Background="White">
 
+                <!-- Right-click empty space in the open folder to paste into it. -->
+                <Grid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[ContextPaste]}"
+                                  Command="{Binding PlacementTarget.DataContext.PasteIntoFolderCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                    </ContextMenu>
+                </Grid.ContextMenu>
+
                 <!-- Thumbnail grid -->
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="10">
                     <ScrollViewer.Style>
