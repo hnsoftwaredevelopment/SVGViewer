@@ -14,6 +14,10 @@ public partial class MainWindow : Window
     private readonly AppSettings _settings;
     private IntPtr _titleBarIcon;
 
+    // Drag & drop: where a possible drag began, and which file it was.
+    private Point _dragStartPoint;
+    private SvgFileViewModel? _dragCandidate;
+
     public MainWindow(MainViewModel viewModel, SettingsService settingsService, AppSettings settings)
     {
         InitializeComponent();
@@ -101,23 +105,78 @@ public partial class MainWindow : Window
         new AboutWindow { Owner = this }.ShowDialog();
 
     /// <summary>
-    /// Double-clicking a thumbnail opens the zoom preview. A single click is left
-    /// free for future file-management gestures (drag to move, select). Opening in
-    /// the editor lives in the right-click menu.
+    /// Double-clicking a thumbnail opens the zoom preview. A single press records a
+    /// possible drag start; the actual drag begins in <see cref="Thumbnail_MouseMove"/>
+    /// once the pointer moves past the system drag threshold. Opening in the editor
+    /// lives in the right-click menu.
     /// </summary>
     private void Thumbnail_MouseDown(object sender, MouseButtonEventArgs e)
     {
-        if (e.ClickCount < 2)
+        if (e.ClickCount >= 2)
+        {
+            if (sender is FrameworkElement { DataContext: SvgFileViewModel file })
+            {
+                OpenPreview(file);
+                e.Handled = true;
+            }
+
+            return;
+        }
+
+        _dragStartPoint = e.GetPosition(null);
+        _dragCandidate = (sender as FrameworkElement)?.DataContext as SvgFileViewModel;
+    }
+
+    /// <summary>Starts a move/copy drag of the pressed thumbnail once it moves far enough.</summary>
+    private void Thumbnail_MouseMove(object sender, MouseEventArgs e)
+    {
+        if (e.LeftButton != MouseButtonState.Pressed || _dragCandidate is null)
         {
             return;
         }
 
-        if (sender is FrameworkElement { DataContext: SvgFileViewModel file })
+        var position = e.GetPosition(null);
+        if (Math.Abs(position.X - _dragStartPoint.X) < SystemParameters.MinimumHorizontalDragDistance &&
+            Math.Abs(position.Y - _dragStartPoint.Y) < SystemParameters.MinimumVerticalDragDistance)
         {
-            OpenPreview(file);
-            e.Handled = true;
+            return;
         }
+
+        var data = new DataObject(DataFormats.FileDrop, new[] { _dragCandidate.FullPath });
+        _dragCandidate = null;
+        DragDrop.DoDragDrop((DependencyObject)sender, data, DragDropEffects.Move | DragDropEffects.Copy);
     }
+
+    /// <summary>Shows the move/copy cursor when a file is dragged over a folder node.</summary>
+    private void Folder_DragOver(object sender, DragEventArgs e)
+    {
+        e.Effects = CanDropInto(sender, e) ? EffectFor(e) : DragDropEffects.None;
+        e.Handled = true;
+    }
+
+    /// <summary>Drops the dragged file(s) into the folder node (move, or copy with Ctrl).</summary>
+    private void Folder_Drop(object sender, DragEventArgs e)
+    {
+        e.Handled = true;
+        if (!CanDropInto(sender, e) || DataContext is not MainViewModel viewModel)
+        {
+            return;
+        }
+
+        var target = (DirectoryNodeViewModel)((FrameworkElement)sender).DataContext;
+        var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+        viewModel.DropFiles(files, target, copy: EffectFor(e) == DragDropEffects.Copy);
+    }
+
+    private static bool CanDropInto(object sender, DragEventArgs e) =>
+        e.Data.GetDataPresent(DataFormats.FileDrop) &&
+        (sender as FrameworkElement)?.DataContext is DirectoryNodeViewModel { IsPlaceholder: false } node &&
+        !string.IsNullOrEmpty(node.FullPath);
+
+    private static DragDropEffects EffectFor(DragEventArgs e) =>
+        (e.KeyStates & DragDropKeyStates.ControlKey) == DragDropKeyStates.ControlKey
+            ? DragDropEffects.Copy
+            : DragDropEffects.Move;
 
     /// <summary>Double-clicking a detail-list row opens the zoom preview.</summary>
     private void ListItem_DoubleClick(object sender, MouseButtonEventArgs e)

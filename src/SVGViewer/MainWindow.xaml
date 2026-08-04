@@ -108,6 +108,8 @@
                                   DataType="{x:Type vm:DirectoryNodeViewModel}"
                                   ItemsSource="{Binding Children}">
             <StackPanel Orientation="Horizontal" Margin="0,2"
+                        Background="Transparent"
+                        AllowDrop="True" DragOver="Folder_DragOver" Drop="Folder_Drop"
                         Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}">
                 <StackPanel.ContextMenu>
                     <ContextMenu>
@@ -326,6 +328,7 @@
                                         Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}"
                                         ContextMenu="{StaticResource SvgItemContextMenu}"
                                         PreviewMouseLeftButtonDown="Thumbnail_MouseDown"
+                                        PreviewMouseMove="Thumbnail_MouseMove"
                                         ToolTip="{Binding ToolTipText}">
                                     <StackPanel Width="{Binding DataContext.ThumbnailSize,
                                                                 RelativeSource={RelativeSource AncestorType=Window}}">

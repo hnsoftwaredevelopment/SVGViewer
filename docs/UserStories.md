@@ -154,13 +154,13 @@ Uit gebruik blijkt behoefte aan minimaal bestandsbeheer binnen de viewer.
 Zie [AD-3](./Epic.md#ad-3--conflictafhandeling-bij-bestandsbewerkingen) voor de
 gekozen aanpak bij naamconflicten en bevestigingen.
 
-- ◑ **US-8.1** — Als gebruiker wil ik een SVG naar een andere map verplaatsen.
-  *(**Knippen/plakken-spoor gereed**: rechtsklik op een SVG → "Knippen" markeert het
-  bestand op het klembord met een verplaats-effect; "Plakken" op een map verplaatst
-  het erheen (`FileOperationService.Move`). Geknipt-maar-nooit-geplakt laat het
-  bestand ongemoeid; na een geslaagde verplaatsing wordt het klembord geleegd en
-  verversen bron- en doelmap. Werkt ook met knippen/plakken in de Verkenner.
-  **Nog open:** verplaatsen via **drag & drop** als tweede, visuele manier.)*
+- ☑ **US-8.1** — Als gebruiker wil ik een SVG naar een andere map verplaatsen.
+  *(Twee sporen. **Knippen/plakken**: rechtsklik → "Knippen" markeert het bestand op
+  het klembord met een verplaats-effect; "Plakken" (op een map in de boom óf in de
+  geopende icon-view) verplaatst het. **Drag & drop**: sleep een SVG uit de icon-view
+  op een mapnode in de boom → verplaatsen (met **Ctrl** = kopiëren). Beide via
+  `FileOperationService.Move/Copy`; conflicten worden per bestand gevraagd (US-8.7)
+  en bron- en doelmap verversen. Geknipt-maar-nooit-geplakt laat het bestand staan.)*
 - ☑ **US-8.2** — Als gebruiker wil ik via het contextmenu een SVG verwijderen,
   met bevestiging en bij voorkeur naar de prullenbak. De bevestiging heeft een
   "Niet meer tonen"-optie; weer inschakelbaar via Instellingen (SE-9).

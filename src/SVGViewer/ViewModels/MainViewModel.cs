@@ -319,12 +319,42 @@ public partial class MainViewModel : ObservableObject
         }
 
         var isMove = contents.Operation == ClipboardOperation.Move;
-        var failedMessage = isMove ? "MsgMoveFailed" : "MsgCopyFailed";
+        if (TransferInto(contents.Files, target, isMove) && isMove)
+        {
+            _clipboard.Clear(); // a cut is consumed by pasting it
+        }
+    }
 
+    /// <summary>
+    /// Drag &amp; drop entry point: moves (or, with Ctrl held, copies) the dropped
+    /// files into the target folder node.
+    /// </summary>
+    public void DropFiles(IReadOnlyList<string> files, DirectoryNodeViewModel target, bool copy)
+    {
+        if (target is null || target.IsPlaceholder || string.IsNullOrEmpty(target.FullPath))
+        {
+            return;
+        }
+
+        TransferInto(files, target, isMove: !copy);
+    }
+
+    /// <summary>
+    /// Copies or moves files into a folder, asking before overwriting (US-8.7) and
+    /// refreshing the target and any source folders. Returns true if anything changed.
+    /// </summary>
+    private bool TransferInto(IReadOnlyList<string> files, DirectoryNodeViewModel target, bool isMove)
+    {
+        if (files.Count == 0)
+        {
+            return false;
+        }
+
+        var failedMessage = isMove ? "MsgMoveFailed" : "MsgCopyFailed";
         var changed = false;
         var sourceFolders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var source in contents.Files)
+        foreach (var source in files)
         {
             var outcome = Transfer(source, target.FullPath, isMove, overwrite: false);
 
@@ -360,7 +390,7 @@ public partial class MainViewModel : ObservableObject
 
         if (!changed)
         {
-            return;
+            return false;
         }
 
         RefreshFolderMarking(target.FullPath, target);
@@ -374,10 +404,7 @@ public partial class MainViewModel : ObservableObject
             _ = LoadPreviewAsync(SelectedNode);
         }
 
-        if (isMove)
-        {
-            _clipboard.Clear(); // a cut is consumed by pasting it
-        }
+        return true;
     }
 
     private FileOperationOutcome Transfer(string source, string targetDir, bool move, bool overwrite) =>

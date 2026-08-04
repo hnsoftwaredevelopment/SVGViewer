@@ -443,3 +443,16 @@ preview-`Grid`; rechtsklik op een thumbnail toont het bestandsmenu, rechtsklik o
 lege ruimte (die transparant doorvalt naar de `Grid`) toont "Plakken", dat plakt in
 `SelectedNode`. Werkt ook in een lege map — juist dán wil je plakken. De boom-variant
 blijft bestaan en is de aangewezen manier voor drag & drop (later).
+
+
+## Bestandsbeheer: verplaatsen via drag & drop (SE-8)
+
+Een SVG kan uit de icon-view naar een mapnode in de boom worden **gesleept**. De
+sleep start pas als de muis voorbij de systeem-sleepdrempel beweegt
+(`Thumbnail_MouseMove`), zodat een klik/dubbelklik (preview openen) niet in de weg
+zit. De sleep draagt een standaard `FileDrop` (`DoDragDrop`), dus je kunt ook naar de
+Verkenner slepen. Mapnodes accepteren de drop (`AllowDrop`, `Folder_DragOver` /
+`Folder_Drop`): standaard **verplaatsen**, met **Ctrl** ingedrukt **kopiëren** — de
+cursor toont het effect. De code-behind roept `MainViewModel.DropFiles` aan, die
+dezelfde `TransferInto`-logica gebruikt als plakken (conflictvraag per bestand,
+verversing van bron- en doelmap). Zo delen knippen/plakken en drag & drop één pad.
