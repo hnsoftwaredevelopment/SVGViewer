@@ -15,6 +15,17 @@ Laufwerk schnell. Die App ist bewusst einfach gehalten; diese Übersicht genügt
   oder **Esc**.
 - **Öffnen & bearbeiten** — **Rechtsklick** auf eine SVG für: im Editor öffnen,
   „Öffnen mit …“ oder im Explorer anzeigen.
+- **Kopieren, Ausschneiden & Einfügen** — wähle per **Rechtsklick** auf eine SVG
+  *Kopieren* oder *Ausschneiden*. Füge dann per **Rechtsklick → Einfügen** auf einen
+  Ordner im Baum ein, oder in den leeren Bereich des geöffneten Ordners. *Kopieren*
+  erstellt eine Kopie; *Ausschneiden* verschiebt (die Datei bleibt, bis du einfügst).
+  Funktioniert auch von und zum Explorer.
+- **Ziehen** — ziehe eine SVG auf einen Ordner im Baum, um sie zu **verschieben**;
+  halte **Strg**, um zu **kopieren**.
+- **Umbenennen & löschen** — ebenfalls per **Rechtsklick** auf eine SVG. Löschen
+  wandert in den Papierkorb, mit Bestätigung.
+- **Neuer Ordner** — **Rechtsklick** auf einen Ordner im Baum und *Neuer Ordner*
+  wählen.
 - **Sprache** — wechsle zwischen Niederländisch, Englisch und Deutsch über die
   **Einstellungen** (⚙).
 - **Über** — Version und Infos findest du unter der **ℹ**-Schaltfläche.

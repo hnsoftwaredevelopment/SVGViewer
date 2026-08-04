@@ -13,5 +13,14 @@ app is deliberately simple; this overview is all you need.
   zoom, drag to pan. Close with the button or **Esc**.
 - **Open & edit** — **right-click** an SVG for: open in your editor, "Open with…", or
   show in Explorer.
+- **Copy, cut & paste** — right-click an SVG and choose *Copy* or *Cut*. Then
+  **right-click → Paste** on a folder in the tree, or in the empty area of the open
+  folder. *Copy* makes a copy; *Cut* moves it (the file stays until you paste). Works
+  to and from Explorer too.
+- **Drag & drop** — drag an SVG onto a folder in the tree to **move** it; hold
+  **Ctrl** to **copy**.
+- **Rename & delete** — also via **right-click** on an SVG. Delete goes to the
+  Recycle Bin, with confirmation.
+- **New folder** — **right-click** a folder in the tree and choose *New folder*.
 - **Language** — switch between Dutch, English and German via **Settings** (⚙).
 - **About** — version and info are under the **ℹ** button.

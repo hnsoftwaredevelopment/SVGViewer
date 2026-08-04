@@ -13,5 +13,14 @@ openen. De app is bewust eenvoudig; dit overzicht volstaat.
   venster; scrollen zoomt, slepen verschuift. Sluiten met de knop of **Esc**.
 - **Openen & bewerken** — **rechtsklik** op een SVG voor: openen in je editor,
   "Openen met…", of tonen in de Verkenner.
+- **Kopiëren, knippen & plakken** — kies via **rechtsklik** op een SVG *Kopiëren* of
+  *Knippen*. Plak daarna met **rechtsklik → Plakken** op een map in de boom, óf in de
+  lege ruimte van de geopende map. *Kopiëren* maakt een kopie; *knippen* verplaatst
+  (het bestand blijft staan tot je het plakt). Werkt ook van en naar de Verkenner.
+- **Slepen** — sleep een SVG naar een map in de boom om te **verplaatsen**; houd
+  **Ctrl** ingedrukt om te **kopiëren**.
+- **Hernoemen & verwijderen** — ook via **rechtsklik** op een SVG. Verwijderen gaat
+  naar de prullenbak, met bevestiging.
+- **Nieuwe map** — **rechtsklik** op een map in de boom en kies *Nieuwe map*.
 - **Taal** — wissel tussen Nederlands, Engels en Duits via **Instellingen** (⚙).
 - **Over** — versie en informatie vind je onder de **ℹ**-knop.
