@@ -261,4 +261,7 @@
   <data name="ButtonSkipAll" xml:space="preserve">
     <value>Alle overslaan</value>
   </data>
+  <data name="LabelFileCount" xml:space="preserve">
+    <value>{0} bestanden</value>
+  </data>
 </root>

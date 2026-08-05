@@ -616,18 +616,49 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    /// <summary>Deletes the file (to the Recycle Bin) after an optional confirmation.</summary>
+    /// <summary>Deletes the selected file(s) (to the Recycle Bin) after an optional confirmation.</summary>
     [RelayCommand]
-    private void DeleteFile(SvgFileViewModel? file)
+    private void DeleteFile(SvgFileViewModel? file) => DeleteFiles(FilesFor(file));
+
+    /// <summary>Deletes the current preview selection (used by the Delete key).</summary>
+    public void DeleteSelected()
     {
-        if (file is null)
+        if (SelectedFiles.Count > 0)
+        {
+            DeleteFiles(SelectedFiles.ToList());
+        }
+    }
+
+    /// <summary>Files to act on: the whole selection if the clicked item is part of it, else just it.</summary>
+    private IReadOnlyList<SvgFileViewModel> FilesFor(SvgFileViewModel? clicked)
+    {
+        if (clicked is not null && SelectedFiles.Count > 1 && SelectedFiles.Contains(clicked))
+        {
+            return SelectedFiles.ToList();
+        }
+
+        if (clicked is not null)
+        {
+            return new[] { clicked };
+        }
+
+        return SelectedFiles.ToList();
+    }
+
+    private void DeleteFiles(IReadOnlyList<SvgFileViewModel> targets)
+    {
+        if (targets.Count == 0)
         {
             return;
         }
 
         if (_settings.ConfirmBeforeDelete)
         {
-            var confirmation = _deleteConfirmer.Confirm(file.FileName);
+            var label = targets.Count == 1
+                ? targets[0].FileName
+                : Loc.Format("LabelFileCount", targets.Count);
+
+            var confirmation = _deleteConfirmer.Confirm(label);
             if (!confirmation.Confirmed)
             {
                 return;
@@ -640,19 +671,23 @@ public partial class MainViewModel : ObservableObject
             }
         }
 
-        var outcome = _fileOperations.DeleteToRecycleBin(file.FullPath);
-        switch (outcome)
+        var anyFailed = false;
+        foreach (var file in targets)
         {
-            case FileOperationOutcome.Success:
-                RemoveFromView(file);
-                break;
-            case FileOperationOutcome.FileNotFound:
-                RemoveFromView(file); // It is gone anyway; keep the list in sync.
-                _notifier.Notify(Loc.Get("MsgFileNotFound"), Loc.Get("AppTitle"));
-                break;
-            default:
-                _notifier.Notify(Loc.Get("MsgDeleteFailed"), Loc.Get("AppTitle"));
-                break;
+            var outcome = _fileOperations.DeleteToRecycleBin(file.FullPath);
+            if (outcome is FileOperationOutcome.Success or FileOperationOutcome.FileNotFound)
+            {
+                RemoveFromView(file); // gone either way; keep the list in sync
+            }
+            else
+            {
+                anyFailed = true;
+            }
+        }
+
+        if (anyFailed)
+        {
+            _notifier.Notify(Loc.Get("MsgDeleteFailed"), Loc.Get("AppTitle"));
         }
     }
 

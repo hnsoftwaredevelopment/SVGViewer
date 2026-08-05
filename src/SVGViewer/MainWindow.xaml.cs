@@ -18,6 +18,11 @@ public partial class MainWindow : Window
     private Point _dragStartPoint;
     private SvgFileViewModel? _dragCandidate;
 
+    // When the user presses an already-selected item (to start a possible drag), we
+    // suppress the default "collapse to just this" and, if no drag follows, collapse
+    // on mouse-up instead. This container is the one to collapse to.
+    private System.Windows.Controls.ListBoxItem? _reclickCandidate;
+
     public MainWindow(MainViewModel viewModel, SettingsService settingsService, AppSettings settings)
     {
         InitializeComponent();
@@ -136,6 +141,7 @@ public partial class MainWindow : Window
             ? viewModel.PathsForDrag(_dragCandidate)
             : new[] { _dragCandidate.FullPath };
         _dragCandidate = null;
+        _reclickCandidate = null; // a drag happened, so don't collapse the selection
 
         var data = new DataObject(DataFormats.FileDrop, files);
         DragDrop.DoDragDrop((DependencyObject)sender, data, DragDropEffects.Move | DragDropEffects.Copy);
@@ -190,6 +196,47 @@ public partial class MainWindow : Window
     {
         _dragStartPoint = e.GetPosition(null);
         _dragCandidate = (sender as FrameworkElement)?.DataContext as SvgFileViewModel;
+        _reclickCandidate = null;
+
+        // Pressing an already-selected item (no Ctrl/Shift) while several are selected
+        // would normally collapse the selection to just that item before a drag can
+        // start. Suppress that so a drag keeps the whole selection; if no drag follows,
+        // ListItem_MouseUp collapses it, mimicking a plain click.
+        if (e.ClickCount == 1 &&
+            sender is System.Windows.Controls.ListBoxItem { IsSelected: true } container &&
+            Keyboard.Modifiers == ModifierKeys.None &&
+            (DataContext as MainViewModel)?.SelectedFiles.Count > 1)
+        {
+            _reclickCandidate = container;
+            e.Handled = true;
+        }
+    }
+
+    /// <summary>Collapses a suppressed multi-selection to the clicked item when no drag happened.</summary>
+    private void ListItem_MouseUp(object sender, MouseButtonEventArgs e)
+    {
+        if (_reclickCandidate is not { } container)
+        {
+            return;
+        }
+
+        _reclickCandidate = null;
+        if (System.Windows.Controls.ItemsControl.ItemsControlFromItemContainer(container)
+            is System.Windows.Controls.ListBox list)
+        {
+            list.SelectedItems.Clear();
+            container.IsSelected = true;
+        }
+    }
+
+    /// <summary>Pressing Delete removes the selected file(s) (to the Recycle Bin).</summary>
+    private void Files_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Delete && DataContext is MainViewModel viewModel)
+        {
+            viewModel.DeleteSelected();
+            e.Handled = true;
+        }
     }
 
     /// <summary>

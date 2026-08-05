@@ -299,6 +299,7 @@
                 <ListBox ItemsSource="{Binding SvgFiles}"
                          SelectionMode="Extended"
                          SelectionChanged="Files_SelectionChanged"
+                         KeyDown="Files_KeyDown"
                          BorderThickness="0" Background="Transparent" Padding="10"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -329,6 +330,7 @@
                                     Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}" />
                             <Setter Property="ContextMenu" Value="{StaticResource SvgItemContextMenu}" />
                             <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListItem_MouseDown" />
+                            <EventSetter Event="PreviewMouseLeftButtonUp" Handler="ListItem_MouseUp" />
                             <EventSetter Event="PreviewMouseMove" Handler="Thumbnail_MouseMove" />
                             <EventSetter Event="MouseDoubleClick" Handler="ListItem_DoubleClick" />
                             <Setter Property="Template">
@@ -393,7 +395,8 @@
                 <!-- Detail list -->
                 <ListView ItemsSource="{Binding SvgFiles}" BorderThickness="0"
                           SelectionMode="Extended"
-                          SelectionChanged="Files_SelectionChanged">
+                          SelectionChanged="Files_SelectionChanged"
+                          KeyDown="Files_KeyDown">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="Tag"
@@ -401,6 +404,7 @@
                             <Setter Property="ContextMenu" Value="{StaticResource SvgItemContextMenu}" />
                             <EventSetter Event="MouseDoubleClick" Handler="ListItem_DoubleClick" />
                             <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListItem_MouseDown" />
+                            <EventSetter Event="PreviewMouseLeftButtonUp" Handler="ListItem_MouseUp" />
                             <EventSetter Event="PreviewMouseMove" Handler="Thumbnail_MouseMove" />
                         </Style>
                     </ListView.ItemContainerStyle>
