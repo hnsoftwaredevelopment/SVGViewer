@@ -18,8 +18,8 @@
     <ApplicationIcon Condition="Exists('Assets\appicon.ico')">Assets\appicon.ico</ApplicationIcon>
 
     <!-- Version (YYYY.M.D.build). Managed in Visual Studio; shown in the About dialog. -->
-    <AssemblyVersion>2026.7.31.2</AssemblyVersion>
-    <FileVersion>2026.7.31.2</FileVersion>
+    <AssemblyVersion>2026.8.4.0</AssemblyVersion>
+    <FileVersion>2026.8.4.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

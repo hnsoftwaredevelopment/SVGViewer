@@ -105,29 +105,19 @@ public partial class MainWindow : Window
         new AboutWindow { Owner = this }.ShowDialog();
 
     /// <summary>
-    /// Double-clicking a thumbnail opens the zoom preview. A single press records a
-    /// possible drag start; the actual drag begins in <see cref="Thumbnail_MouseMove"/>
-    /// once the pointer moves past the system drag threshold. Opening in the editor
-    /// lives in the right-click menu.
+    /// Updates the view model with the current preview selection (icon or list view),
+    /// so file commands and drags act on all selected files.
     /// </summary>
-    private void Thumbnail_MouseDown(object sender, MouseButtonEventArgs e)
+    private void Files_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
-        if (e.ClickCount >= 2)
+        if (DataContext is MainViewModel viewModel &&
+            sender is System.Windows.Controls.ListBox list)
         {
-            if (sender is FrameworkElement { DataContext: SvgFileViewModel file })
-            {
-                OpenPreview(file);
-                e.Handled = true;
-            }
-
-            return;
+            viewModel.SetSelectedFiles(list.SelectedItems);
         }
-
-        _dragStartPoint = e.GetPosition(null);
-        _dragCandidate = (sender as FrameworkElement)?.DataContext as SvgFileViewModel;
     }
 
-    /// <summary>Starts a move/copy drag of the pressed thumbnail once it moves far enough.</summary>
+    /// <summary>Starts a move/copy drag of the selected file(s) once the pointer moves far enough.</summary>
     private void Thumbnail_MouseMove(object sender, MouseEventArgs e)
     {
         if (e.LeftButton != MouseButtonState.Pressed || _dragCandidate is null)
@@ -142,8 +132,12 @@ public partial class MainWindow : Window
             return;
         }
 
-        var data = new DataObject(DataFormats.FileDrop, new[] { _dragCandidate.FullPath });
+        var files = DataContext is MainViewModel viewModel
+            ? viewModel.PathsForDrag(_dragCandidate)
+            : new[] { _dragCandidate.FullPath };
         _dragCandidate = null;
+
+        var data = new DataObject(DataFormats.FileDrop, files);
         DragDrop.DoDragDrop((DependencyObject)sender, data, DragDropEffects.Move | DragDropEffects.Copy);
     }
 

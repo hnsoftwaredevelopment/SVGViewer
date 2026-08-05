@@ -24,6 +24,7 @@ public partial class MainViewModel : ObservableObject
     private readonly IRenameDialog _renameDialog;
     private readonly INewFolderDialog _newFolderDialog;
     private readonly IFileClipboard _clipboard;
+    private readonly IConflictResolver _conflictResolver;
     private readonly AppSettings _settings;
 
     private CancellationTokenSource? _scanCancellation;
@@ -52,7 +53,8 @@ public partial class MainViewModel : ObservableObject
         IDeleteConfirmer? deleteConfirmer = null,
         IRenameDialog? renameDialog = null,
         INewFolderDialog? newFolderDialog = null,
-        IFileClipboard? clipboard = null)
+        IFileClipboard? clipboard = null,
+        IConflictResolver? conflictResolver = null)
     {
         _settingsService = settingsService;
         _settings = settings;
@@ -63,6 +65,7 @@ public partial class MainViewModel : ObservableObject
         _renameDialog = renameDialog ?? new RenameDialog();
         _newFolderDialog = newFolderDialog ?? new NewFolderDialog();
         _clipboard = clipboard ?? new WpfFileClipboard();
+        _conflictResolver = conflictResolver ?? new ConflictResolver();
 
         Drives = new ObservableCollection<DriveChoice>(LoadDrives());
         RootNodes = new ObservableCollection<DirectoryNodeViewModel>();
@@ -108,6 +111,41 @@ public partial class MainViewModel : ObservableObject
 
     /// <summary>SVG files in the selected folder. Never contains other file types.</summary>
     public ObservableCollection<SvgFileViewModel> SvgFiles { get; }
+
+    /// <summary>The files currently selected in the preview (multi-select).</summary>
+    public List<SvgFileViewModel> SelectedFiles { get; } = new();
+
+    /// <summary>Called by the view when the preview selection changes.</summary>
+    public void SetSelectedFiles(System.Collections.IList items)
+    {
+        SelectedFiles.Clear();
+        foreach (var item in items)
+        {
+            if (item is SvgFileViewModel file)
+            {
+                SelectedFiles.Add(file);
+            }
+        }
+    }
+
+    /// <summary>Paths to act on: the whole selection if the clicked item is part of it, else just it.</summary>
+    private IReadOnlyList<string> PathsFor(SvgFileViewModel? clicked)
+    {
+        if (clicked is not null && SelectedFiles.Count > 1 && SelectedFiles.Contains(clicked))
+        {
+            return SelectedFiles.Select(f => f.FullPath).ToList();
+        }
+
+        if (clicked is not null)
+        {
+            return new[] { clicked.FullPath };
+        }
+
+        return SelectedFiles.Select(f => f.FullPath).ToList();
+    }
+
+    /// <summary>Files to drag: the whole selection when the dragged item is part of it.</summary>
+    public string[] PathsForDrag(SvgFileViewModel clicked) => PathsFor(clicked).ToArray();
 
     /// <summary>Edge length in pixels for a thumbnail, derived from the size choice.</summary>
     public double ThumbnailSize => SelectedPreviewSize.Value switch
@@ -282,23 +320,25 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    /// <summary>Copies the file to the clipboard so it can be pasted into a folder.</summary>
+    /// <summary>Copies the selected file(s) to the clipboard to paste into a folder.</summary>
     [RelayCommand]
     private void CopyFile(SvgFileViewModel? file)
     {
-        if (file is not null)
+        var paths = PathsFor(file);
+        if (paths.Count > 0)
         {
-            _clipboard.SetCopy(file.FullPath);
+            _clipboard.SetCopy(paths);
         }
     }
 
-    /// <summary>Marks the file for moving (cut). It is only moved once pasted.</summary>
+    /// <summary>Marks the selected file(s) for moving (cut). Only moved once pasted.</summary>
     [RelayCommand]
     private void CutFile(SvgFileViewModel? file)
     {
-        if (file is not null)
+        var paths = PathsFor(file);
+        if (paths.Count > 0)
         {
-            _clipboard.SetMove(file.FullPath);
+            _clipboard.SetMove(paths);
         }
     }
 
@@ -353,6 +393,8 @@ public partial class MainViewModel : ObservableObject
         var failedMessage = isMove ? "MsgMoveFailed" : "MsgCopyFailed";
         var changed = false;
         var sourceFolders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var multiple = files.Count > 1;
+        bool? overwriteAll = null; // null = ask; true = overwrite rest; false = skip rest
 
         foreach (var source in files)
         {
@@ -360,11 +402,45 @@ public partial class MainViewModel : ObservableObject
 
             if (outcome == FileOperationOutcome.TargetExists)
             {
-                // US-8.7: a single-file conflict is always asked, every time.
                 var name = System.IO.Path.GetFileName(source);
-                if (!_notifier.Confirm(Loc.Format("ConfirmOverwriteMessage", name), Loc.Get("ConfirmOverwriteTitle")))
+                bool overwrite;
+
+                if (overwriteAll.HasValue)
                 {
-                    continue; // skip this one
+                    overwrite = overwriteAll.Value;
+                }
+                else if (!multiple)
+                {
+                    // US-8.7: a single-file conflict is a simple yes/no, every time.
+                    overwrite = _notifier.Confirm(
+                        Loc.Format("ConfirmOverwriteMessage", name), Loc.Get("ConfirmOverwriteTitle"));
+                }
+                else
+                {
+                    // US-8.8: multi-file conflict offers overwrite / all / skip / skip all,
+                    // where the "all" choices apply to the rest of this operation.
+                    switch (_conflictResolver.Resolve(name))
+                    {
+                        case ConflictChoice.OverwriteAll:
+                            overwriteAll = true;
+                            overwrite = true;
+                            break;
+                        case ConflictChoice.SkipAll:
+                            overwriteAll = false;
+                            overwrite = false;
+                            break;
+                        case ConflictChoice.Overwrite:
+                            overwrite = true;
+                            break;
+                        default:
+                            overwrite = false; // Skip
+                            break;
+                    }
+                }
+
+                if (!overwrite)
+                {
+                    continue; // skip this file
                 }
 
                 outcome = Transfer(source, target.FullPath, isMove, overwrite: true);

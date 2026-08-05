@@ -181,19 +181,19 @@ gekozen aanpak bij naamconflicten en bevestigingen.
   aangemaakt via `FileOperationService.CreateFolder` en de boom klapt open zodat de
   nieuwe map zichtbaar is. Bestaat de naam al of is 'ie ongeldig, dan een nette
   melding. In "Alleen SVG" verschijnt een lege nieuwe map pas als er SVG's in staan.)*
-- ☐ **US-8.6** — Als gebruiker wil ik dat de tree en preview zich verversen na een
-  bestandsbewerking.
-- ☐ **US-8.7** — Als gebruiker wil ik bij één bestand dat al bestaat, **elke keer
+- ☑ **US-8.6** — Als gebruiker wil ik dat de tree en preview zich verversen na een
+  bestandsbewerking. *(Gerichte verversing van bron/doel bij elke bewerking.)*
+- ☑ **US-8.7** — Als gebruiker wil ik bij één bestand dat al bestaat, **elke keer
   opnieuw** gevraagd worden. *(Geen persistente "altijd overschrijven"; standaard
   is steeds vragen.)*
-- ☐ **US-8.8** — Als gebruiker wil ik bij het verplaatsen/kopiëren van **meerdere**
-  bestanden, per conflict de keuze: **Bestand overschrijven** · **Alle bestanden
-  overschrijven** · **Dit bestand overslaan** · **Alle bestanden overslaan**.
-  *(Volledige tekst voor duidelijkheid; knoplabels mogen korter met de volledige
-  tekst als tooltip. "Alle …" geldt alleen binnen de lopende operatie, niet
-  persistent.)*
-- ☐ **US-8.9** — Als gebruiker wil ik meerdere bestanden kunnen selecteren voor
-  verplaatsen/kopiëren/verwijderen. *(Voorwaarde voor US-8.8.)*
+- ☑ **US-8.8** — Als gebruiker wil ik bij het verplaatsen/kopiëren van **meerdere**
+  bestanden, per conflict de keuze: **Overschrijven** · **Alle overschrijven** ·
+  **Overslaan** · **Alle overslaan**. *("Alle …" geldt alleen binnen de lopende
+  operatie, niet persistent. Bij één bestand blijft het de simpele ja/nee van US-8.7.)*
+- ☑ **US-8.9** — Als gebruiker wil ik meerdere bestanden kunnen selecteren voor
+  verplaatsen/kopiëren. *(Multi-select (Ctrl/Shift) in beide weergaven; knippen,
+  kopiëren, slepen en plakken werken op de hele selectie. Verwijderen werkt bewust
+  nog op één bestand.)*
 
 ## SE-9 · Instellingen
 

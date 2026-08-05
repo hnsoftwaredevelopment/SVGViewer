@@ -246,4 +246,19 @@
   <data name="MsgMoveFailed" xml:space="preserve">
     <value>Die Datei konnte nicht verschoben werden.</value>
   </data>
+  <data name="ConflictMessage" xml:space="preserve">
+    <value>Eine Datei mit dem Namen '{0}' existiert bereits. Was möchtest du tun?</value>
+  </data>
+  <data name="ButtonOverwrite" xml:space="preserve">
+    <value>Überschreiben</value>
+  </data>
+  <data name="ButtonOverwriteAll" xml:space="preserve">
+    <value>Alle überschreiben</value>
+  </data>
+  <data name="ButtonSkip" xml:space="preserve">
+    <value>Überspringen</value>
+  </data>
+  <data name="ButtonSkipAll" xml:space="preserve">
+    <value>Alle überspringen</value>
+  </data>
 </root>

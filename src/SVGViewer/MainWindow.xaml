@@ -295,10 +295,15 @@
                     </ContextMenu>
                 </Grid.ContextMenu>
 
-                <!-- Thumbnail grid -->
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="10">
-                    <ScrollViewer.Style>
-                        <Style TargetType="ScrollViewer">
+                <!-- Thumbnail grid (multi-select) -->
+                <ListBox ItemsSource="{Binding SvgFiles}"
+                         SelectionMode="Extended"
+                         SelectionChanged="Files_SelectionChanged"
+                         BorderThickness="0" Background="Transparent" Padding="10"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListBox.Style>
+                        <Style TargetType="ListBox">
                             <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
                                 <MultiDataTrigger>
@@ -310,60 +315,85 @@
                                 </MultiDataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </ScrollViewer.Style>
+                    </ListBox.Style>
 
-                    <ItemsControl ItemsSource="{Binding SvgFiles}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
 
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type vm:SvgFileViewModel}">
-                                <Border Margin="6" Padding="8" CornerRadius="6"
-                                        BorderBrush="#E4E8ED" BorderThickness="1"
-                                        Background="#FCFDFE"
-                                        Cursor="Hand"
-                                        Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}"
-                                        ContextMenu="{StaticResource SvgItemContextMenu}"
-                                        PreviewMouseLeftButtonDown="Thumbnail_MouseDown"
-                                        PreviewMouseMove="Thumbnail_MouseMove"
-                                        ToolTip="{Binding ToolTipText}">
-                                    <StackPanel Width="{Binding DataContext.ThumbnailSize,
-                                                                RelativeSource={RelativeSource AncestorType=Window}}">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Tag"
+                                    Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}" />
+                            <Setter Property="ContextMenu" Value="{StaticResource SvgItemContextMenu}" />
+                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListItem_MouseDown" />
+                            <EventSetter Event="PreviewMouseMove" Handler="Thumbnail_MouseMove" />
+                            <EventSetter Event="MouseDoubleClick" Handler="ListItem_DoubleClick" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <ContentPresenter />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
 
-                                        <!-- Fixed-size cell so the grid stays aligned -->
-                                        <Grid Height="{Binding DataContext.ThumbnailSize,
-                                                               RelativeSource={RelativeSource AncestorType=Window}}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:SvgFileViewModel}">
+                            <Border Margin="6" Padding="8" CornerRadius="6"
+                                    BorderThickness="1" Cursor="Hand"
+                                    ToolTip="{Binding ToolTipText}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="#FCFDFE" />
+                                        <Setter Property="BorderBrush" Value="#E4E8ED" />
+                                        <Style.Triggers>
+                                            <DataTrigger Value="True"
+                                                Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}">
+                                                <Setter Property="Background" Value="#E7F0FE" />
+                                                <Setter Property="BorderBrush" Value="#4C8DF5" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <StackPanel Width="{Binding DataContext.ThumbnailSize,
+                                                            RelativeSource={RelativeSource AncestorType=Window}}">
 
-                                            <Image Source="{Binding Thumbnail}"
-                                                   Stretch="Uniform"
-                                                   RenderOptions.BitmapScalingMode="HighQuality" />
+                                    <!-- Fixed-size cell so the grid stays aligned -->
+                                    <Grid Height="{Binding DataContext.ThumbnailSize,
+                                                           RelativeSource={RelativeSource AncestorType=Window}}">
 
-                                            <TextBlock Text="{Binding Source={x:Static loc:Loc.Instance}, Path=[PreviewRenderFailed]}"
-                                                       TextWrapping="Wrap" TextAlignment="Center"
-                                                       FontSize="11" Foreground="#B42318"
-                                                       VerticalAlignment="Center"
-                                                       Visibility="{Binding RenderFailed, Converter={StaticResource BoolToVisibility}}" />
+                                        <Image Source="{Binding Thumbnail}"
+                                               Stretch="Uniform"
+                                               RenderOptions.BitmapScalingMode="HighQuality" />
 
-                                            <ProgressBar Height="3" Width="40" IsIndeterminate="True"
-                                                         VerticalAlignment="Center"
-                                                         Visibility="{Binding IsLoadingThumbnail, Converter={StaticResource BoolToVisibility}}" />
-                                        </Grid>
+                                        <TextBlock Text="{Binding Source={x:Static loc:Loc.Instance}, Path=[PreviewRenderFailed]}"
+                                                   TextWrapping="Wrap" TextAlignment="Center"
+                                                   FontSize="11" Foreground="#B42318"
+                                                   VerticalAlignment="Center"
+                                                   Visibility="{Binding RenderFailed, Converter={StaticResource BoolToVisibility}}" />
 
-                                        <TextBlock Text="{Binding FileName}"
-                                                   TextTrimming="CharacterEllipsis" TextAlignment="Center"
-                                                   Margin="0,6,0,0" FontSize="11" Foreground="#24292F" />
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
+                                        <ProgressBar Height="3" Width="40" IsIndeterminate="True"
+                                                     VerticalAlignment="Center"
+                                                     Visibility="{Binding IsLoadingThumbnail, Converter={StaticResource BoolToVisibility}}" />
+                                    </Grid>
+
+                                    <TextBlock Text="{Binding FileName}"
+                                               TextTrimming="CharacterEllipsis" TextAlignment="Center"
+                                               Margin="0,6,0,0" FontSize="11" Foreground="#24292F" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
 
                 <!-- Detail list -->
-                <ListView ItemsSource="{Binding SvgFiles}" BorderThickness="0">
+                <ListView ItemsSource="{Binding SvgFiles}" BorderThickness="0"
+                          SelectionMode="Extended"
+                          SelectionChanged="Files_SelectionChanged">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="Tag"

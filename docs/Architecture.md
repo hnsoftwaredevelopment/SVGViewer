@@ -456,3 +456,19 @@ Verkenner slepen. Mapnodes accepteren de drop (`AllowDrop`, `Folder_DragOver` /
 cursor toont het effect. De code-behind roept `MainViewModel.DropFiles` aan, die
 dezelfde `TransferInto`-logica gebruikt als plakken (conflictvraag per bestand,
 verversing van bron- en doelmap). Zo delen knippen/plakken en drag & drop één pad.
+
+
+## Bestandsbeheer: multi-select en conflictkeuzes (US-8.8/8.9)
+
+Beide previews zijn nu selectie-controls: de icon-weergave is een `ListBox`
+(WrapPanel, `SelectionMode=Extended`) en de detaillijst een `ListView` (Extended).
+`SelectionChanged` meldt de selectie aan `MainViewModel.SetSelectedFiles`. Knippen,
+kopiëren, slepen en plakken werken op de hele selectie via een `PathsFor`-helper: is
+het aangeklikte/gesleepte bestand deel van een meervoudige selectie, dan geldt de
+selectie, anders alleen dat ene bestand.
+
+Bij een naamconflict kiest `TransferInto` de aanpak op basis van het aantal: bij één
+bestand de simpele ja/nee (US-8.7), bij meerdere de vier-keuzedialoog `ConflictWindow`
+achter `IConflictResolver` — *Overschrijven / Alle overschrijven / Overslaan / Alle
+overslaan*. De "Alle …"-keuze wordt onthouden in een lokale `bool?` en geldt alleen
+binnen de lopende operatie. Verwijderen blijft bewust op één bestand werken.
