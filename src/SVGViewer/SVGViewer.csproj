@@ -49,11 +49,7 @@
     <Resource Include="Assets\flags\nl.svg" Condition="Exists('Assets\flags\nl.svg')" />
     <Resource Include="Assets\flags\en.svg" Condition="Exists('Assets\flags\en.svg')" />
     <Resource Include="Assets\flags\de.svg" Condition="Exists('Assets\flags\de.svg')" />
-  </ItemGroup>
-
-  <!-- Native WPF splash screen: shown at startup, fades out when the window loads. -->
-  <ItemGroup>
-    <SplashScreen Include="Assets\splash.png" Condition="Exists('Assets\splash.png')" Width="800" />
+    <Resource Include="Assets\splash.png" Condition="Exists('Assets\splash.png')" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,20 @@
+<Window x:Class="SVGViewer.Views.SplashWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False"
+        Topmost="True" WindowStartupLocation="CenterScreen"
+        SizeToContent="WidthAndHeight"
+        AllowsTransparency="True" Background="Transparent">
+    <Grid>
+        <Image Source="pack://application:,,,/Assets/splash.png" Width="800" Stretch="Uniform" />
+
+        <!-- Version number overlay (bottom-right). Restyle/reposition as you like. -->
+        <Border x:Name="VersionChip"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Margin="0,0,18,16" Padding="10,3"
+                CornerRadius="10" Background="#99000000">
+            <TextBlock x:Name="VersionText"
+                       Foreground="White" FontSize="13" FontWeight="SemiBold" />
+        </Border>
+    </Grid>
+</Window>

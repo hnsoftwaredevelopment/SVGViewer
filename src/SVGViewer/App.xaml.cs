@@ -5,6 +5,7 @@ using System.Windows.Threading;
 using SVGViewer.Localization;
 using SVGViewer.Services;
 using SVGViewer.ViewModels;
+using SVGViewer.Views;
 
 namespace SVGViewer;
 
@@ -31,9 +32,22 @@ public partial class App : Application
         var settings = settingsService.Load();
         Loc.SetCulture(settings.Language);
 
+        // Show the splash (with the version number) first, then build the main window.
+        var splash = new SplashWindow();
+        splash.Show();
+
         var viewModel = new MainViewModel(settingsService, settings);
         var window = new MainWindow(viewModel, settingsService, settings);
         window.Show();
+
+        // The splash stays on top for a moment, then closes to reveal the window.
+        var splashTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        splashTimer.Tick += (_, _) =>
+        {
+            splashTimer.Stop();
+            splash.Close();
+        };
+        splashTimer.Start();
     }
 
     /// <summary>
