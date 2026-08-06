@@ -39,23 +39,6 @@ Preview window (zoom & pan):
 | Optional UI | Syncfusion WPF (license read from a local file) |
 | Localization | `.resx` satellite assemblies (nl / en / de) |
 
-## Getting started
-
-```powershell
-# Requires the .NET 8 SDK (pinned via global.json)
-git clone https://github.com/hnsoftwaredevelopment/SVGViewer.git
-cd SVGViewer
-dotnet build -c Release
-dotnet run --project src/SVGViewer
-```
-
-### Syncfusion license (optional)
-
-If you use the Syncfusion controls, place your license key in a file named
-`syncfusionlicense.txt` inside `src/SVGViewer/`. This file is **git‑ignored** and
-is never committed. If the file is absent, the app still runs (with a Syncfusion
-trial notice) or falls back to the standard WPF controls.
-
 ## Documentation
 
 - Quick reference: [`docs/user-guide/`](docs/user-guide/) — a short overview in NL / EN / DE (also opened by the in‑app Help button).
