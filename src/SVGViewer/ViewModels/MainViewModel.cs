@@ -842,6 +842,12 @@ public partial class MainViewModel : ObservableObject
         {
             try { await previousScan; }
             catch (OperationCanceledException) { }
+            catch (Exception exception)
+            {
+                // A failed old scan must never prevent a newly selected location
+                // from starting its own scan.
+                Logger.Error("Previous SVG scan failed while switching locations.", exception);
+            }
         }
 
         if (requestId != _scanRequestId)

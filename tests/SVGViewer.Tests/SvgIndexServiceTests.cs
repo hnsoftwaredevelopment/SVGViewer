@@ -126,6 +126,7 @@ public class SvgIndexServiceTests
 
             await service.BuildIndexAsync(state, progress, cts.Token);
             Assert.False(state.IsComplete);
+            Assert.True(state.Index.WasCancelled);
             Assert.InRange(state.Index.TotalFoldersScanned, 50, 80);
 
             await service.BuildIndexAsync(state);

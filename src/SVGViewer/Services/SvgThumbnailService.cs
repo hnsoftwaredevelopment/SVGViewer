@@ -25,6 +25,7 @@ public sealed class SvgThumbnailService
     /// entry after an edit, while retaining only the latest render per file.
     /// </summary>
     private readonly ConcurrentDictionary<string, CacheEntry> _cache = new(StringComparer.OrdinalIgnoreCase);
+    private readonly ConcurrentDictionary<RenderKey, Lazy<Task<ImageSource?>>> _inFlight = new();
 
     public int CachedCount => _cache.Count;
 
@@ -52,16 +53,43 @@ public sealed class SvgThumbnailService
             return cached.Image;
         }
 
-        await _throttle.WaitAsync(cancellationToken).ConfigureAwait(false);
+        var key = new RenderKey(normalizedPath, lastWriteUtcTicks);
+        var render = _inFlight.GetOrAdd(
+            key,
+            static (_, request) => new Lazy<Task<ImageSource?>>(
+                () => request.Service.RenderAndCacheAsync(request.Key),
+                LazyThreadSafetyMode.ExecutionAndPublication),
+            (Service: this, Key: key));
+
         try
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            return await render.Value.WaitAsync(cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            if (render.IsValueCreated && render.Value.IsCompleted)
+            {
+                _inFlight.TryRemove(new KeyValuePair<RenderKey, Lazy<Task<ImageSource?>>>(key, render));
+            }
+        }
+    }
 
-            var image = await Task.Run(() => Render(normalizedPath), cancellationToken).ConfigureAwait(false);
+    /// <summary>Clears the cache, e.g. after the user presses Refresh.</summary>
+    public void ClearCache()
+    {
+        _cache.Clear();
+        _inFlight.Clear();
+    }
 
+    private async Task<ImageSource?> RenderAndCacheAsync(RenderKey key)
+    {
+        await _throttle.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            var image = await Task.Run(() => Render(key.Path)).ConfigureAwait(false);
             if (image is not null)
             {
-                _cache[normalizedPath] = new CacheEntry(lastWriteUtcTicks, image);
+                _cache[key.Path] = new CacheEntry(key.LastWriteUtcTicks, image);
             }
 
             return image;
@@ -72,10 +100,8 @@ public sealed class SvgThumbnailService
         }
     }
 
-    /// <summary>Clears the cache, e.g. after the user presses Refresh.</summary>
-    public void ClearCache() => _cache.Clear();
-
     private sealed record CacheEntry(long LastWriteUtcTicks, ImageSource Image);
+    private sealed record RenderKey(string Path, long LastWriteUtcTicks);
 
     private static ImageSource? Render(string filePath)
     {

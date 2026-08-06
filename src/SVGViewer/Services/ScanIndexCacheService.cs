@@ -134,7 +134,19 @@ public sealed class ScanIndexCacheService
         try
         {
             var root = Path.GetPathRoot(path);
-            if (string.IsNullOrWhiteSpace(root) ||
+            if (string.IsNullOrWhiteSpace(root))
+            {
+                return null;
+            }
+
+            // GetVolumeInformation requires a trailing separator for UNC share
+            // roots, whereas local drive roots already contain one.
+            if (!Path.EndsInDirectorySeparator(root))
+            {
+                root += Path.DirectorySeparatorChar;
+            }
+
+            if (
                 !GetVolumeInformation(root, null, 0, out var serial, out _, out _, null, 0))
             {
                 return null;

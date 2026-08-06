@@ -190,6 +190,7 @@ public sealed class SvgIndexService
         {
             if (cancellationToken.IsCancellationRequested)
             {
+                state.Index.WasCancelled = true;
                 state.Visited.Remove(current);
                 state.Pending.Push(current);
                 break;
@@ -203,6 +204,7 @@ public sealed class SvgIndexService
             catch (OperationCanceledException)
             {
                 // Put the interrupted folder back so a resumed scan never loses it.
+                state.Index.WasCancelled = true;
                 state.Visited.Remove(current);
                 state.Pending.Push(current);
                 break;
@@ -283,15 +285,27 @@ public sealed class SvgIndexService
 
     private static bool IsAtOrBelowRoot(string path, string root)
     {
-        if (string.Equals(path, root, StringComparison.OrdinalIgnoreCase))
+        string canonicalPath;
+        string canonicalRoot;
+        try
+        {
+            canonicalPath = DirectoryScanner.NormalizeFolderPath(Path.GetFullPath(path));
+            canonicalRoot = DirectoryScanner.NormalizeFolderPath(Path.GetFullPath(root));
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+
+        if (string.Equals(canonicalPath, canonicalRoot, StringComparison.OrdinalIgnoreCase))
         {
             return true;
         }
 
-        var rootPrefix = root.EndsWith(Path.DirectorySeparatorChar)
-            ? root
-            : root + Path.DirectorySeparatorChar;
-        return path.StartsWith(rootPrefix, StringComparison.OrdinalIgnoreCase);
+        var rootPrefix = canonicalRoot.EndsWith(Path.DirectorySeparatorChar)
+            ? canonicalRoot
+            : canonicalRoot + Path.DirectorySeparatorChar;
+        return canonicalPath.StartsWith(rootPrefix, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>

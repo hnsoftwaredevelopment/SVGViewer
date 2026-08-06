@@ -25,7 +25,7 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $benchmarkProject = Join-Path $projectRoot 'tools\SVGViewer.ScanBenchmark\SVGViewer.ScanBenchmark.csproj'
 $benchmarkOutput = Join-Path $projectRoot 'Builds\Benchmark\Host\'
-$benchmarkAssembly = Join-Path $benchmarkOutput 'Release\net8.0-windows\SVGViewer.ScanBenchmark.dll'
+$benchmarkAssembly = Join-Path $benchmarkOutput "$Configuration\net8.0-windows\SVGViewer.ScanBenchmark.dll"
 
 & dotnet build $benchmarkProject --configuration $Configuration "-p:BaseOutputPath=$benchmarkOutput" --nologo
 if ($LASTEXITCODE -ne 0) {

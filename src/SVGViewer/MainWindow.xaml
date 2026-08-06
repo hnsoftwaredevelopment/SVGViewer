@@ -178,6 +178,7 @@
 
                 <Button Style="{StaticResource ToolIconButton}" Margin="0,0,18,0"
                         Click="SelectFolder_Click"
+                        AutomationProperties.Name="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonSelectFolder]}"
                         ToolTip="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonSelectFolder]}">
                     <Viewbox Width="20" Height="20" Stretch="Uniform">
                         <Canvas Width="20" Height="20">

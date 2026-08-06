@@ -62,7 +62,8 @@ internal sealed record Measurement(
     int FoldersWithSvg,
     int RelevantFolders)
 {
-    public double FoldersPerSecond => FoldersScanned / Math.Max(Elapsed.TotalSeconds, 0.001);
+    public double FoldersPerSecond =>
+        Elapsed.Ticks == 0 ? 0 : FoldersScanned / Elapsed.TotalSeconds;
 }
 
 internal sealed record Summary(

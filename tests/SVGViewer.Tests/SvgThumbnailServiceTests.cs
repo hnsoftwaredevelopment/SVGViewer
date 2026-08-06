@@ -86,7 +86,11 @@ public class SvgThumbnailServiceTests
         File.SetLastWriteTimeUtc(path, DateTime.UtcNow.AddMinutes(5));
         var second = await service.GetThumbnailAsync(path);
 
+        Assert.NotNull(first);
+        Assert.NotNull(second);
         Assert.NotSame(first, second);
+        var third = await service.GetThumbnailAsync(path);
+        Assert.Same(second, third);
         Assert.Equal(1, service.CachedCount);
     }
 
@@ -120,5 +124,20 @@ public class SvgThumbnailServiceTests
         var images = await Task.WhenAll(paths.Select(p => service.GetThumbnailAsync(p)));
 
         Assert.All(images, image => Assert.NotNull(image));
+    }
+
+    [Fact]
+    public async Task Simultaneous_requests_for_one_file_share_the_same_render()
+    {
+        using var tree = new TestTree();
+        var service = new SvgThumbnailService();
+        var path = Path.Combine(tree.Icons, "one.svg");
+
+        var images = await Task.WhenAll(Enumerable.Range(0, 8)
+            .Select(_ => service.GetThumbnailAsync(path)));
+
+        Assert.All(images, image => Assert.NotNull(image));
+        Assert.All(images, image => Assert.Same(images[0], image));
+        Assert.Equal(1, service.CachedCount);
     }
 }

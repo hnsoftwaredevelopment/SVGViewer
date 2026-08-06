@@ -76,7 +76,7 @@
     <value>{0} mappen met SVG-bestanden gevonden</value>
   </data>
   <data name="StatusNoSvgFound" xml:space="preserve">
-    <value>Geen SVG-bestanden gevonden in deze locatie</value>
+    <value>Geen SVG-bestanden gevonden op deze locatie</value>
   </data>
   <data name="TreeLoading" xml:space="preserve">
     <value>Laden...</value>
