@@ -191,9 +191,9 @@ gekozen aanpak bij naamconflicten en bevestigingen.
   **Overslaan** · **Alle overslaan**. *("Alle …" geldt alleen binnen de lopende
   operatie, niet persistent. Bij één bestand blijft het de simpele ja/nee van US-8.7.)*
 - ☑ **US-8.9** — Als gebruiker wil ik meerdere bestanden kunnen selecteren voor
-  verplaatsen/kopiëren. *(Multi-select (Ctrl/Shift) in beide weergaven; knippen,
-  kopiëren, slepen en plakken werken op de hele selectie. Verwijderen werkt bewust
-  nog op één bestand.)*
+  verplaatsen/kopiëren/verwijderen. *(Multi-select (Ctrl/Shift) in beide
+  weergaven; knippen, kopiëren, slepen en plakken werken op de hele selectie.
+  Verwijderen vraagt één bevestiging voor de geselecteerde bestanden.)*
 
 ## SE-9 · Instellingen
 

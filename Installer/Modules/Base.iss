@@ -1,0 +1,39 @@
+[Setup]
+AppId={#AppId}
+AppName={#ProductName}
+AppVersion={#ProductVersion}
+AppVerName={#ProductName} {#ProductVersion}
+AppPublisher={#ProductPublisher}
+AppPublisherURL={#ProductUrl}
+AppSupportURL={#ProductUrl}
+AppUpdatesURL={#ProductUrl}
+DefaultDirName={autopf}\HnSoftwaredevelopment\{#ProductName}
+DisableDirPage=yes
+DisableProgramGroupPage=no
+DisableReadyMemo=yes
+DisableFinishedPage=yes
+DisableWelcomePage=yes
+AllowNoIcons=yes
+; Houd bij een upgrade de eerdere installatiemap aan. Dit ondersteunt een
+; stabiele upgrade-identiteit en helpt Windows bestaande pins te behouden.
+UsePreviousAppDir=yes
+OutputDir={#OutputDir}
+OutputBaseFilename={#OutputBaseFilename}-{#ProductVersion}
+SetupIconFile={#SetupIconFile}
+UninstallDisplayIcon={app}\{#MainExecutable}
+UninstallDisplayName={#ProductName}
+Compression=lzma2/ultra64
+SolidCompression=yes
+WizardStyle=modern
+WizardImageFile={#WizardImageFile}
+WizardSmallImageFile={#WizardSmallImageFile}
+PrivilegesRequired={#PrivilegesRequired}
+CloseApplications=yes
+RestartApplications=no
+VersionInfoCompany={#ProductPublisher}
+VersionInfoDescription={#ProductName} installer
+VersionInfoProductName={#ProductName}
+VersionInfoProductVersion={#ProductVersion}
+VersionInfoVersion={#ProductVersion}
+AppCopyright={#ProductPublisher}
+VersionInfoCopyright={#ProductPublisher}

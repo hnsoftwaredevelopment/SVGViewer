@@ -20,13 +20,21 @@ public class LocalizationTests : IDisposable
     {
         Loc.SetCulture(culture);
 
-        foreach (var key in new[] { "AppTitle", "LabelDrive", "LabelView", "LabelPreviewSize", "LabelLanguage" })
+        foreach (var key in new[]
+                 {
+                     "AppTitle", "LabelDrive", "LabelView", "LabelPreviewSize", "LabelLanguage",
+                     "ButtonSelectFolder"
+                 })
         {
             var value = Loc.Get(key);
 
             Assert.False(string.IsNullOrWhiteSpace(value));
             Assert.DoesNotContain("!", value);
         }
+
+        var status = Loc.Format("StatusFoldersScanned", 12, 3, 250.0, TimeSpan.FromSeconds(90));
+        Assert.False(string.IsNullOrWhiteSpace(status));
+        Assert.DoesNotContain("{", status);
     }
 
     [Fact]
@@ -40,7 +48,7 @@ public class LocalizationTests : IDisposable
     {
         Loc.SetCulture("nl");
 
-        Assert.Equal("Schijf:", Loc.Get("LabelDrive"));
+        Assert.Equal("Locatie:", Loc.Get("LabelDrive"));
     }
 
     [Fact]

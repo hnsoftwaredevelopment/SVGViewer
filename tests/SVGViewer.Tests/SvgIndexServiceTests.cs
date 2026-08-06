@@ -90,6 +90,62 @@ public class SvgIndexServiceTests
     }
 
     [Fact]
+    public async Task Prioritized_folder_is_scanned_without_duplicate_results()
+    {
+        using var tree = new TestTree();
+        var priority = new SvgScanPriority();
+        priority.Prioritize(tree.Deep);
+
+        var index = await new SvgIndexService().BuildIndexAsync(
+            tree.Root,
+            new SvgFolderIndex(),
+            priority: priority);
+
+        Assert.Equal(8, index.TotalFoldersScanned);
+        Assert.True(index.ContainsSvg(tree.Deep));
+        Assert.True(index.IsRelevant(tree.Path_("B")));
+    }
+
+    [Fact]
+    public async Task Interrupted_work_state_resumes_without_rescanning_or_losing_folders()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "SVGViewerTests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+
+        try
+        {
+            for (var i = 0; i < 80; i++)
+            {
+                Directory.CreateDirectory(Path.Combine(root, $"folder-{i:D3}"));
+            }
+
+            using var cts = new CancellationTokenSource();
+            var state = new SvgScanWorkState(root);
+            var progress = new CancelOnFirstReport(cts);
+            var service = new SvgIndexService();
+
+            await service.BuildIndexAsync(state, progress, cts.Token);
+            Assert.False(state.IsComplete);
+            Assert.True(state.Index.WasCancelled);
+            Assert.InRange(state.Index.TotalFoldersScanned, 50, 80);
+
+            await service.BuildIndexAsync(state);
+
+            Assert.True(state.IsComplete);
+            Assert.Equal(81, state.Index.TotalFoldersScanned); // root + 80 folders
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    private sealed class CancelOnFirstReport(CancellationTokenSource cancellation) : IProgress<ScanProgress>
+    {
+        public void Report(ScanProgress value) => cancellation.Cancel();
+    }
+
+    [Fact]
     public async Task Reports_progress_while_scanning()
     {
         using var tree = new TestTree();

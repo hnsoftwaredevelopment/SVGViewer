@@ -22,6 +22,7 @@ SVGViewer/
    ├─ Services/
    │  ├─ LicenseManager.cs      Syncfusion-key inlezen/registreren
    │  ├─ SettingsService.cs     voorkeuren als JSON in %AppData%
+   │  ├─ ScanIndexCacheService.cs  voltooide scanindexen als JSON in %AppData%
    │  ├─ DirectoryScanner.cs    veilige bestandssysteem-primitieven
    │  └─ SvgIndexService.cs     asynchrone drive-scan naar SVG-mappen
    └─ ViewModels/
@@ -63,6 +64,48 @@ De scan is iteratief (met een `Stack`), niet recursief, zodat een diepe
 mappenstructuur geen stack overflow kan geven. Hij draait op een achtergrond-
 thread, rapporteert voortgang en is te annuleren.
 
+Tijdens de scan wordt elke map in één ongesorteerde pass geënumerereerd: SVG's
+worden geteld en toegestane submappen worden direct op de stack gezet. De
+TreeView houdt afzonderlijk zijn gesorteerde enumeratie, omdat die volgorde voor
+de gebruiker zichtbaar is. Zie [Performance.md](./Performance.md) voor een
+reproduceerbare vergelijking met de vorige scanstrategie.
+
+De actieve map krijgt tijdens een scan voorrang. Als de gebruiker een map
+selecteert of uitklapt, zet `SvgScanPriority` die map vóór de gewone
+achtergrondwachtrij. De root wordt altijd eerst gescand en een `visited`-set
+garandeert dat een map ook na een prioriteitsverzoek maar één keer wordt
+verwerkt. Daardoor wordt de tak waar de gebruiker werkt sneller blauw, zonder
+extra volledige scan of wijziging aan de volledigheid van het eindresultaat.
+
+Een scanroot hoeft niet langer een volledige schijf te zijn. Via de mapknop
+naast de locatielijst kiest de gebruiker een willekeurige map; die wordt dan de
+root van precies dezelfde lazy tree, index en progressieve scan. De gekozen map
+wordt als laatste locatie opgeslagen en bij een volgende start hersteld zolang
+deze nog bestaat.
+
+Scans worden per drive of gekozen map maximaal acht keer in een sessie bewaard.
+Een voltooide scan verschijnt bij terugwisselen direct; een nog lopende scan
+wordt gepauzeerd met zijn resterende wachtrij en vervolgens voortgezet waar hij
+was gebleven.
+
+Voltooide scans blijven daarnaast bewaard tussen sessies in
+`%AppData%\SVGViewer\scan-cache.json`. Bij het opnieuw kiezen van een bekende
+locatie kan de viewer de gevonden SVG-mappen daarom meteen tonen, zonder eerst
+opnieuw te scannen. De cache controleert voor drive-roots het Windows-volume-ID,
+zodat bijvoorbeeld een andere USB-stick met dezelfde driveletter geen resultaten
+van de vorige stick krijgt. Een ongeldig, onleesbaar of niet-passend cachebestand
+wordt veilig genegeerd. De knop **Vernieuwen** voert bewust een verse scan uit en
+vervangt de blijvende cache pas nadat die scan volledig is afgerond; tot die tijd
+blijft een eerder resultaat beschikbaar als veilige terugval.
+
+### Scanvoortgang en snelle toegang
+
+Omdat vooraf niet bekend is hoeveel mappen een locatie bevat, blijft de
+voortgangsbalk bewust onbepaald. De statusregel toont wel het daadwerkelijke
+aantal gescande mappen, gevonden SVG-mappen, de gemiddelde scansnelheid en de
+verstreken actieve scantijd. De filter **Alleen SVG** blijft de snelle,
+volledige toegang tot alle relevante mappen.
+
 ### 3. Robuust tegen het bestandssysteem
 
 Een volledige schijf bevat altijd mappen die niet leesbaar zijn. `DirectoryScanner`
@@ -92,11 +135,13 @@ Teksten die in code worden samengesteld (zoals de statusregel) worden bewaard
 als resourcekey + argumenten, zodat ze na een taalwissel opnieuw opgebouwd
 kunnen worden in de nieuwe taal.
 
-### 5. Waarom er één stukje code-behind is
+### 5. Beperkt en UI-gericht code-behind
 
 `TreeView.SelectedItem` is read-only en dus niet bindbaar. De selectie wordt
-daarom in `MainWindow.xaml.cs` doorgegeven aan de ViewModel. Dat is de enige
-code-behind in het venster; al het andere gedrag zit in de ViewModels.
+daarom in `MainWindow.xaml.cs` doorgegeven aan de ViewModel. Code-behind bevat
+verder alleen WPF-interactie die niet goed bindbaar is (dialoogvensters,
+drag-and-drop, muis- en toetsgebeurtenissen); bestandsbewerkingen en
+applicatietoestand blijven in de ViewModels en services.
 
 ## Verificatie
 
@@ -129,8 +174,9 @@ een **vector** is, volstaat één render voor alle previewgroottes: WPF schaalt 
 zonder kwaliteitsverlies. De previewgrootte bepaalt dus alleen de afmeting van de
 `Image` in XAML, niet wat er gerenderd wordt.
 
-- De cachesleutel is pad + wijzigingsdatum, dus een bewerkt bestand wordt
-  automatisch opnieuw gerenderd.
+- De cache bewaart één render per pad en controleert de wijzigingsdatum; een
+  bewerkt bestand wordt automatisch opnieuw gerenderd zonder dat oude renders
+  in het geheugen achterblijven.
 - Parallellisme is begrensd op de helft van de processorkernen, zodat een map met
   honderden bestanden de machine niet plat legt.
 - Bestandsdetails (naam, grootte, datum) worden direct gelezen en de lijst wordt

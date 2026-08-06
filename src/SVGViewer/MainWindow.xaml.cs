@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using SVGViewer.Localization;
 using SVGViewer.Models;
 using SVGViewer.Services;
 using SVGViewer.ViewModels;
@@ -77,6 +78,26 @@ public partial class MainWindow : Window
         if (DataContext is MainViewModel viewModel)
         {
             viewModel.SelectedNode = e.NewValue as DirectoryNodeViewModel;
+        }
+    }
+
+    /// <summary>Lets the user limit the scan to a chosen folder instead of a full drive.</summary>
+    private void SelectFolder_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new Microsoft.Win32.OpenFolderDialog
+        {
+            Title = Loc.Get("ButtonSelectFolder")
+        };
+
+        if (DataContext is MainViewModel { SelectedDrive: { } selected } &&
+            System.IO.Directory.Exists(selected.RootPath))
+        {
+            dialog.InitialDirectory = selected.RootPath;
+        }
+
+        if (dialog.ShowDialog(this) == true && DataContext is MainViewModel viewModel)
+        {
+            viewModel.SelectFolderScope(dialog.FolderName);
         }
     }
 

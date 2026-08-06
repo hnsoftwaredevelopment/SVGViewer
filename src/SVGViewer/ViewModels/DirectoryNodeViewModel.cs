@@ -16,6 +16,7 @@ public partial class DirectoryNodeViewModel : ObservableObject
     private readonly SvgFolderIndex? _index;
     private readonly FolderFilterMode _filterMode;
     private readonly bool _explicit;
+    private readonly Action<string>? _onExpanded;
     private bool _childrenLoaded;
 
     public DirectoryNodeViewModel(
@@ -23,13 +24,15 @@ public partial class DirectoryNodeViewModel : ObservableObject
         string displayName,
         FolderFilterMode filterMode,
         SvgFolderIndex? index,
-        bool explicitlyBuilt = false)
+        bool explicitlyBuilt = false,
+        Action<string>? onExpanded = null)
     {
         FullPath = DirectoryScanner.NormalizeFolderPath(fullPath);
         DisplayName = displayName;
         _filterMode = filterMode;
         _index = index;
         _explicit = explicitlyBuilt;
+        _onExpanded = onExpanded;
 
         Children = new ObservableCollection<DirectoryNodeViewModel>();
 
@@ -161,6 +164,7 @@ public partial class DirectoryNodeViewModel : ObservableObject
         if (value)
         {
             LoadChildren();
+            _onExpanded?.Invoke(FullPath);
         }
     }
 
@@ -217,7 +221,8 @@ public partial class DirectoryNodeViewModel : ObservableObject
                 directory.FullName,
                 directory.Name,
                 _filterMode,
-                _index));
+                _index,
+                onExpanded: _onExpanded));
         }
     }
 
