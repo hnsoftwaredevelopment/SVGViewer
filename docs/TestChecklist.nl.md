@@ -63,8 +63,9 @@ Herhaal de kernpaden in **alle drie de talen** (NL/EN/DE).
 - [ ] Gekozen taal blijft behouden **na herstart** van de app.
 
 ## 8. Help (❓) & Over (ℹ)
-- [ ] Help opent de handleiding in de standaardbrowser, in de **juiste taal**
-      (terugval op NL als een taalversie ontbreekt).
+- [ ] Help opent de handleiding in een **venster binnen de app**, in de juiste
+      taal (terugval op NL als een taalversie ontbreekt); sluiten via de knop,
+      titelbalk-X of **Esc** werkt.
 - [ ] Over toont het app-logo, het **versienummer**, de beschrijving en het
       HN-Software-logo op de donkere strook; "Sluiten" werkt.
 

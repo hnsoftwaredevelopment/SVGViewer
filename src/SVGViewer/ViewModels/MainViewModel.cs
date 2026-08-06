@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -15,6 +16,7 @@ namespace SVGViewer.ViewModels;
 public partial class MainViewModel : ObservableObject
 {
     private readonly SettingsService _settingsService;
+    private readonly ScanIndexCacheService _persistentScanCache;
     private readonly SvgIndexService _indexService = new();
     private readonly SvgThumbnailService _thumbnailService = new();
     private readonly FileOpenService _fileOpenService;
@@ -28,6 +30,8 @@ public partial class MainViewModel : ObservableObject
     private readonly AppSettings _settings;
 
     private CancellationTokenSource? _scanCancellation;
+    private Task<SvgFolderIndex>? _activeScanTask;
+    private int _scanRequestId;
     private CancellationTokenSource? _previewCancellation;
     private DateTime _lastMarkingRefreshUtc;
     private bool _isInitializing = true;
@@ -36,6 +40,10 @@ public partial class MainViewModel : ObservableObject
     // this index instead of starting a new scan; a running scan keeps feeding
     // whichever view is active.
     private SvgFolderIndex _index = new();
+    private SvgScanPriority? _scanPriority;
+    private SvgScanWorkState? _scanWorkState;
+    private const int MaxCachedScanScopes = 8;
+    private readonly Dictionary<string, CachedScan> _scanCache = new(StringComparer.OrdinalIgnoreCase);
     private bool _scanComplete;
     private DirectoryNodeViewModel? _svgOnlyRoot;
     private HashSet<string> _svgOnlyInserted = new(StringComparer.OrdinalIgnoreCase);
@@ -54,9 +62,11 @@ public partial class MainViewModel : ObservableObject
         IRenameDialog? renameDialog = null,
         INewFolderDialog? newFolderDialog = null,
         IFileClipboard? clipboard = null,
-        IConflictResolver? conflictResolver = null)
+        IConflictResolver? conflictResolver = null,
+        ScanIndexCacheService? persistentScanCache = null)
     {
         _settingsService = settingsService;
+        _persistentScanCache = persistentScanCache ?? new ScanIndexCacheService();
         _settings = settings;
         _fileOpenService = fileOpenService ?? new FileOpenService();
         _notifier = notifier ?? new MessageBoxNotifier();
@@ -68,6 +78,7 @@ public partial class MainViewModel : ObservableObject
         _conflictResolver = conflictResolver ?? new ConflictResolver();
 
         Drives = new ObservableCollection<DriveChoice>(LoadDrives());
+        AddRestoredLocationIfAvailable(_settings.LastDrive);
         RootNodes = new ObservableCollection<DirectoryNodeViewModel>();
         SvgFiles = new ObservableCollection<SvgFileViewModel>();
 
@@ -107,7 +118,28 @@ public partial class MainViewModel : ObservableObject
 
     public ObservableCollection<DriveChoice> Drives { get; }
 
+    /// <summary>Selects a user-chosen folder as the root of the next scan.</summary>
+    public void SelectFolderScope(string folderPath)
+    {
+        var normalized = DirectoryScanner.NormalizeFolderPath(folderPath);
+        if (string.IsNullOrEmpty(normalized) || !Directory.Exists(normalized))
+        {
+            return;
+        }
+
+        var choice = Drives.FirstOrDefault(d =>
+            string.Equals(d.RootPath, normalized, StringComparison.OrdinalIgnoreCase));
+        if (choice is null)
+        {
+            choice = new DriveChoice(normalized, normalized);
+            Drives.Insert(0, choice);
+        }
+
+        SelectedDrive = choice;
+    }
+
     public ObservableCollection<DirectoryNodeViewModel> RootNodes { get; }
+
 
     /// <summary>SVG files in the selected folder. Never contains other file types.</summary>
     public ObservableCollection<SvgFileViewModel> SvgFiles { get; }
@@ -200,6 +232,7 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private DirectoryNodeViewModel? _selectedNode;
 
+
     [ObservableProperty]
     private string _statusText = string.Empty;
 
@@ -264,6 +297,11 @@ public partial class MainViewModel : ObservableObject
 
     partial void OnSelectedNodeChanged(DirectoryNodeViewModel? value)
     {
+        if (value is not null)
+        {
+            _scanPriority?.Prioritize(value.FullPath);
+        }
+
         UpdateSelectedFolderInfo();
         _ = LoadPreviewAsync(value);
     }
@@ -274,7 +312,7 @@ public partial class MainViewModel : ObservableObject
     {
         // Drop cached renders so edited files show their new content.
         _thumbnailService.ClearCache();
-        return StartScanAsync();
+        return StartScanAsync(forceRescan: true);
     }
 
     /// <summary>
@@ -776,35 +814,118 @@ public partial class MainViewModel : ObservableObject
         return result;
     }
 
+    private void AddRestoredLocationIfAvailable(string? lastLocation)
+    {
+        if (string.IsNullOrWhiteSpace(lastLocation) || !Directory.Exists(lastLocation))
+        {
+            return;
+        }
+
+        var normalized = DirectoryScanner.NormalizeFolderPath(lastLocation);
+        if (!Drives.Any(d => string.Equals(d.RootPath, normalized, StringComparison.OrdinalIgnoreCase)))
+        {
+            Drives.Insert(0, new DriveChoice(normalized, normalized));
+        }
+    }
+
     /// <summary>
     /// Starts (or restarts) the single background scan for the selected drive and
     /// shows the current view immediately. The scan fills one shared index that
     /// both views read from, so switching the filter never triggers a new scan.
     /// </summary>
-    private async Task StartScanAsync()
+    private async Task StartScanAsync(bool forceRescan = false)
     {
+        var requestId = ++_scanRequestId;
         _scanCancellation?.Cancel();
+        var previousScan = _activeScanTask;
+        if (previousScan is not null)
+        {
+            try { await previousScan; }
+            catch (OperationCanceledException) { }
+        }
+
+        if (requestId != _scanRequestId)
+        {
+            return; // A newer location selection superseded this request.
+        }
+
         SelectedNode = null;
 
         var drive = SelectedDrive;
 
-        // Fresh shared index for this drive.
-        _index = new SvgFolderIndex();
-        _scanComplete = false;
-
         if (drive is null)
         {
+            _index = new SvgFolderIndex();
+            _scanPriority = null;
+            _scanWorkState = null;
+            _scanComplete = false;
             RootNodes.Clear();
             IsScanning = false;
             SetStatus("StatusSelectDrive");
             return;
         }
 
+        var scopeKey = DirectoryScanner.NormalizeFolderPath(drive.RootPath);
+        if (forceRescan)
+        {
+            _scanCache.Remove(scopeKey);
+        }
+
+        CachedScan? cached = null;
+        if (!forceRescan)
+        {
+            _scanCache.TryGetValue(scopeKey, out cached);
+        }
+
+        if (cached is not null)
+        {
+            cached.LastUsedUtc = DateTime.UtcNow;
+            _scanWorkState = cached.State;
+            _index = cached.State.Index;
+            _scanPriority = cached.State.Priority;
+
+            if (cached.State.IsComplete)
+            {
+                _scanComplete = true;
+                IsScanning = false;
+                ProjectView();
+                ApplyFinalStatus();
+                return;
+            }
+        }
+        else
+        {
+            var persistedIndex = !forceRescan ? _persistentScanCache.Load(scopeKey) : null;
+            if (persistedIndex is not null)
+            {
+                _scanWorkState = new SvgScanWorkState(scopeKey, persistedIndex) { IsComplete = true };
+                _scanCache[scopeKey] = new CachedScan(_scanWorkState, DateTime.UtcNow);
+                TrimScanCache();
+                _index = persistedIndex;
+                _scanPriority = _scanWorkState.Priority;
+                _scanComplete = true;
+                IsScanning = false;
+                ProjectView();
+                ApplyFinalStatus();
+                Logger.Info($"Loaded persistent SVG scan cache for '{scopeKey}'.");
+                return;
+            }
+
+            // Fresh shared index for this drive or folder scope.
+            _scanWorkState = new SvgScanWorkState(scopeKey);
+            _scanCache[scopeKey] = new CachedScan(_scanWorkState, DateTime.UtcNow);
+            TrimScanCache();
+            _index = _scanWorkState.Index;
+            _scanPriority = _scanWorkState.Priority;
+        }
+
+        _scanComplete = false;
         // Project the (still empty) index into the current view right away.
         ProjectView();
 
         _scanCancellation = new CancellationTokenSource();
         var token = _scanCancellation.Token;
+        var runStartedUtc = DateTime.UtcNow;
 
         IsScanning = true;
         SetStatus("StatusScanning");
@@ -817,7 +938,9 @@ public partial class MainViewModel : ObservableObject
                 return;
             }
 
-            SetStatus("StatusFoldersScanned", p.FoldersScanned, p.FoldersWithSvg);
+            var elapsed = _scanWorkState!.Elapsed + (DateTime.UtcNow - runStartedUtc);
+            var foldersPerSecond = p.FoldersScanned / Math.Max(elapsed.TotalSeconds, 0.001);
+            SetStatus("StatusFoldersScanned", p.FoldersScanned, p.FoldersWithSvg, foldersPerSecond, elapsed);
 
             // Repaint the active view a few times per second at most while scanning.
             if ((DateTime.UtcNow - _lastMarkingRefreshUtc).TotalMilliseconds >= 400)
@@ -829,14 +952,21 @@ public partial class MainViewModel : ObservableObject
 
         try
         {
-            await _indexService.BuildIndexAsync(drive.RootPath, _index, progress, token);
+            _activeScanTask = _indexService.BuildIndexAsync(_scanWorkState!, progress, token);
+            await _activeScanTask;
+            _scanWorkState!.Elapsed += DateTime.UtcNow - runStartedUtc;
 
-            if (token.IsCancellationRequested)
+            if (token.IsCancellationRequested || requestId != _scanRequestId)
             {
-                return; // A newer drive change (or cancel) owns the UI now.
+                return; // The resumable work state stays cached for later.
             }
 
-            _scanComplete = true;
+            _scanComplete = _scanWorkState!.IsComplete;
+            CacheCompletedIndex(scopeKey, _scanWorkState);
+            if (_scanComplete)
+            {
+                _persistentScanCache.Save(scopeKey, _index);
+            }
             RefreshActiveView();
 
             if (SelectedFilter.Value == FolderFilterMode.SvgOnly && _index.FoldersWithSvg.Count == 0)
@@ -859,6 +989,28 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    /// <summary>Keeps recently completed drive/folder scans for this app session.</summary>
+    private void CacheCompletedIndex(string scopeKey, SvgScanWorkState state)
+    {
+        _scanCache[scopeKey] = new CachedScan(state, DateTime.UtcNow);
+        TrimScanCache();
+    }
+
+    private void TrimScanCache()
+    {
+        if (_scanCache.Count > MaxCachedScanScopes)
+        {
+            var oldest = _scanCache.MinBy(entry => entry.Value.LastUsedUtc).Key;
+            _scanCache.Remove(oldest);
+        }
+    }
+
+    private sealed class CachedScan(SvgScanWorkState state, DateTime lastUsedUtc)
+    {
+        public SvgScanWorkState State { get; } = state;
+        public DateTime LastUsedUtc { get; set; } = lastUsedUtc;
+    }
+
     /// <summary>
     /// Rebuilds <see cref="RootNodes"/> for the current filter from the shared
     /// index, without scanning. Called on start-up, on every filter switch, and
@@ -878,7 +1030,13 @@ public partial class MainViewModel : ObservableObject
         if (SelectedFilter.Value == FolderFilterMode.All)
         {
             // Lazy tree, usable immediately; markings come from the shared index.
-            var root = new DirectoryNodeViewModel(drive.RootPath, drive.DisplayName, FolderFilterMode.All, _index);
+            var priority = _scanPriority;
+            var root = new DirectoryNodeViewModel(
+                drive.RootPath,
+                drive.DisplayName,
+                FolderFilterMode.All,
+                _index,
+                onExpanded: priority is null ? null : path => priority.Prioritize(path));
             RootNodes.Add(root);
             root.ExpandAndLoad();
             RefreshMarkings();

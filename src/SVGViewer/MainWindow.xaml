@@ -42,7 +42,7 @@
             </Setter>
         </Style>
 
-        <!-- Flat icon button for the toolbar (Segoe MDL2 glyph as content). -->
+        <!-- Flat icon button for the toolbar. -->
         <Style x:Key="ToolIconButton" TargetType="Button">
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
             <Setter Property="FontSize" Value="16" />
@@ -101,6 +101,13 @@
             <MenuItem Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[ContextDelete]}"
                       Command="{Binding PlacementTarget.Tag.DeleteFileCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+        </ContextMenu>
+
+        <!-- Shared by the preview background and both preview controls. The latter
+             own empty-space clicks whenever files are visible. -->
+        <ContextMenu x:Key="PreviewPasteContextMenu" x:Shared="False">
+            <MenuItem Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[ContextPaste]}"
+                      Command="{Binding PlacementTarget.DataContext.PasteIntoFolderCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
         </ContextMenu>
 
         <!-- A folder node in the tree; highlighted when it contains SVG files -->
@@ -164,10 +171,28 @@
 
                 <TextBlock Text="{Binding Source={x:Static loc:Loc.Instance}, Path=[LabelDrive]}"
                            VerticalAlignment="Center" Margin="0,0,6,0" />
-                <ComboBox Width="190" Margin="0,0,18,0"
+                <ComboBox Width="250" Margin="0,0,4,0"
                           ItemsSource="{Binding Drives}"
                           SelectedItem="{Binding SelectedDrive}"
                           DisplayMemberPath="DisplayName" />
+
+                <Button Style="{StaticResource ToolIconButton}" Margin="0,0,18,0"
+                        Click="SelectFolder_Click"
+                        ToolTip="{Binding Source={x:Static loc:Loc.Instance}, Path=[ButtonSelectFolder]}">
+                    <Viewbox Width="20" Height="20" Stretch="Uniform">
+                        <Canvas Width="20" Height="20">
+                            <Path Data="M1,5 L7,5 L9,7 L18,7 L18,15 L1,15 Z"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.5" StrokeLineJoin="Round" />
+                            <Ellipse Canvas.Left="11" Canvas.Top="10" Width="6" Height="6"
+                                     Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                     StrokeThickness="1.5" />
+                            <Line X1="15.5" Y1="14.5" X2="19" Y2="18"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                        </Canvas>
+                    </Viewbox>
+                </Button>
 
                 <TextBlock Text="{Binding Source={x:Static loc:Loc.Instance}, Path=[LabelView]}"
                            VerticalAlignment="Center" Margin="0,0,6,0" />
@@ -285,15 +310,9 @@
                           Background="#E4E8ED" />
 
             <!-- Preview pane: thumbnails, or a detail list in "only details" mode -->
-            <Grid Grid.Column="2" Background="White">
-
-                <!-- Right-click empty space in the open folder to paste into it. -->
-                <Grid.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[ContextPaste]}"
-                                  Command="{Binding PlacementTarget.DataContext.PasteIntoFolderCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
-                    </ContextMenu>
-                </Grid.ContextMenu>
+            <!-- Right-click empty space in the open folder to paste into it. -->
+            <Grid Grid.Column="2" Background="White"
+                  ContextMenu="{StaticResource PreviewPasteContextMenu}">
 
                 <!-- Thumbnail grid (multi-select) -->
                 <ListBox ItemsSource="{Binding SvgFiles}"
@@ -306,6 +325,7 @@
                     <ListBox.Style>
                         <Style TargetType="ListBox">
                             <Setter Property="Visibility" Value="Collapsed" />
+                            <Setter Property="ContextMenu" Value="{StaticResource PreviewPasteContextMenu}" />
                             <Style.Triggers>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
@@ -411,6 +431,7 @@
                     <ListView.Style>
                         <Style TargetType="ListView">
                             <Setter Property="Visibility" Value="Collapsed" />
+                            <Setter Property="ContextMenu" Value="{StaticResource PreviewPasteContextMenu}" />
                             <Style.Triggers>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>

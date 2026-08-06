@@ -14,7 +14,9 @@ DisableReadyMemo=yes
 DisableFinishedPage=yes
 DisableWelcomePage=yes
 AllowNoIcons=yes
-UsePreviousAppDir=no
+; Houd bij een upgrade de eerdere installatiemap aan. Dit ondersteunt een
+; stabiele upgrade-identiteit en helpt Windows bestaande pins te behouden.
+UsePreviousAppDir=yes
 OutputDir={#OutputDir}
 OutputBaseFilename={#OutputBaseFilename}-{#ProductVersion}
 SetupIconFile={#SetupIconFile}

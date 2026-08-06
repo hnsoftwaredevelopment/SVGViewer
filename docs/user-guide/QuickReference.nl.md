@@ -3,10 +3,16 @@
 SVG Viewer laat je snel door de SVG-bestanden op je schijf bladeren, ze bekijken en
 openen. De app is bewust eenvoudig; dit overzicht volstaat.
 
-- **Schijf & mappen** — kies linksboven een schijf en klik door de boomstructuur.
+- **Schijf & mappen** — kies linksboven een schijf, of klik op de mapknop om
+  alleen een gekozen map te scannen. Een eerder volledig gescande locatie staat
+  ook na het opnieuw starten direct klaar. Wissel je binnen dezelfde sessie terug
+  tijdens een scan, dan gaat die verder waar hij was gebleven. Klik daarna door de
+  boomstructuur.
 - **Waar staan SVG's?** — mappen mét SVG's zijn **blauw met een aantal**; mappen die
   er alleen naartoe leiden zijn blauw zónder aantal. Zet de filter op **Alleen SVG**
   om enkel de relevante mappen te tonen.
+- **Voortgang** — onderaan zie je het aantal gescande mappen, SVG-mappen,
+  gemiddelde scansnelheid en verstreken scantijd.
 - **Bekijken** — selecteer een map om de previews te zien. Kies rechtsboven de
   weergavegrootte (grote / middelgrote / kleine iconen of details).
 - **Vergroten** — **dubbelklik** op een SVG om 'm groot te bekijken in een apart

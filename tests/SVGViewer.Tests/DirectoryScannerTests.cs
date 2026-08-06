@@ -69,6 +69,21 @@ public class DirectoryScannerTests
         Assert.Equal(new[] { "A", "B", "C" }, names);
     }
 
+    [Fact]
+    public void ScanDirectory_counts_svg_files_and_returns_scannable_subdirectories_in_one_pass()
+    {
+        using var tree = new TestTree();
+
+        var result = DirectoryScanner.ScanDirectory(tree.Root);
+
+        Assert.Equal(0, result.SvgFileCount);
+        Assert.Equal(new[] { "A", "B", "C" }, result.SubDirectories.Select(Path.GetFileName).Order());
+
+        result = DirectoryScanner.ScanDirectory(tree.Icons);
+        Assert.Equal(2, result.SvgFileCount);
+        Assert.Empty(result.SubDirectories);
+    }
+
     // Regression: a drive root arrives as "C:\". Trimming the trailing separator
     // to "C:" makes Windows treat it as drive-relative (the process working
     // directory), so the tree showed bin\Debug instead of the real drive root.

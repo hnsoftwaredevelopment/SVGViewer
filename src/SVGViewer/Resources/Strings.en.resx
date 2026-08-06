@@ -16,7 +16,10 @@
     <value>SVG Viewer</value>
   </data>
   <data name="LabelDrive" xml:space="preserve">
-    <value>Drive:</value>
+    <value>Location:</value>
+  </data>
+  <data name="ButtonSelectFolder" xml:space="preserve">
+    <value>Choose folder</value>
   </data>
   <data name="LabelView" xml:space="preserve">
     <value>View:</value>
@@ -58,7 +61,7 @@
     <value>Ready</value>
   </data>
   <data name="StatusSelectDrive" xml:space="preserve">
-    <value>Select a drive to begin</value>
+    <value>Select a drive or folder to begin</value>
   </data>
   <data name="StatusScanning" xml:space="preserve">
     <value>Scanning for SVG folders...</value>
@@ -67,13 +70,13 @@
     <value>Scan cancelled</value>
   </data>
   <data name="StatusFoldersScanned" xml:space="preserve">
-    <value>{0} folders scanned, {1} containing SVG files</value>
+    <value>{0} folders scanned, {1} containing SVG files · {2:N0} folders/s · {3:g}</value>
   </data>
   <data name="StatusFoldersWithSvg" xml:space="preserve">
     <value>Found {0} folders containing SVG files</value>
   </data>
   <data name="StatusNoSvgFound" xml:space="preserve">
-    <value>No SVG files found on this drive</value>
+    <value>No SVG files found in this location</value>
   </data>
   <data name="TreeLoading" xml:space="preserve">
     <value>Loading...</value>

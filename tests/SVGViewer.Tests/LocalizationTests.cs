@@ -40,7 +40,7 @@ public class LocalizationTests : IDisposable
     {
         Loc.SetCulture("nl");
 
-        Assert.Equal("Schijf:", Loc.Get("LabelDrive"));
+        Assert.Equal("Locatie:", Loc.Get("LabelDrive"));
     }
 
     [Fact]

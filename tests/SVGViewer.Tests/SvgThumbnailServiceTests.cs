@@ -73,19 +73,21 @@ public class SvgThumbnailServiceTests
     }
 
     [Fact]
-    public async Task Editing_a_file_invalidates_its_cache_entry()
+    public async Task Editing_a_file_replaces_its_cached_thumbnail()
     {
         using var tree = new TestTree();
         var service = new SvgThumbnailService();
         var path = Path.Combine(tree.Icons, "one.svg");
 
-        await service.GetThumbnailAsync(path);
+        var first = await service.GetThumbnailAsync(path);
 
-        // The cache key includes the last-write time.
+        // The cached image is invalidated by the last-write time, but an old
+        // render for the same path must not be retained indefinitely.
         File.SetLastWriteTimeUtc(path, DateTime.UtcNow.AddMinutes(5));
-        await service.GetThumbnailAsync(path);
+        var second = await service.GetThumbnailAsync(path);
 
-        Assert.Equal(2, service.CachedCount);
+        Assert.NotSame(first, second);
+        Assert.Equal(1, service.CachedCount);
     }
 
     [Fact]

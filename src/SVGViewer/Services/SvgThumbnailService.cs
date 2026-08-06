@@ -20,8 +20,11 @@ public sealed class SvgThumbnailService
     /// <summary>Limits parallel renders so a large folder cannot saturate the CPU.</summary>
     private readonly SemaphoreSlim _throttle = new(Math.Max(2, Environment.ProcessorCount / 2));
 
-    /// <summary>Cache keyed on path plus last-write time, so edits are picked up.</summary>
-    private readonly ConcurrentDictionary<string, ImageSource> _cache = new(StringComparer.OrdinalIgnoreCase);
+    /// <summary>
+    /// Cache keyed on normalized path. The recorded last-write time invalidates an
+    /// entry after an edit, while retaining only the latest render per file.
+    /// </summary>
+    private readonly ConcurrentDictionary<string, CacheEntry> _cache = new(StringComparer.OrdinalIgnoreCase);
 
     public int CachedCount => _cache.Count;
 
@@ -31,19 +34,22 @@ public sealed class SvgThumbnailService
     /// </summary>
     public async Task<ImageSource?> GetThumbnailAsync(string filePath, CancellationToken cancellationToken = default)
     {
-        string cacheKey;
+        string normalizedPath;
+        long lastWriteUtcTicks;
         try
         {
-            cacheKey = $"{filePath}|{File.GetLastWriteTimeUtc(filePath).Ticks}";
+            normalizedPath = Path.GetFullPath(filePath);
+            lastWriteUtcTicks = File.GetLastWriteTimeUtc(normalizedPath).Ticks;
         }
         catch (Exception)
         {
             return null;
         }
 
-        if (_cache.TryGetValue(cacheKey, out var cached))
+        if (_cache.TryGetValue(normalizedPath, out var cached) &&
+            cached.LastWriteUtcTicks == lastWriteUtcTicks)
         {
-            return cached;
+            return cached.Image;
         }
 
         await _throttle.WaitAsync(cancellationToken).ConfigureAwait(false);
@@ -51,11 +57,11 @@ public sealed class SvgThumbnailService
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var image = await Task.Run(() => Render(filePath), cancellationToken).ConfigureAwait(false);
+            var image = await Task.Run(() => Render(normalizedPath), cancellationToken).ConfigureAwait(false);
 
             if (image is not null)
             {
-                _cache[cacheKey] = image;
+                _cache[normalizedPath] = new CacheEntry(lastWriteUtcTicks, image);
             }
 
             return image;
@@ -68,6 +74,8 @@ public sealed class SvgThumbnailService
 
     /// <summary>Clears the cache, e.g. after the user presses Refresh.</summary>
     public void ClearCache() => _cache.Clear();
+
+    private sealed record CacheEntry(long LastWriteUtcTicks, ImageSource Image);
 
     private static ImageSource? Render(string filePath)
     {

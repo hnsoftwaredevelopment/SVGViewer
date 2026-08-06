@@ -3,10 +3,15 @@
 SVG Viewer lets you browse, preview and open the SVG files on your drive fast. The
 app is deliberately simple; this overview is all you need.
 
-- **Drive & folders** — pick a drive at the top left and click through the tree.
+- **Drive & folders** — pick a drive at the top left, or use the folder button to
+  scan just a chosen folder. A previously completed location is immediately ready,
+  even after restarting the app. Returning during a scan in the same session
+  resumes where it stopped. Then click through the tree.
 - **Where are the SVGs?** — folders that contain SVGs are **blue with a count**;
   folders that only lead to them are blue without a count. Set the filter to
   **SVG only** to show just the relevant folders.
+- **Progress** — the bottom bar shows scanned folders, SVG folders, average scan
+  speed and elapsed scan time.
 - **Preview** — select a folder to see the previews. Choose the view size at the top
   right (large / medium / small icons, or details).
 - **Zoom** — **double-click** an SVG to view it large in a separate window; scroll to

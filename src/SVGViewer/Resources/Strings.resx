@@ -16,7 +16,10 @@
     <value>SVG Viewer</value>
   </data>
   <data name="LabelDrive" xml:space="preserve">
-    <value>Schijf:</value>
+    <value>Locatie:</value>
+  </data>
+  <data name="ButtonSelectFolder" xml:space="preserve">
+    <value>Map kiezen</value>
   </data>
   <data name="LabelView" xml:space="preserve">
     <value>Weergave:</value>
@@ -58,7 +61,7 @@
     <value>Gereed</value>
   </data>
   <data name="StatusSelectDrive" xml:space="preserve">
-    <value>Selecteer een schijf om te beginnen</value>
+    <value>Selecteer een schijf of map om te beginnen</value>
   </data>
   <data name="StatusScanning" xml:space="preserve">
     <value>Scannen naar SVG-mappen...</value>
@@ -67,13 +70,13 @@
     <value>Scan geannuleerd</value>
   </data>
   <data name="StatusFoldersScanned" xml:space="preserve">
-    <value>{0} mappen doorzocht, {1} met SVG-bestanden</value>
+    <value>{0} mappen doorzocht, {1} met SVG-bestanden · {2:N0} mappen/s · {3:g}</value>
   </data>
   <data name="StatusFoldersWithSvg" xml:space="preserve">
     <value>{0} mappen met SVG-bestanden gevonden</value>
   </data>
   <data name="StatusNoSvgFound" xml:space="preserve">
-    <value>Geen SVG-bestanden gevonden op deze schijf</value>
+    <value>Geen SVG-bestanden gevonden in deze locatie</value>
   </data>
   <data name="TreeLoading" xml:space="preserve">
     <value>Laden...</value>

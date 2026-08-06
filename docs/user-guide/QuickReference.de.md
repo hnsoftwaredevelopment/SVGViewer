@@ -3,11 +3,16 @@
 Mit SVG Viewer durchsuchst, betrachtest und öffnest du die SVG-Dateien auf deinem
 Laufwerk schnell. Die App ist bewusst einfach gehalten; diese Übersicht genügt.
 
-- **Laufwerk & Ordner** — wähle oben links ein Laufwerk und klicke dich durch den
-  Baum.
+- **Laufwerk & Ordner** — wähle oben links ein Laufwerk oder nutze die
+  Ordnerschaltfläche, um nur einen gewählten Ordner zu scannen. Ein zuvor
+  vollständig gescannter Standort ist auch nach einem Neustart sofort verfügbar.
+  Bei einem Wechsel während eines Scans in derselben Sitzung wird dieser dort
+  fortgesetzt. Klicke dich dann durch den Baum.
 - **Wo sind die SVGs?** — Ordner mit SVGs sind **blau mit Anzahl**; Ordner, die nur
   dorthin führen, sind blau ohne Anzahl. Stelle den Filter auf **Nur SVG**, um nur
   die relevanten Ordner anzuzeigen.
+- **Fortschritt** — die untere Leiste zeigt gescannte Ordner, SVG-Ordner,
+  durchschnittliche Scangeschwindigkeit und vergangene Scanzeit.
 - **Vorschau** — wähle einen Ordner, um die Vorschauen zu sehen. Wähle oben rechts
   die Ansichtsgröße (große / mittlere / kleine Symbole oder Details).
 - **Vergrößern** — **Doppelklick** auf eine SVG, um sie groß in einem eigenen Fenster
