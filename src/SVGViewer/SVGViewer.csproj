@@ -22,6 +22,10 @@
     <FileVersion>2026.8.5.2</FileVersion>
   </PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+      <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+    </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Assets\appicon.png" />
     <None Remove="Assets\splash.png" />
@@ -35,9 +39,9 @@
 
   <!-- Ship the localized quick reference next to the executable for the in-app Help. -->
   <ItemGroup>
-    <Content Include="..\..\docs\user-guide\QuickReference.nl.md" Link="Help\QuickReference.nl.md" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="..\..\docs\user-guide\QuickReference.en.md" Link="Help\QuickReference.en.md" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="..\..\docs\user-guide\QuickReference.de.md" Link="Help\QuickReference.de.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\docs\user-guide\QuickReference.nl.md" Link="Help\QuickReference.nl.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="..\..\docs\user-guide\QuickReference.en.md" Link="Help\QuickReference.en.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="..\..\docs\user-guide\QuickReference.de.md" Link="Help\QuickReference.de.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
   <!-- Icon artwork embedded as WPF resources (loaded via pack URIs at runtime). -->
