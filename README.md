@@ -18,7 +18,7 @@ German).
 - **Edit externally** — double‑click an SVG to open it in the associated app.
 - **Multilingual UI** — Dutch (default), English, German, switchable at runtime.
 - **In‑app help** — user guide opens in the currently selected language.
-- **Simple filemanagement** - rename, copy or move files from one directory to another on the selected drive, or to another drive when you have an open explorer window with that drive
+- **Simple filemanagement** - rename, copy or move files from one directory to another on the selected drive, or to another drive when you have an open explorer window with that drive.
 
 ## Screenshots
 
